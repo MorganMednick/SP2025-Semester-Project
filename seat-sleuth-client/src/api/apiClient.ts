@@ -1,8 +1,7 @@
-import { ValidServerEndpoints } from '@shared/api/api';
-import { ValidPayloads } from '@shared/api/payloads';
-import { ValidApiResponses, ApiResponse } from '@shared/api/responses';
 import { API_ENDPOINTS } from '@shared/api/api';
 import axios, { AxiosInstance } from 'axios';
+import { ValidApiResponses, ValidPayloads, ValidServerEndpoints } from '@shared/api/validations';
+import { ApiResponse } from '@shared/api/responses';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http:localhost:5137',

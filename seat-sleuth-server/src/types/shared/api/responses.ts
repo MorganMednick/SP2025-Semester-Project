@@ -9,8 +9,6 @@ export interface ApiResponse<T> {
 
 export type RegistrationResponse = Omit<User, 'password'>;
 
-export type ValidApiResponses = LoginResponse | RegistrationResponse;
-
 export interface LoginResponse {
   token: string;
 }

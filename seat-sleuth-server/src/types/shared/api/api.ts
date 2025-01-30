@@ -10,5 +10,3 @@ export const API_ENDPOINTS: Record<string, ApiEndpoint> = {
   AUTH_LOGIN: { route: '/auth/login', method: 'POST' },
   AUTH_REGISTER: { route: '/auth/register', method: 'POST' },
 } as const;
-
-export type ValidServerEndpoints = 'HEALTH' | 'AUTH_LOGIN' | 'AUTH_REGISTER';
