@@ -15,8 +15,7 @@ datasource db {
 
 model User {
   id        Int       @id @default(autoincrement())
-  name      String    @default("new user")
   email     String    @unique
-  password  String    // Hashed password -- bcrypt
+  password  String    // Hashed password -- bcryptjs
   createdAt DateTime  @default(now())
 }
