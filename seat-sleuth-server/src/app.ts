@@ -1,12 +1,13 @@
-import express from "express";
-import cors from "cors";
-import routes from "./routes";
+import express from 'express';
+import routes from './routes';
+import { configureServerCookies } from './middleware/cookie';
 
 const app = express();
 
-app.use(cors());
+configureServerCookies(app);
+
 app.use(express.json());
 
-app.use("/api", routes);
+app.use('/api', routes);
 
 export default app;

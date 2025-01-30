@@ -18,7 +18,12 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* For shared directory */
+    "paths": {
+      "@shared/*": ["../seat-sleuth-server/src/types/shared/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../seat-sleuth-server/src/types/shared/*", "../seat-sleuth-server/src/types/shared/api/payloads.ts", "../seat-sleuth-server/src/types/shared/api/api.ts"]
 }
