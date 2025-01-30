@@ -3,31 +3,25 @@ import bcryptjs from 'bcryptjs';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
-import { AuthRequest, AuthSchema } from '../types/requests/authRequests';
 import { BCRYPT_SALT_ROUNDS } from '../data/constants';
 import { generateToken } from '../util/jwtUtils';
+import { generateCookieForResponseToClient } from '../middleware/cookie';
+import { User } from '@prisma/client';
+import { RegistrationResponse } from '../types/shared/api/responses';
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const parsed = AuthSchema.safeParse(req.body as AuthRequest);
-
-    if (!parsed.success) {
-      return sendError(res, {
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: 'Invalid request data',
-        error: parsed.error.format(),
-      });
-    }
-
-    const { email, password } = parsed.data;
+    const { email, password } = req.body;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
-      return sendError(res, {
+      sendError(res, {
         statusCode: StatusCodes.CONFLICT,
         message: 'User with this email already exists',
+        error: null,
       });
+      return;
     }
 
     const hashedPassword = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
@@ -36,13 +30,20 @@ export const createUser = async (req: Request, res: Response) => {
       data: { email, password: hashedPassword },
     });
 
-    return sendSuccess(res, {
+    const { password: _, ...userWithoutPassword } = newUser;
+
+    console.info('Registered', userWithoutPassword);
+
+    sendSuccess(res, {
       statusCode: StatusCodes.CREATED,
       message: 'User created successfully',
-      data: newUser,
+      data: {
+        type: 'UserWithoutPassword',
+        payload: userWithoutPassword as RegistrationResponse,
+      },
     });
   } catch (error) {
-    return sendError(res, {
+    sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'An error occurred while creating the user',
       error,
@@ -50,47 +51,46 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const parsed = AuthSchema.safeParse(req.body as AuthRequest);
+    const { email, password } = req.body;
 
-    if (!parsed.success) {
-      return sendError(res, {
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: 'Invalid request data',
-        error: parsed.error.format(),
-      });
-    }
-
-    const { email, password } = parsed.data;
-
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user: User | null = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return sendError(res, {
+      sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
         message: 'Invalid credentials',
+        error: null,
       });
+      return;
     }
 
-    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    const isPasswordValid: boolean = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return sendError(res, {
+      sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
         message: 'Invalid credentials',
+        error: null,
       });
+      return;
     }
 
-    const token = generateToken(user.id);
+    const token: string = generateToken(user.id);
 
-    return sendSuccess(res, {
+    generateCookieForResponseToClient(res, token);
+
+    sendSuccess(res, {
       statusCode: StatusCodes.OK,
       message: 'Login successful',
-      data: { token },
+      data: {
+        type: 'AuthToken',
+        payload: { token },
+      },
     });
   } catch (error) {
-    return sendError(res, {
+    sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'An error occurred during login',
       error,

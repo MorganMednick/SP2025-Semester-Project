@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import app from './app';
-import { handleGracefulShutdown } from './middleware';
+import { handleGracefulShutdown } from './middleware/gracefulShutdown';
 
 const PORT = process.env.PORT || 4000;
 
