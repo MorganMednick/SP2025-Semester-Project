@@ -80,6 +80,18 @@ And to synch the migration with your local database:
 npx prisma db push
 ```
 
+Finally, you will need to update your `.env` to include a secure [jwt token](https://jwt.io/introduction). You can generate a good enough one by using openssl:
+
+```bash
+openssl rand -base64 64
+```
+
+Copy the output of the above command onto your clipboard and add the following to your `.env`:
+
+```bash
+JWT_SECRET="<output-of-previous-command>"
+```
+
 You should now be good to go! To test this, let's try running the server (I already have a connecticity script in place) :
 
 ```bash
@@ -119,11 +131,25 @@ Now that your database is all migrated and set up, all you will need to do to ru
 brew services restart postgresql
 ```
 
-Then, cd into `./sleuth-server` and run
+Then, cd into `./seat-sleuth-server` and run
 
 ```
 npm i && npm run dev
 ```
+
+I currently have included a few test scripts that will try and mock auth requests. Please note that the results are dependent on your local db data store. To run them, first change permissions of the `./seat-sleuth-server/script` folder:
+
+```bash
+chmod -R +x ./scripts
+```
+
+Then, you can run all test files with
+
+```bash
+./scripts/run-manual-tests.sh
+```
+
+**_This is likely a temporary testing feature if we get some solid testing framework set up_**
 
 ### Running the client
 
