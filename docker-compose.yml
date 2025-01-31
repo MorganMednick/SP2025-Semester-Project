@@ -1,0 +1,81 @@
+services:
+  health-check:
+    container_name: seat-sleuth-health
+    image: busybox
+    depends_on:
+      postgres:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+      client:
+        condition: service_healthy
+    command: ['/bin/sh', '-c', "until nc -z server 4000 && nc -z client 5173 && nc -z database 5432; do sleep 2; done; echo '✅ All services are healthy!' && sleep infinity"]
+
+  postgres:
+    image: postgres:15
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_USER: seat-sleuth-user
+      POSTGRES_PASSWORD: seat-sleuth-password-12345
+      POSTGRES_DB: seat-sleuth
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U seat-sleuth-user -d seat-sleuth']
+      interval: 5s
+      retries: 10
+  client:
+    container_name: client
+    build:
+      context: ./seat-sleuth-client
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173'
+    depends_on:
+      server:
+        condition: service_healthy
+    volumes:
+      - ./seat-sleuth-client:/app
+      - /app/node_modules
+      - ./seat-sleuth-server/src/types/shared:/app/src/shared
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_HOST=0.0.0.0
+      - VITE_API_BASE_URL=http://localhost:4000/api/
+    command: sh -c "npm run dev"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5173']
+      interval: 5s
+      retries: 10
+
+  server:
+    container_name: server
+    build:
+      context: ./seat-sleuth-server
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@postgres:5432/seat-sleuth
+      - NODE_ENV=development
+      - JWT_SECRET=JZzG7L8tSgLVOkPiZ+ftMJvB4hrwF9vC1MmTXLTrSg1WJYhr5qkZW2+8v6d/5mVZb1Sx8H0qMAtu8d5PVo3C3A==
+      - CLIENT_URL=http://localhost:5173
+    ports:
+      - '4000:4000'
+      - '5555:5555'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./seat-sleuth-server:/app
+      - /app/node_modules
+    command: sh -c "npx prisma migrate deploy && sleep 2 && npm run dev" # Ensure Prisma initializes before running the app
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4000/api/health']
+      interval: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

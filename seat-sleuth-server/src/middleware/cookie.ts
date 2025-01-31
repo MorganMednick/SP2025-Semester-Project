@@ -1,19 +1,21 @@
 import cors from 'cors';
-import express, { Application, Response } from 'express';
+import { Application, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { CLIENT_URL, NODE_ENV } from '../config/env';
 
 export const configureServerCookies = (app: Application): void => {
-  app.use(cookieParser());
-
-  app.use(
+  app.use((req, res, next) => {
+    if (req.path === '/api/health') {
+      return next();
+    }
     cors({
       origin: CLIENT_URL,
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization'],
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    }),
-  );
+    })(req, res, next);
+  });
+  app.use(cookieParser());
 };
 
 export const generateCookieForResponseToClient = (res: Response, token: string): void => {
