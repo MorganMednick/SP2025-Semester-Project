@@ -22,7 +22,7 @@
 
     /* For shared directory */
     "paths": {
-      "@shared/*": ["../seat-sleuth-server/src/types/shared/*"]
+      "@shared/*": ["./src/shared/*", "../seat-sleuth-server/src/types/shared/*"]
     }
   },
   "include": ["src", "../seat-sleuth-server/src/types/shared/*", "../seat-sleuth-server/src/types/shared/api/payloads.ts", "../seat-sleuth-server/src/types/shared/api/api.ts"]
