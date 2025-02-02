@@ -39,13 +39,25 @@ We have now containerized the entire application with a single docker-compose.ym
 
 ### Running the application with docker
 
-1. Change the permissions of the start script:
+1. Change the permissions of the docker install script:
+
+```bash
+chmod +x ./run-scripts/docker-install.sh
+```
+
+2. Run the docker install script:
+
+```bash
+./run-scripts/docker-install.sh
+```
+
+3. Change the permissions of the start script:
 
 ```bash
 chmod +x ./start.sh
 ```
 
-2. Run the script:
+1. Run the script:
 
 ```bash
 ./start.sh
