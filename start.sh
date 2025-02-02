@@ -1,26 +1,32 @@
-#!/bin/bash
+echo -e "\n🔻 Bringing down existing Docker containers and cleaning up...\n"
+docker-compose down -v --remove-orphans
 
-# Bring down any running containers and clean up Docker resources
-echo "Bringing down Docker containers and cleaning up..."
-docker-compose down
-sleep 1
+# Remove old health-check container if it exists
+HEALTH_CONTAINER_ID=$(docker ps -aqf "name=health")
+if [ -n "$HEALTH_CONTAINER_ID" ]; then
+    echo -e "\n🗑️  Removing old Health Check container (ID: $HEALTH_CONTAINER_ID)..."
+    docker rm -f $HEALTH_CONTAINER_ID
+else
+    echo -e "\n✅ No existing Health Check container found."
+fi
 
-echo "Pruning Docker system..."
-docker system prune -af --volumes
-sleep 2
-
-
-# Start Docker containers
-echo "Starting Docker containers..."
+echo -e "\n🦥 Starting Up Seat Sleuth Containers...\n"
 docker-compose up --build -d
 
-echo "Waiting for all services to be ready..."
 
-# Loop until all services respond
-while ! nc -z localhost 5173 || ! nc -z localhost 4000 || ! nc -z localhost 5432; do
-  sleep 2
-  echo "Still waiting for services..."
-done
+echo -e "🛠️ Opening Prisma Studio in the PostgreSQL volume...\n"
+docker-compose exec -d server npx prisma studio
+echo "🌐 Prisma Studio is now live!"
 
-./run-scripts/health-check.sh
-./run-scripts/prisma-studio.sh
+HEALTH_CONTAINER_ID=$(docker ps -aqf "name=health")
+if [ -n "$HEALTH_CONTAINER_ID" ]; then
+    echo -e "\n🔥 Health Check Complete! All Services Healthy..."
+    echo -e "\n🗑️  Removing Vestigial Health Check container for memory optimization (ID: $HEALTH_CONTAINER_ID)..."
+    docker rm -f $HEALTH_CONTAINER_ID > /dev/null 2>&1
+fi
+
+echo -e "\n🚀 Seat Sleuth is Up and Running! 🦥\n"
+
+echo -e "\t✅ Client:        http://localhost:5173"
+echo -e "\t✅ Server:        http://localhost:4000"
+echo -e "\t✅ Prisma Studio: http://localhost:5555\n"
