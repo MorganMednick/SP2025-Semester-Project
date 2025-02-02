@@ -9,7 +9,10 @@ import { generateCookieForResponseToClient } from '../middleware/cookie';
 import { User } from '@prisma/client';
 import { RegistrationResponse } from '../types/shared/api/responses';
 
-export const createUser = async (req: Request, res: Response): Promise<void> => {
+export const createUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -19,7 +22,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       sendError(res, {
         statusCode: StatusCodes.CONFLICT,
         message: 'User with this email already exists',
-        error: null,
+        error: null
       });
       return;
     }
@@ -27,7 +30,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const hashedPassword = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
 
     const newUser = await prisma.user.create({
-      data: { email, password: hashedPassword },
+      data: { email, password: hashedPassword }
     });
 
     const { password: _, ...userWithoutPassword } = newUser;
@@ -39,14 +42,14 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       message: 'User created successfully',
       data: {
         type: 'UserWithoutPassword',
-        payload: userWithoutPassword as RegistrationResponse,
-      },
+        payload: userWithoutPassword as RegistrationResponse
+      }
     });
   } catch (error) {
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'An error occurred while creating the user',
-      error,
+      error
     });
   }
 };
@@ -55,24 +58,29 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    const user: User | null = await prisma.user.findUnique({ where: { email } });
+    const user: User | null = await prisma.user.findUnique({
+      where: { email }
+    });
 
     if (!user) {
       sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
         message: 'Invalid credentials',
-        error: null,
+        error: null
       });
       return;
     }
 
-    const isPasswordValid: boolean = await bcryptjs.compare(password, user.password);
+    const isPasswordValid: boolean = await bcryptjs.compare(
+      password,
+      user.password
+    );
 
     if (!isPasswordValid) {
       sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
         message: 'Invalid credentials',
-        error: null,
+        error: null
       });
       return;
     }
@@ -86,14 +94,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       message: 'Login successful',
       data: {
         type: 'AuthToken',
-        payload: { token },
-      },
+        payload: { token }
+      }
     });
   } catch (error) {
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'An error occurred during login',
-      error,
+      error
     });
   }
 };

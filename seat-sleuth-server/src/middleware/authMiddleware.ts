@@ -15,13 +15,17 @@ import { StatusCodes } from 'http-status-codes';
  * @param next - The next middleware function in the Express pipeline, called if authentication succeeds.
  * @returns If authentication fails, returns an error response with `401 Unauthorized`. Otherwise, calls `next()` to proceed.
  */
-export function authenticateToken(req: Request, res: Response, next: NextFunction) {
+export function authenticateToken(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const token = req.header('Authorization')?.split(' ')[1];
 
   if (!token) {
     return sendError(res, {
       statusCode: StatusCodes.UNAUTHORIZED,
-      message: 'Access denied. No token provided.',
+      message: 'Access denied. No token provided.'
     });
   }
 
@@ -30,7 +34,7 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
   if (!decoded) {
     return sendError(res, {
       statusCode: StatusCodes.UNAUTHORIZED,
-      message: 'Invalid or expired token.',
+      message: 'Invalid or expired token.'
     });
   }
 

@@ -12,17 +12,20 @@ export const configureServerCookies = (app: Application): void => {
       origin: CLIENT_URL,
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE']
     })(req, res, next);
   });
   app.use(cookieParser());
 };
 
-export const generateCookieForResponseToClient = (res: Response, token: string): void => {
+export const generateCookieForResponseToClient = (
+  res: Response,
+  token: string
+): void => {
   // Send cookie for client auth
   res.cookie('token', token, {
     httpOnly: true, // Like in 330 @ Veda :)
     secure: NODE_ENV === 'production', // We actually don't need express to verify security unless we are in prod! - J
-    sameSite: 'strict',
+    sameSite: 'strict'
   });
 };

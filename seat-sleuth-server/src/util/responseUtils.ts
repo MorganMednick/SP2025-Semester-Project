@@ -8,8 +8,13 @@ import { ApiResponse } from '../types/shared/api/responses';
  * @param res - The Express `Response` object used to send the response.
  * @param options - The response details, including status, message, and optional data.
  */
-export const sendSuccess = <T>(res: Response, { statusCode, data, message }: ApiResponse<T>) => {
-  return res.status(statusCode).json({ success: true, statusCode, message, data });
+export const sendSuccess = <T>(
+  res: Response,
+  { statusCode, data, message }: ApiResponse<T>
+) => {
+  return res
+    .status(statusCode)
+    .json({ success: true, statusCode, message, data });
 };
 
 /**
@@ -18,6 +23,11 @@ export const sendSuccess = <T>(res: Response, { statusCode, data, message }: Api
  * @param res - The Express `Response` object used to send the response.
  * @param options - The response details, including status, message, and optional error data.
  */
-export const sendError = (res: Response, { statusCode, message, error }: ApiResponse<null>) => {
-  return res.status(statusCode).json({ success: false, statusCode, message, error });
+export const sendError = (
+  res: Response,
+  { statusCode, message, error }: ApiResponse<null>
+) => {
+  return res
+    .status(statusCode)
+    .json({ success: false, statusCode, message, error });
 };
