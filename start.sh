@@ -1,6 +1,5 @@
 set -e
 
-PROJECT_NAME="seat-sleuth"
 
 
 remove_health_container() {
@@ -31,7 +30,7 @@ cleanup_containers() {
 
 start_containers() {
     echo -e "\n🦥 Starting Up Seat Sleuth Containers...\n"
-    docker-compose -p "$PROJECT_NAME" up --build -d
+    docker-compose up --build -d
 }
 
 

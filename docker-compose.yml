@@ -1,3 +1,4 @@
+name: seat-sleuth
 services:
   health-check:
     container_name: health
