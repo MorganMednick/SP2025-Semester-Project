@@ -1,4 +1,3 @@
-name: seat-sleuth
 services:
   health-check:
     container_name: health
@@ -6,15 +5,17 @@ services:
     restart: 'no'
     stop_grace_period: 0s
     depends_on:
-      postgres:
+      database:
         condition: service_healthy
       server:
         condition: service_healthy
       client:
         condition: service_healthy
-    command: ['/bin/sh', '-c', "until nc -z server 4000 && nc -z client 5173 && nc -z database 5432; do sleep 1; done; echo '✅ All services are healthy!'"]
+      prisma-studio:
+        condition: service_healthy
+    command: ['/bin/sh', '-c', "until nc -z server 4000 && nc -z client 5173 && nc -z database 5432 && nc -z prisma-studio 5555; do sleep 1; done; echo '✅ All services are healthy!'"]
 
-  postgres:
+  database:
     image: postgres:15
     container_name: database
     restart: always
@@ -28,9 +29,10 @@ services:
     ports:
       - '5432:5432'
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U seat-sleuth-user -d seat-sleuth']
+      test: ['CMD-SHELL', 'pg_isready -U seat-sleuth-user -h database -d seat-sleuth']
       interval: 1s
       retries: 10
+
   client:
     container_name: client
     build:
@@ -58,13 +60,12 @@ services:
       context: ./seat-sleuth-server
       dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@postgres:5432/seat-sleuth
+      - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@database:5432/seat-sleuth
       - NODE_ENV=development
-      - JWT_SECRET=JZzG7L8tSgLVOkPiZ+ftMJvB4hrwF9vC1MmTXLTrSg1WJYhr5qkZW2+8v6d/5mVZb1Sx8H0qMAtu8d5PVo3C3A==
+      - JWT_SECRET="JZzG7L8tSgLVOkPiZ+ftMJvB4hrwF9vC1MmTXLTrSg1WJYhr5qkZW2+8v6d/5mVZb1Sx8H0qMAtu8d5PVo3C3A=="
       - CLIENT_URL=http://localhost:5173
     ports:
       - '4000:4000'
-      - '5555:5555'
     volumes:
       - ./seat-sleuth-server:/app
       - node_modules_server:/app/node_modules
@@ -74,10 +75,27 @@ services:
       interval: 1s
       retries: 10
 
+  prisma-studio:
+    container_name: prisma-studio
+    build:
+      context: ./seat-sleuth-server
+    environment:
+      - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@database:5432/seat-sleuth
+    ports:
+      - '5555:5555'
+    volumes:
+      - ./seat-sleuth-server:/app
+      - node_modules_server:/app/node_modules
+    command: sh -c "npx prisma studio"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5555']
+      interval: 1s
+      retries: 10
+
 volumes:
   postgres_data:
     name: seat-sleuth-postgres-data
   node_modules_client:
-    name: seat-sleuth-client
+    name: seat-sleuth-client-modules
   node_modules_server:
-    name: seat-sleuth-server
+    name: seat-sleuth-server-modules
