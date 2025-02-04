@@ -7,7 +7,7 @@ import { BCRYPT_SALT_ROUNDS } from '../data/constants';
 import { generateToken } from '../util/jwtUtils';
 import { generateCookieForResponseToClient } from '../middleware/cookie';
 import { User } from '@prisma/client';
-import { RegistrationResponse } from '../types/shared/api/responses';
+import { LoginResponse, RegistrationResponse } from '../types/shared/api/responses';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -34,13 +34,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
     console.info('Registered', userWithoutPassword);
 
-    sendSuccess(res, {
+    sendSuccess<RegistrationResponse>(res, {
       statusCode: StatusCodes.CREATED,
       message: 'User created successfully',
-      data: {
-        type: 'UserWithoutPassword',
-        payload: userWithoutPassword as RegistrationResponse,
-      },
+      data: userWithoutPassword as RegistrationResponse,
     });
   } catch (error) {
     sendError(res, {
@@ -81,13 +78,10 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     generateCookieForResponseToClient(res, token);
 
-    sendSuccess(res, {
+    sendSuccess<LoginResponse>(res, {
       statusCode: StatusCodes.OK,
       message: 'Login successful',
-      data: {
-        type: 'AuthToken',
-        payload: { token },
-      },
+      data: { token: token },
     });
   } catch (error) {
     sendError(res, {
