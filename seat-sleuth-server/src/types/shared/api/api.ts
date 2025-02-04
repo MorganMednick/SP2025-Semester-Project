@@ -1,11 +1,5 @@
-export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
+import { API_SCHEMA, HttpMethodsAllowed, ValidServerEndpoints } from './apiSchema';
 
-export interface ApiEndpoint {
-  route: string;
-  method: HttpMethodsAllowed;
-}
-
-export const API_ENDPOINTS: Record<string, ApiEndpoint> = {
-  AUTH_LOGIN: { route: '/auth/login', method: 'POST' },
-  AUTH_REGISTER: { route: '/auth/register', method: 'POST' },
-} as const;
+export const API_ENDPOINTS: Record<ValidServerEndpoints, { route: string; method: HttpMethodsAllowed }> = Object.fromEntries(
+  Object.entries(API_SCHEMA).map(([key, { route, method }]) => [key, { route, method }]),
+) as Record<ValidServerEndpoints, { route: string; method: HttpMethodsAllowed }>;
