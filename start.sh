@@ -1,18 +1,6 @@
 set -e
 
 
-
-remove_health_container() {
-    local HEALTH_CONTAINER_ID=$(docker ps -aqf "name=health")
-    if [ -n "$HEALTH_CONTAINER_ID" ]; then
-        echo -e "\n🗑️  Removing old Health Check container (ID: $HEALTH_CONTAINER_ID)..."
-        docker rm -f $HEALTH_CONTAINER_ID > /dev/null 2>&1
-    else
-        echo -e "\n✅ No existing Health Check container found."
-    fi
-}
-
-
 cleanup_containers() {
     echo -e "\n🔻 Forcing removal of lingering containers...\n"
     docker ps -aq | xargs -r docker rm -f
@@ -22,8 +10,6 @@ cleanup_containers() {
 
     echo -e "\n🗑️  Removing unused volumes...\n"
     docker volume prune -f
-
-    remove_health_container
 }
 
 
