@@ -4,14 +4,21 @@ import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { BCRYPT_SALT_ROUNDS } from '../data/constants';
-import { generateToken } from '../util/jwtUtils';
-import { generateCookieForResponseToClient } from '../middleware/cookie';
 import { User } from '@prisma/client';
-import { LoginResponse, RegistrationResponse } from '../types/shared/api/responses';
+import { AuthResponse } from '../types/shared/api/responses';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      sendError(res, {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'Missing email or password',
+        error: null,
+      });
+      return;
+    }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
@@ -34,12 +41,12 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
     console.info('Registered', userWithoutPassword);
 
-    sendSuccess<RegistrationResponse>(res, {
+    sendSuccess<AuthResponse>(res, {
       statusCode: StatusCodes.CREATED,
       message: 'User created successfully',
-      data: userWithoutPassword as RegistrationResponse,
     });
   } catch (error) {
+    console.error(error);
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'An error occurred while creating the user',
@@ -51,6 +58,15 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      sendError(res, {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'Missing email or password',
+        error: null,
+      });
+      return;
+    }
 
     const user: User | null = await prisma.user.findUnique({ where: { email } });
 
@@ -74,14 +90,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token: string = generateToken(user.id);
+    req.session.userId = user.id;
 
-    generateCookieForResponseToClient(res, token);
-
-    sendSuccess<LoginResponse>(res, {
+    sendSuccess<AuthResponse>(res, {
       statusCode: StatusCodes.OK,
       message: 'Login successful',
-      data: { token: token },
     });
   } catch (error) {
     sendError(res, {
@@ -90,4 +103,20 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       error,
     });
   }
+};
+
+export const checkLogin = async (req: Request, res: Response): Promise<void> => {
+  if (req.session.userId) {
+    sendSuccess<AuthResponse>(res, {
+      statusCode: StatusCodes.OK,
+      message: 'User is logged in',
+    });
+    return;
+  }
+
+  sendError(res, {
+    statusCode: StatusCodes.UNAUTHORIZED,
+    message: 'User not logged in',
+    error: null,
+  });
 };

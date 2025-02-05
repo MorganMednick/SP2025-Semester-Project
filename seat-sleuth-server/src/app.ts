@@ -1,10 +1,12 @@
 import express from 'express';
 import routes from './routes';
-import { configureServerCookies } from './middleware/cookie';
+import { configureServerCookies, configureCors, configureServerSession } from './middleware/auth';
 
 const app = express();
 
+configureCors(app);
 configureServerCookies(app);
+configureServerSession(app);
 
 app.use(express.json());
 

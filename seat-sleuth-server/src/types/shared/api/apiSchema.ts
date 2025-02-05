@@ -1,5 +1,5 @@
 import { AuthPayload } from './payloads';
-import { LoginResponse, RegistrationResponse } from './responses';
+import { AuthResponse } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -11,13 +11,19 @@ export const API_SCHEMA = {
     route: '/auth/login',
     method: 'POST',
     payload: {} as AuthPayload,
-    response: {} as LoginResponse,
+    response: null as AuthResponse,
+  },
+  CHECK_LOGIN: {
+    route: '/auth/login',
+    method: 'GET',
+    payload: null,
+    response: null as AuthResponse,
   },
   AUTH_REGISTER: {
     route: '/auth/register',
     method: 'POST',
     payload: {} as AuthPayload,
-    response: {} as RegistrationResponse,
+    response: null as AuthResponse,
   },
 } as const;
 

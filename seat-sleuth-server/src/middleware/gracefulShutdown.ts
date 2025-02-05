@@ -9,10 +9,8 @@ export const handleGracefulShutdown = async (server: Server): Promise<void> => {
 
     server.close(() => {
       console.info('Server routes disabled...\nServer is offline :)');
-      process.exit(0);
     });
   } catch (err) {
     console.error('Error during shutdown:', err);
-    process.exit(1);
   }
 };

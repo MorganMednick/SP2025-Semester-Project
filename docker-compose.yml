@@ -67,15 +67,12 @@ services:
       dockerfile: Dockerfile
     environment:
       - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@database:5432/seat-sleuth
-      - NODE_ENV=development
-      - JWT_SECRET="JZzG7L8tSgLVOkPiZ+ftMJvB4hrwF9vC1MmTXLTrSg1WJYhr5qkZW2+8v6d/5mVZb1Sx8H0qMAtu8d5PVo3C3A=="
-      - CLIENT_URL=http://localhost:5173
     ports:
       - '4000:4000'
     volumes:
       - ./seat-sleuth-server:/app
       - node_modules_server:/app/node_modules
-    command: sh -c "npx prisma migrate deploy && sleep 1 && npm run dev"
+    command: sh -c "npm run dev"
     depends_on:
       database:
         condition: service_healthy

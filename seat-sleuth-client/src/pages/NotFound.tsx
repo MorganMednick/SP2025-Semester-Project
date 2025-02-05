@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
-import { registerUser } from '../api/functions/auth';
+import { checkLogin, loginUser } from '../api/functions/auth';
 
 export default function NotFound() {
   useEffect(() => {
-    registerUser({ email: 'superEmail@gmail.com', password: 'SuperPassword' });
+    checkLogin()
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
   }, []);
   return <div>NotFound</div>;
 }

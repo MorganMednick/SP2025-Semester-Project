@@ -23,6 +23,6 @@ export const sendError = (res: Response, { statusCode, message, error }: ApiErro
     success: false,
     statusCode,
     message,
-    error: typeof error === 'object' ? error?.message ?? 'Unknown error' : error,
+    error: typeof error === 'object' ? (error?.message ?? 'Unknown error') : error,
   });
 };

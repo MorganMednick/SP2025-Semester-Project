@@ -1,5 +1,5 @@
 import { AuthPayload } from './payloads';
-import { LoginResponse, RegistrationResponse } from './responses';
+import { AuthResponse } from './responses';
 
 export type ValidPayloads = AuthPayload;
-export type ValidApiResponses = LoginResponse | RegistrationResponse;
+export type ValidApiResponses = AuthResponse;
