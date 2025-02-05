@@ -7,6 +7,12 @@ export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
  * Defines the valid API endpoints and their respective request payloads and responses.
  */
 export const API_SCHEMA = {
+  HEALTH: {
+    route: '/health',
+    method: 'GET',
+    payload: null,
+    response: {} as any,
+  },
   AUTH_LOGIN: {
     route: '/auth/login',
     method: 'POST',
