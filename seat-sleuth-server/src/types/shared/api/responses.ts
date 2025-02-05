@@ -11,10 +11,6 @@ export type ApiSuccessResponse<T> = Omit<ApiResponse<T>, 'error'>;
 
 export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
 
-export type RegistrationResponse = Omit<User, 'password'>;
-
-export interface LoginResponse {
-  token: string;
-}
+export type AuthResponse = null;
 
 export { User };
