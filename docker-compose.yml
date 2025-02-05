@@ -72,7 +72,7 @@ services:
     volumes:
       - ./seat-sleuth-server:/app
       - node_modules_server:/app/node_modules
-    command: sh -c "npm run dev"
+    command: sh -c "npx prisma migrate reset --force && npm run dev"
     depends_on:
       database:
         condition: service_healthy
