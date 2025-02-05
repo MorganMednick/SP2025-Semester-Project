@@ -39,28 +39,59 @@ We have now containerized the entire application with a single docker-compose.ym
 
 ### Running the application with docker
 
-1. Change the permissions of the docker install script:
+1. Configure `.env` under `./seat-sleuth-server/.env`. This is because your local environment will be different than the stood up postgresql volume. Your `.env` should look like
 
 ```bash
-chmod +x ./run-scripts/docker-install.sh
+DATABASE_URL="postgresql://seat-sleuth-user:seat-sleuth-password-12345@localhost:5432/seat-sleuth"
+NODE_ENV="development"
+CLIENT_URL="http://localhost:5173"
+SESSION_SECRET="<32 char secure string>"
+
 ```
 
-2. Run the docker install script:
+**Note that** the database ul points to loclhost instead of database. This is because you will need manual database migrations if you want to run testing and or change code.
 
-```bash
-./run-scripts/docker-install.sh
-```
-
-3. Change the permissions of the start script:
+2. Change the permissions of the start script:
 
 ```bash
 chmod +x ./start.sh
 ```
 
-1. Run the script:
+3. Run the script:
 
 ```bash
 ./start.sh
 ```
 
-# You are done!
+You should see something like
+
+```bash
+[+] Running 12/12
+ ✔ client                               Built                                                                                                                                             0.0s
+ ✔ prisma-studio                        Built                                                                                                                                             0.0s
+ ✔ server                               Built                                                                                                                                             0.0s
+ ✔ Network seat-sleuth_default          Created                                                                                                                                           0.3s
+ ✔ Volume "seat-sleuth-server-modules"  Created                                                                                                                                           0.0s
+ ✔ Volume "seat-sleuth-postgres-data"   Created                                                                                                                                           0.0s
+ ✔ Volume "seat-sleuth-client-modules"  Created                                                                                                                                           0.0s
+ ✔ Container database                   Healthy                                                                                                                                          24.4s
+ ✔ Container server                     Healthy                                                                                                                                          22.8s
+ ✔ Container prisma-studio              Healthy                                                                                                                                          22.8s
+ ✔ Container client                     Healthy                                                                                                                                          20.4s
+ ✔ Container health                     Started                                                                                                                                          18.5s
+
+🔥 Health Check Complete! All Services Healthy...
+
+🗑️  Removing Vestigial Health Check container for memory optimization (ID: 9c631dcec8f9)...
+
+🚀 Seat Sleuth is Up and Running! 🦥
+
+        ✅ Client:        http://localhost:5173
+        ✅ Server:        http://localhost:4000
+        ✅ Prisma Studio: http://localhost:5555
+
+```
+
+### Running server tests
+
+TODO
