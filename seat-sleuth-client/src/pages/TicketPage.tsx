@@ -1,3 +1,4 @@
+import { TicketMasterResponse } from "@shared/api/ticketMasterResponse";
 import { useState } from "react";
 
 export default function TicketPage() {
@@ -10,7 +11,7 @@ export default function TicketPage() {
 
     try {
       const response: Response = await fetch(url);
-      const data: unknown = await response.json();
+      const data: TicketMasterResponse | undefined = await response.json();
       console.log(data); //To check the ticket info
     } catch (error) {
       console.error("Error fetching ticket data:", error);
