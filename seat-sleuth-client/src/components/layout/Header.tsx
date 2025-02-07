@@ -11,20 +11,22 @@ export default function Header() {
   const location = useLocation();
   let logoOrSearchBar;
 
-  if (location.pathname === "/") {
-    logoOrSearchBar = <Image w={250} src={slothLogoWithText}/>
+  if (location.pathname === '/') {
+    logoOrSearchBar = <Image w={250} src={slothLogoWithText} />;
   } else {
-    logoOrSearchBar = <Group>
-      <Link to={"/"}>
-        <Image w={70} src={slothLogo}/>
-      </Link>
-      <Search></Search>
-    </Group>
+    logoOrSearchBar = (
+      <Group align="center" justify="space-between">
+        <Link to={'/'}>
+          <Image w={70} src={slothLogo} visibleFrom="xs" />
+        </Link>
+        <Search></Search>
+      </Group>
+    );
   }
-    
+
   return (
     <AppShell.Header h="fit-content">
-      <Flex justify="space-between" align="center" p={20} h={80}>
+      <Flex justify="space-between" align="center" p={10} h={80}>
         {logoOrSearchBar}
         {!isAuthenticated ? (
           <Button
@@ -37,11 +39,11 @@ export default function Header() {
             }}
             size="md"
           >
-            Sign in
+            Sign In
           </Button>
         ) : (
           <Button onClick={logout} size="md" color="red">
-            Logout
+            Log Out
           </Button>
         )}
       </Flex>
