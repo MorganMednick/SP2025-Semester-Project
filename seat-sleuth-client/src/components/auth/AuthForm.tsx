@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { TextInput, PasswordInput, Button, Stack, Alert, Image } from '@mantine/core';
+import React from 'react';
+import { TextInput, PasswordInput, Button, Stack, Image } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { AuthState } from '../types/clitentAuth';
-import { slothLogoWithText } from '../util/assetReconcileUtil';
-import { useAuth } from '../context/authContext';
+import { AuthState } from '../../types/clitentAuth';
+import { slothLogoWithText } from '../../util/assetReconcileUtil';
+import { useAuth } from '../../context/authContext';
 import { AuthPayload } from '@shared/api/payloads';
 import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 
 interface AuthFormProps {
   authState: AuthState;
@@ -15,7 +14,6 @@ interface AuthFormProps {
 
 export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
   const { login, register } = useAuth();
-  const [error, setError] = useState<string>('');
   const form = useForm({
     initialValues: {
       email: '',
@@ -39,13 +37,13 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
         .then(() => {
           modals.closeAll();
         })
-        .catch((err: Error) => setError(err.message));
+        .catch((err: Error) => console.error(err.message));
     } else {
       register({ email, password })
         .then(() => {
           modals.closeAll();
         })
-        .catch((err: Error) => setError(err.message));
+        .catch((err: Error) => console.error(err.message));
     }
   };
 
@@ -58,12 +56,6 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
         <PasswordInput label="Password" placeholder="Enter your password" {...form.getInputProps('password')} required w="90%" />
 
         {authState === AuthState.REGISTER && <PasswordInput w="90%" label="Confirm Password" placeholder="Re-enter your password" {...form.getInputProps('confirmPassword')} required />}
-
-        {error && (
-          <Alert color="red" withCloseButton closeButtonLabel="Close alert" onClose={() => setError('')}>
-            {error}
-          </Alert>
-        )}
 
         <Button type="submit" w="90%">
           {authState === AuthState.LOGIN ? AuthState.LOGIN : AuthState.REGISTER}

@@ -3,7 +3,7 @@ import { loginUser, checkLogin, registerUser, logoutUser } from '../api/function
 import { AuthPayload } from '@shared/api/payloads';
 import axios from 'axios';
 import { AuthContext } from '../types/clitentAuth';
-import { showMantineNotification } from '../util/uiHelpers';
+import { showMantineNotification } from '../util/uiUtils';
 
 axios.defaults.withCredentials = true;
 
@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(true);
       showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
     } else {
+      showMantineNotification({ message: response.message, type: 'ERROR', position: 'top-center' });
       throw new Error(response.message);
     }
   };
@@ -39,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       showMantineNotification({ message: `You have been logged out.`, type: 'INFO' });
       setIsAuthenticated(false);
     } else {
+      showMantineNotification({ message: response.message, type: 'ERROR', position: 'top-center' });
       throw new Error(response.message);
     }
   };
@@ -49,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
       setIsAuthenticated(true);
     } else {
+      showMantineNotification({ message: response.message, type: 'ERROR', position: 'top-center' });
       throw new Error(response.message);
     }
   };

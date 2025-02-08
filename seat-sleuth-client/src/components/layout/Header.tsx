@@ -19,7 +19,7 @@ export default function Header() {
         <Link to={'/'}>
           <Image w={70} src={slothLogo} visibleFrom="xs" />
         </Link>
-        <Search></Search>
+        <Search />
       </Group>
     );
   }
