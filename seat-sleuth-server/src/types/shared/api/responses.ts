@@ -13,4 +13,4 @@ export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
 
 export type AuthResponse = null;
 
-export { User };
+export type { User };
