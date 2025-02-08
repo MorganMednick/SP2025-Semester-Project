@@ -10,6 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: seat-sleuth-user
+          POSTGRES_PASSWORD: seat-sleuth-password
+          POSTGRES_DB: seat-sleuth-test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U seat-sleuth-user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
@@ -44,6 +59,20 @@ jobs:
       run: npm ci
       working-directory: ./seat-sleuth-server
 
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        for i in {1..10}; do
+          pg_isready -h localhost -p 5433 -U seat-sleuth-user && break
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+
+    - name: Apply Prisma Migrations
+      run: npx prisma migrate deploy
+      working-directory: ./seat-sleuth-server
+      env:
+        DATABASE_URL: "postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test"
+
     - name: Build
       run: npm run build --if-present
       working-directory: ./seat-sleuth-server
@@ -51,3 +80,5 @@ jobs:
     - name: Run tests
       run: npm test
       working-directory: ./seat-sleuth-server
+      env:
+        DATABASE_URL: "postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test"
