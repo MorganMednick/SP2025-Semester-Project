@@ -15,15 +15,20 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: ./seat-sleuth-server/package-lock.json
 
-    - name: Debug - Check working directory
+    - name: Debug - List root directory files
+      run: ls -la
+
+    - name: Debug - List files in seat-sleuth-server
       run: ls -la
       working-directory: ./seat-sleuth-server
 
