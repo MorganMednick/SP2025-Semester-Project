@@ -3,6 +3,10 @@ jest.mock('../../../config/db', () => ({
   default: require('../../__mocks__/prisma').default,
 }));
 
+jest.mock('../../../util/sessionUtils', () => ({
+  destroySessionAndClearCookies: jest.fn(),
+}));
+
 jest.mock('bcryptjs', () => ({
   hash: jest.fn().mockResolvedValue('hashedpassword'),
   compare: jest.fn().mockResolvedValue(true),
