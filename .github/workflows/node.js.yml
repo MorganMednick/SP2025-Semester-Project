@@ -32,6 +32,14 @@ jobs:
       run: ls -la
       working-directory: ./seat-sleuth-server
 
+    - name: Set up environment variables
+      run: |
+        echo "NODE_ENV=test" >> .env.test
+        echo "DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test" >> .env.test
+        echo "SESSION_SECRET=test_secret" >> .env.test
+        echo "CLIENT_URL=http://localhost:5173" >> .env.test
+      working-directory: ./seat-sleuth-server
+
     - name: Install dependencies
       run: npm ci
       working-directory: ./seat-sleuth-server
