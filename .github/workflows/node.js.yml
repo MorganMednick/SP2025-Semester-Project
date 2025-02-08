@@ -1,4 +1,4 @@
-name: Server Continuous Integration Tests
+name: Server CI Tests
 
 on:
   push:
