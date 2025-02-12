@@ -20,6 +20,12 @@ export const API_SCHEMA = {
     payload: {} as AuthPayload,
     response: null as AuthResponse,
   },
+  AUTH_LOGOUT: {
+    route: '/auth/logout',
+    method: 'POST',
+    payload: null,
+    response: null as AuthResponse,
+  },
   CHECK_LOGIN: {
     route: '/auth/login',
     method: 'GET',

@@ -6,6 +6,7 @@ import { sendSuccess, sendError } from '../util/responseUtils';
 import { BCRYPT_SALT_ROUNDS } from '../data/constants';
 import { User } from '@prisma/client';
 import { AuthResponse } from '../types/shared/api/responses';
+import { destroySessionAndClearCookies } from '../util/sessionUtils';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -37,9 +38,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       data: { email, password: hashedPassword },
     });
 
-    const { password: _, ...userWithoutPassword } = newUser;
-
-    console.info('Registered', userWithoutPassword);
+    req.session.userId = newUser.id;
 
     sendSuccess<AuthResponse>(res, {
       statusCode: StatusCodes.CREATED,
@@ -119,4 +118,17 @@ export const checkLogin = async (req: Request, res: Response): Promise<void> => 
     message: 'User not logged in',
     error: null,
   });
+};
+
+export const logoutUser = async (req: Request, res: Response): Promise<void> => {
+  if (!req.session.userId) {
+    sendError(res, {
+      statusCode: StatusCodes.UNAUTHORIZED,
+      message: 'User not logged in',
+      error: null,
+    });
+    return;
+  }
+
+  destroySessionAndClearCookies(req, res);
 };
