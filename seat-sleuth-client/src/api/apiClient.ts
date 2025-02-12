@@ -9,7 +9,7 @@ export const apiClient: AxiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-export const ticketMasterApiClient: AxiosInstance = axios.create({ 
+export const ticketMasterApiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_TM_BASE_URL || 'https://app.ticketmaster.com/discovery/v2/',
   headers: { 'Content-Type': 'application/json' },
 });
@@ -38,7 +38,6 @@ export const handleServerRequest = async <E extends ValidServerEndpoints>(endpoi
     });
 };
 
-
 /**
  * A generic API request handler ensuring strict type safety.
  *
@@ -53,7 +52,7 @@ export const handlleTicketMasterRequest = async <E extends ValidServerEndpoints>
   return ticketMasterApiClient
     .request<ApiResponse<EndpointResponse<E>>>({
       method,
-      url: `${route}?apiKey=${import.meta.env.VITE_TM_API_KEY}`,
+      url: `${route}?apikey=${import.meta.env.VITE_TM_API_KEY}`,
       data: payload ?? undefined,
     })
     .then((res) => res?.data)
