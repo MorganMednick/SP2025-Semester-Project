@@ -1,5 +1,8 @@
-import {  handleTicketMasterRequest } from '../apiClient';
+import { EventData } from '@shared/api/external/eventData';
+import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
+import { handleServerRequest } from '../apiClient';
+import { ApiResponse } from '@shared/api/responses';
 
-export const requestTicketMaster = async () => {
-  return handleTicketMasterRequest('TM_REQUEST');
+export const fetchTicketMasterEvents = (params?: TicketMasterSearchParams): Promise<ApiResponse<EventData[]>> => {
+  return handleServerRequest('TM_EVENTS', params);
 };

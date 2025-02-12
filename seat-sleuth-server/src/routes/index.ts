@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authRoutes from './authRoutes';
+import ticketMasterRoutes from './ticketMasterRoutes';
 import { StatusCodes } from 'http-status-codes';
 
 const router = Router();
@@ -11,5 +12,7 @@ router.get('/health', (req, res) => {
 
 // router.use for all other routes goes here!
 router.use('/auth', authRoutes);
+
+router.use('/tm', ticketMasterRoutes);
 
 export default router;

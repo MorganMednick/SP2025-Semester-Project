@@ -2,9 +2,9 @@ name: Server CI Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   build:
@@ -30,55 +30,57 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: ./seat-sleuth-server/package-lock.json
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./seat-sleuth-server/package-lock.json
 
-    - name: Debug - List root directory files
-      run: ls -la
+      - name: Debug - List root directory files
+        run: ls -la
 
-    - name: Debug - List files in seat-sleuth-server
-      run: ls -la
-      working-directory: ./seat-sleuth-server
+      - name: Debug - List files in seat-sleuth-server
+        run: ls -la
+        working-directory: ./seat-sleuth-server
 
-    - name: Set up environment variables
-      run: |
-        echo "NODE_ENV=test" >> .env.test
-        echo "DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test" >> .env.test
-        echo "SESSION_SECRET=test_secret" >> .env.test
-        echo "CLIENT_URL=http://localhost:5173" >> .env.test
-      working-directory: ./seat-sleuth-server
+      - name: Set up environment variables
+        run: |
+          echo "NODE_ENV=test" >> .env.test
+          echo "DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test" >> .env.test
+          echo "SESSION_SECRET=test_secret" >> .env.test
+          echo "CLIENT_URL=http://localhost:5173" >> .env.test
+          echo "TM_BASE_URL=https://app.ticketmaster.com/discovery/v2/" >> .env.test
+          echo "TM_API_KEY=cmtAt6aY2NgARV2FksRnE42AY2Hy3mmA" >> .env.test
+        working-directory: ./seat-sleuth-server
 
-    - name: Install dependencies
-      run: npm ci
-      working-directory: ./seat-sleuth-server
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./seat-sleuth-server
 
-    - name: Wait for PostgreSQL to be ready
-      run: |
-        for i in {1..10}; do
-          pg_isready -h localhost -p 5433 -U seat-sleuth-user && break
-          echo "Waiting for PostgreSQL..."
-          sleep 2
-        done
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5433 -U seat-sleuth-user && break
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
-    - name: Apply Prisma Migrations
-      run: npx prisma migrate deploy
-      working-directory: ./seat-sleuth-server
-      env:
-        DATABASE_URL: "postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test"
+      - name: Apply Prisma Migrations
+        run: npx prisma migrate deploy
+        working-directory: ./seat-sleuth-server
+        env:
+          DATABASE_URL: 'postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test'
 
-    - name: Build
-      run: npm run build --if-present
-      working-directory: ./seat-sleuth-server
+      - name: Build
+        run: npm run build --if-present
+        working-directory: ./seat-sleuth-server
 
-    - name: Run tests
-      run: npm test
-      working-directory: ./seat-sleuth-server
-      env:
-        DATABASE_URL: "postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test"
+      - name: Run tests
+        run: npm test
+        working-directory: ./seat-sleuth-server
+        env:
+          DATABASE_URL: 'postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test'

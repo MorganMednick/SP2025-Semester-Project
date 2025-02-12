@@ -4,6 +4,7 @@ import { AuthPayload } from '@shared/api/payloads';
 import axios from 'axios';
 import { AuthContext } from '../types/clitentAuth';
 import { showMantineNotification } from '../util/uiUtils';
+import { ApiResponse, AuthResponse } from '@shared/api/responses';
 
 axios.defaults.withCredentials = true;
 
@@ -12,8 +13,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const verifyLogin = async () => {
-      const response = await checkLogin();
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      const response: ApiResponse<AuthResponse> = await checkLogin();
+      if (response?.statusCode && response.statusCode >= 200 && response.statusCode < 300) {
         setIsAuthenticated(true);
         showMantineNotification({ message: 'You are already logged in!', type: 'INFO' });
       } else {
@@ -24,35 +25,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (credentials: AuthPayload) => {
-    const response = await loginUser(credentials);
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    const response: ApiResponse<AuthResponse> = await loginUser(credentials);
+    if (response?.statusCode && response.statusCode >= 200 && response.statusCode < 300) {
       setIsAuthenticated(true);
       showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
     } else {
       showMantineNotification({ message: response.message, type: 'ERROR' });
-      throw new Error(response.message);
     }
   };
 
   const logout = async () => {
-    const response = await logoutUser();
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    const response: ApiResponse<AuthResponse> = await logoutUser();
+    if (response?.statusCode >= 200 && response.statusCode < 300) {
       showMantineNotification({ message: `You have been logged out.`, type: 'INFO' });
       setIsAuthenticated(false);
     } else {
       showMantineNotification({ message: response.message, type: 'ERROR' });
-      throw new Error(response.message);
     }
   };
 
   const register = async (credentials: AuthPayload) => {
-    const response = await registerUser(credentials);
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    const response: ApiResponse<AuthResponse> = await registerUser(credentials);
+    if (response?.statusCode >= 200 && response.statusCode < 300) {
       showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
       setIsAuthenticated(true);
     } else {
       showMantineNotification({ message: response.message, type: 'ERROR' });
-      throw new Error(response.message);
     }
   };
 
