@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { requestTicketMaster } from "../api/functions/ticketMaster";
+import { parseData } from "../util/parseData";
 
 export default function TicketPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,10 +19,8 @@ export default function TicketPage() {
       <h1>I am the Ticket page</h1>
       <button onClick={fetchTicketData} disabled={loading}>
         {loading ? "Loading..." : "Check Ticket"}
-        {res && <p>{JSON.stringify(res)}</p>}
+        {res && <p>{JSON.stringify(parseData(res))}</p>}
       </button>
     </div>
   );
-}//checkout a pr and resolve merge conf on github physically.
-
-//
+}
