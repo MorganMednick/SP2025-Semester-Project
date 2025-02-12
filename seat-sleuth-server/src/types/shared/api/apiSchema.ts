@@ -1,6 +1,6 @@
 import { AuthPayload } from './payloads';
 import { AuthResponse } from './responses';
-import { ticketMasterResponse } from './ticketMasterResponse';
+import { TicketMasterResponse } from './ticketMasterResponse';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -32,7 +32,12 @@ export const API_SCHEMA = {
     payload: {} as AuthPayload,
     response: null as AuthResponse,
   },
-  //TODO: Add a schema for ticketmaster response
+  TM_REQUEST: {
+    route: '/events.json',
+    method: 'GET',
+    payload: null,
+    response: null as TicketMasterResponse | null, 
+  },
 } as const;
 
 export type ValidServerEndpoints = keyof typeof API_SCHEMA;
