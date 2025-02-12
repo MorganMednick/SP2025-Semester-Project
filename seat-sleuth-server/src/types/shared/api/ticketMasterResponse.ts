@@ -1,13 +1,13 @@
 export interface TicketMasterResponse {
-  price_min?: number; //_embedded.events[0].priceRanges[0].min
-  price_max?: number; // _embedded.events[0].priceRanges[0].max
-  event_name: string; //_embedded.events[0].name
+  price_min?: number; 
+  price_max?: number;
+  event_name: string;
   seat_location?: string; 
-  event_location?: string; //_embedded.events[0].products[0].name
-  start_time: string; //_embedded.events[0].dates.start
-  venue_seat_map?: string; //_embedded.events[0].seatmap.staticUrl
+  event_location?: string;
+  start_time: string;
+  venue_seat_map?: string;
+  tm_link?: string;
+  event_type?: string;
 }
 
 //ill want different types based on different scenarios. maybe we want a type that contains an array of instances of ticket pricing
-
-//split into my own types to make it more workable. 
