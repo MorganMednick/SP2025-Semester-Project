@@ -20,6 +20,7 @@ export default function TicketPage() {
       <button onClick={fetchTicketData} disabled={loading}>
         {loading ? "Loading..." : "Check Ticket"}
         {res && <p>{JSON.stringify(parseData(res))}</p>}
+        {console.log(res)}
       </button>
     </div>
   );

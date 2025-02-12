@@ -1,5 +1,5 @@
-import {  handlleTicketMasterRequest } from '../apiClient';
+import {  handleTicketMasterRequest } from '../apiClient';
 
 export const requestTicketMaster = async () => {
-  return handlleTicketMasterRequest('TM_REQUEST');
+  return handleTicketMasterRequest('TM_REQUEST');
 };
