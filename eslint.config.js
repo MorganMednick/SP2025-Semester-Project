@@ -5,6 +5,7 @@ import nodePlugin from 'eslint-plugin-node';
 import prettier from 'eslint-plugin-prettier';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 
 export default [
@@ -29,6 +30,7 @@ export default [
       prettier,
       node: nodePlugin,
       jest: jestPlugin,
+      'unused-imports': unusedImports,
     },
     rules: {
       'prettier/prettier': ['error'],
@@ -52,6 +54,13 @@ export default [
       'jest/no-identical-title': 'error',
       'jest/prefer-to-have-length': 'warn',
       'jest/valid-expect': 'error',
+
+      // Automatically remove unused imports
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+      ],
     },
     settings: {
       react: {
