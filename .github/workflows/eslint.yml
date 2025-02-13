@@ -1,0 +1,57 @@
+name: ESLint check
+
+on: 
+  pull_request: 
+    types: [opened, synchronize] 
+    branches: 
+      - main
+
+jobs: 
+  eslint: 
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: Checkout code 
+        uses: actions/checkout@v2 
+        with: 
+          ref: ${{ github.event.pull_request.head.sha }} 
+
+      - name: Setup Node.js 
+        uses: actions/setup-node@v2 
+        with: 
+          node-version: '20.10.0' 
+
+      - name: Restore cached dependencies (Client) 
+        id: cache-client
+        uses: actions/cache@v3 
+        with: 
+          path: ./seat-sleuth-client/node_modules 
+          key: client-npm-${{ hashFiles('./seat-sleuth-client/package-lock.json') }} 
+
+      - name: Install dependencies (Client) 
+        if: steps.cache-client.outputs.cache-hit != 'true' 
+        run: | 
+          cd seat-sleuth-client
+          npm ci --ignore-scripts 
+
+      - name: Restore cached dependencies (Server) 
+        id: cache-server
+        uses: actions/cache@v3 
+        with: 
+          path: ./seat-sleuth-server/node_modules 
+          key: server-npm-${{ hashFiles('./seat-sleuth-server/package-lock.json') }} 
+
+      - name: Install dependencies (Server) 
+        if: steps.cache-server.outputs.cache-hit != 'true' 
+        run: | 
+          cd seat-sleuth-server
+          npm ci --ignore-scripts 
+
+      - name: Lint Client 
+        run: | 
+          cd seat-sleuth-client
+          npm run lint
+
+      - name: Lint Server 
+        run: | 
+          cd seat-sleuth-server
+          npm run lint
