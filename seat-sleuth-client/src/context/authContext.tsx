@@ -54,7 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  return <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

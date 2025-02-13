@@ -23,8 +23,12 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
 
     validate: {
       email: (value: string) => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Invalid email address'),
-      password: (value: string) => (value.length < 6 ? 'Password must be at least 6 characters' : null),
-      confirmPassword: (value: string, values) => (authState === AuthState.REGISTER && value !== values.password ? 'Passwords do not match' : null),
+      password: (value: string) =>
+        value.length < 6 ? 'Password must be at least 6 characters' : null,
+      confirmPassword: (value: string, values) =>
+        authState === AuthState.REGISTER && value !== values.password
+          ? 'Passwords do not match'
+          : null,
     },
 
     validateInputOnChange: ['email', 'confirmPassword'],
@@ -51,18 +55,48 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="lg" align="center" p={8}>
         <Image src={slothLogoWithText} w="90%" />
-        <TextInput label="Email" placeholder="Enter your email" type="email" {...form.getInputProps('email')} required error={form.errors.email} w="90%" />
+        <TextInput
+          label="Email"
+          placeholder="Enter your email"
+          type="email"
+          {...form.getInputProps('email')}
+          required
+          error={form.errors.email}
+          w="90%"
+        />
 
-        <PasswordInput label="Password" placeholder="Enter your password" {...form.getInputProps('password')} required w="90%" />
+        <PasswordInput
+          label="Password"
+          placeholder="Enter your password"
+          {...form.getInputProps('password')}
+          required
+          w="90%"
+        />
 
-        {authState === AuthState.REGISTER && <PasswordInput w="90%" label="Confirm Password" placeholder="Re-enter your password" {...form.getInputProps('confirmPassword')} required />}
+        {authState === AuthState.REGISTER && (
+          <PasswordInput
+            w="90%"
+            label="Confirm Password"
+            placeholder="Re-enter your password"
+            {...form.getInputProps('confirmPassword')}
+            required
+          />
+        )}
 
         <Button type="submit" w="90%">
           {authState === AuthState.LOGIN ? AuthState.LOGIN : AuthState.REGISTER}
         </Button>
 
-        <Button variant="subtle" w="90%" onClick={() => setAuthState(authState === AuthState.LOGIN ? AuthState.REGISTER : AuthState.LOGIN)}>
-          {authState === AuthState.LOGIN ? 'Need an account? Register' : 'Already have an account? Login'}
+        <Button
+          variant="subtle"
+          w="90%"
+          onClick={() =>
+            setAuthState(authState === AuthState.LOGIN ? AuthState.REGISTER : AuthState.LOGIN)
+          }
+        >
+          {authState === AuthState.LOGIN
+            ? 'Need an account? Register'
+            : 'Already have an account? Login'}
         </Button>
       </Stack>
     </form>

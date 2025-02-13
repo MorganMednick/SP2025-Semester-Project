@@ -10,7 +10,17 @@ export default function NotFound() {
       <Container size="md" p="xl">
         <Stack align="center" justify="space-around" gap="xl">
           <Image src={fourOhFour} alt="404 - Not Found" w={400} maw="90%" />
-          <NavLink href="/" key="Go-Home-Button" label={'Go Home'} bg="green.5" c="white" leftSection={<IconHome />} w="fit-content" active={hovered} ref={ref} />
+          <NavLink
+            href="/"
+            key="Go-Home-Button"
+            label={'Go Home'}
+            bg="green.5"
+            c="white"
+            leftSection={<IconHome />}
+            w="fit-content"
+            active={hovered}
+            ref={ref}
+          />
         </Stack>
       </Container>
     </Center>

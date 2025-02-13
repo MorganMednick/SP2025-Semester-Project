@@ -30,19 +30,25 @@ describe('Environment Variables Validation', () => {
   it('[ENV FAILURE] should throw an error if DATABASE_URL is missing', () => {
     delete process.env.DATABASE_URL;
 
-    expect(() => require('../../../config/env')).toThrow('\n\nDATABASE_URL is not defined in your environment variables.\n\n');
+    expect(() => require('../../../config/env')).toThrow(
+      '\n\nDATABASE_URL is not defined in your environment variables.\n\n',
+    );
   });
 
   it('[ENV FAILURE] should throw an error if CLIENT_URL is missing', () => {
     delete process.env.CLIENT_URL;
 
-    expect(() => require('../../../config/env')).toThrow('\n\nCLIENT_URL must be set in your .env to run this application. \n\n\n');
+    expect(() => require('../../../config/env')).toThrow(
+      '\n\nCLIENT_URL must be set in your .env to run this application. \n\n\n',
+    );
   });
 
   it('[ENV FAILURE] should throw an error if SESSION_SECRET is missing', () => {
     delete process.env.SESSION_SECRET;
 
-    expect(() => require('../../../config/env')).toThrow('\n\nSESSION_SECRET must be set in your .env to run this application. \n\n\n');
+    expect(() => require('../../../config/env')).toThrow(
+      '\n\nSESSION_SECRET must be set in your .env to run this application. \n\n\n',
+    );
   });
 
   it('[ENV FAILURE] should throw an error if NODE_ENV is missing', () => {
@@ -51,7 +57,9 @@ describe('Environment Variables Validation', () => {
     try {
       require('../../../config/env');
     } catch (err: any) {
-      expect(err.message.trim()).toContain('NODE_ENV must be set in your .env to run this application.');
+      expect(err.message.trim()).toContain(
+        'NODE_ENV must be set in your .env to run this application.',
+      );
     }
   });
 
@@ -61,7 +69,9 @@ describe('Environment Variables Validation', () => {
     try {
       require('../../../config/env');
     } catch (err: any) {
-      expect(err.message.trim()).toContain('NODE_ENV must be set in your .env to run this application.');
+      expect(err.message.trim()).toContain(
+        'NODE_ENV must be set in your .env to run this application.',
+      );
     }
   });
 });

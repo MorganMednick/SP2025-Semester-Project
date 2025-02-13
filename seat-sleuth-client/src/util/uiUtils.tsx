@@ -6,7 +6,11 @@ export type CustomNotificationRequirements = {
   position?: 'top-center' | 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
 };
 
-export const showMantineNotification = ({ message, type, position = 'bottom-right' }: CustomNotificationRequirements) => {
+export const showMantineNotification = ({
+  message,
+  type,
+  position = 'bottom-right',
+}: CustomNotificationRequirements) => {
   const notificationConfig = {
     SUCCESS: { color: 'green', title: '🦥 Success 🦥' },
     ERROR: { color: 'red', title: '🦥 Error 🦥' },

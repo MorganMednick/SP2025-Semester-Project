@@ -19,13 +19,19 @@ ticketMasterApiClient.interceptors.request.use((config) => {
 
 ticketMasterApiClient.interceptors.response.use(
   (response) => {
-    console.info(`[TicketMaster API Success] ${response.config.method?.toUpperCase()} ${response.config.baseURL}${response.config.url} - STATUS: ${response.status}`);
+    console.info(
+      `[TicketMaster API Success] ${response.config.method?.toUpperCase()} ${response.config.baseURL}${response.config.url} - STATUS: ${response.status}`,
+    );
     return response;
   },
   (error) => {
     const status = error?.response?.status || 'UNKNOWN';
     const statusText = error?.response?.statusText || 'No status text';
     const requestUrl = error?.config ? `${error.config.baseURL}${error.config.url}` : 'Unknown URL';
-    return Promise.reject({ status, request: `${error.config?.method?.toUpperCase()} ${requestUrl}`, statusText });
+    return Promise.reject({
+      status,
+      request: `${error.config?.method?.toUpperCase()} ${requestUrl}`,
+      statusText,
+    });
   },
 );

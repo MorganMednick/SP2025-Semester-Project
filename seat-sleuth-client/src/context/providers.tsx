@@ -8,7 +8,18 @@ const theme = createTheme({
   primaryColor: 'green',
   primaryShade: 7,
   colors: {
-    green: ['#ebfaf0', '#ddf0e3', '#bddec7', '#9acba9', '#7cbb8f', '#68b17e', '#5dac75', '#4c9763', '#418657', '#327448'],
+    green: [
+      '#ebfaf0',
+      '#ddf0e3',
+      '#bddec7',
+      '#9acba9',
+      '#7cbb8f',
+      '#68b17e',
+      '#5dac75',
+      '#4c9763',
+      '#418657',
+      '#327448',
+    ],
   },
   fontFamily: "'Source Sans 3'",
   fontSizes: {

@@ -8,7 +8,10 @@ import { ApiErrorResponse, ApiSuccessResponse } from '../types/shared/api/respon
  * @param res - The Express `Response` object used to send the response.
  * @param options - The response details, including status, message, and optional data.
  */
-export const sendSuccess = <T>(res: Response, { statusCode, data, message }: ApiSuccessResponse<T>) => {
+export const sendSuccess = <T>(
+  res: Response,
+  { statusCode, data, message }: ApiSuccessResponse<T>,
+) => {
   return res.status(statusCode).json({ success: true, statusCode, message, data });
 };
 
@@ -18,7 +21,10 @@ export const sendSuccess = <T>(res: Response, { statusCode, data, message }: Api
  * @param res - The Express `Response` object used to send the response.
  * @param options - The response details, including status, message, and optional error data.
  */
-export const sendError = (res: Response, { statusCode, message, error }: ApiErrorResponse<null>) => {
+export const sendError = (
+  res: Response,
+  { statusCode, message, error }: ApiErrorResponse<null>,
+) => {
   return res.status(statusCode).json({
     success: false,
     statusCode,
