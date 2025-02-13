@@ -1,21 +1,23 @@
-// import js from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsparser from '@typescript-eslint/parser';
-import prettier from 'eslint-plugin-prettier';
+import eslint from "@eslint/js";
+import tseslint from "@typescript-eslint/eslint-plugin";
 
-export default ({ ignores: ['node_modules', 'dist'] },
-{
-  languageOptions: {
-    parser: tsparser,
-    ecmaVersion: 2021,
-    sourceType: 'module'
+export default {
+  root: true,
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
   },
-  plugins: {
-    '@typescript-eslint': tseslint,
-    prettier
-  },
+  plugins: ["@typescript-eslint"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   rules: {
-    'prettier/prettier': 'error',
-    '@typescript-eslint/no-unused-vars': ['error']
-  }
-});
+    "no-unused-vars": "error",
+    "no-undef": "error",
+    "prefer-const": "error",
+    "no-console": "warn"
+  },
+  ignorePatterns: ["dist", "node_modules"]
+};
