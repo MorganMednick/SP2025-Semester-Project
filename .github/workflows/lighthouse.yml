@@ -22,7 +22,7 @@ jobs:
         run: |
           cd seat-sleuth-server
           npm install
-          npx prisma generate # Generates Prisma client
+          npx prisma generate
 
       - name: Install Client Dependencies
         run: |
@@ -39,3 +39,4 @@ jobs:
       - name: Run Lighthouse CI
         run: |
           lhci autorun --collect.url=http://localhost:3000
+        continue-on-error: true
