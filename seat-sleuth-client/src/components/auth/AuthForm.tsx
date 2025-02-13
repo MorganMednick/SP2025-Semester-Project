@@ -1,4 +1,3 @@
-import React from 'react';
 import { TextInput, PasswordInput, Button, Stack, Image } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { AuthState } from '../../types/clitentAuth';
