@@ -10,13 +10,11 @@ interface AppShellProps {
 
 const Shell = ({ children }: AppShellProps) => {
   return (
-    <AppShell
-     header={{ height: 64 }}
-     padding="md" >
-     <Header></Header>
-     <AppShell.Main>{children || <Outlet />}</AppShell.Main>
-     <Footer></Footer>
-   </AppShell>
+    <AppShell header={{ height: 64 }}>
+      <Header />
+      <AppShell.Main pt={80}>{children || <Outlet />}</AppShell.Main>
+      <Footer />
+    </AppShell>
   );
 };
 

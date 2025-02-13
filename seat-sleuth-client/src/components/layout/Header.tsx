@@ -10,7 +10,7 @@ export default function Header() {
   const { isAuthenticated, logout } = useAuth();
   const location = useLocation();
   let logoOrSearchBar;
-
+  // TODO: Update this to be responsive to mobile. Maybe get rid of logo  or use the smaller one for mobile layout
   if (location.pathname === '/') {
     logoOrSearchBar = <Image w={250} src={slothLogoWithText} />;
   } else {
@@ -42,6 +42,7 @@ export default function Header() {
             Sign In
           </Button>
         ) : (
+          // TODO: Remove this logout button and replace it with hamburger menu: https://mantine.dev/core/menu/ & https://mantine.dev/core/burger/ The menu should be its own component for refactorability.
           <Button onClick={logout} size="md" color="red">
             Log Out
           </Button>
