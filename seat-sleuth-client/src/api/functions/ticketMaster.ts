@@ -3,6 +3,8 @@ import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { handleServerRequest } from '../apiClient';
 import { ApiResponse } from '@shared/api/responses';
 
-export const fetchTicketMasterEvents = (params?: TicketMasterSearchParams): Promise<ApiResponse<EventData[]>> => {
+export const fetchTicketMasterEvents = (
+  params?: TicketMasterSearchParams,
+): Promise<ApiResponse<EventData[]>> => {
   return handleServerRequest('TM_EVENTS', params);
 };

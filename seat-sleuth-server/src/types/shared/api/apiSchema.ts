@@ -57,6 +57,8 @@ export const MERGED_API_SCHEMA = {
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;
 
-export type EndpointPayload<E extends ValidServerEndpoints> = (typeof MERGED_API_SCHEMA)[E]['payload'];
+export type EndpointPayload<E extends ValidServerEndpoints> =
+  (typeof MERGED_API_SCHEMA)[E]['payload'];
 
-export type EndpointResponse<E extends ValidServerEndpoints> = (typeof MERGED_API_SCHEMA)[E]['response'];
+export type EndpointResponse<E extends ValidServerEndpoints> =
+  (typeof MERGED_API_SCHEMA)[E]['response'];

@@ -26,7 +26,10 @@ apiClient.interceptors.response.use(
  * @param payload - The request body (must match the endpoint's expected payload).
  * @returns A promise resolving to `ApiResponse` with the expected response type.
  */
-export const handleServerRequest = async <E extends ValidServerEndpoints>(endpoint: E, payload?: EndpointPayload<E>): Promise<ApiResponse<EndpointResponse<E>>> => {
+export const handleServerRequest = async <E extends ValidServerEndpoints>(
+  endpoint: E,
+  payload?: EndpointPayload<E>,
+): Promise<ApiResponse<EndpointResponse<E>>> => {
   const { route, method } = API_ENDPOINTS[endpoint];
 
   return apiClient

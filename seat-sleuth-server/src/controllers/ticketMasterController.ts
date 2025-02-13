@@ -32,6 +32,10 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
     });
   } catch (error) {
     console.error('TicketMaster API Error:', error);
-    sendError(res, { statusCode: StatusCodes.BAD_REQUEST, message: 'Error in Ticket Master Api Call.', error: error });
+    sendError(res, {
+      statusCode: StatusCodes.BAD_REQUEST,
+      message: 'Error in Ticket Master Api Call.',
+      error: error,
+    });
   }
 };

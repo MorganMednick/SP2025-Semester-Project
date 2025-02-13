@@ -1,0 +1,37 @@
+name: Linting Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.10.0'
+          cache: 'npm'
+
+      - name: Restore cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            seat-sleuth-client/node_modules
+            seat-sleuth-server/node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run ESLint
+        run: npm run lint
