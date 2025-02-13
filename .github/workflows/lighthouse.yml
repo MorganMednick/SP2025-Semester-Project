@@ -1,0 +1,34 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lighthouse:
+    name: Run Lighthouse CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: |
+          cd seat-sleuth-client
+          npm install
+          npm install -g @lhci/cli
+
+      - name: Build Frontend
+        run: |
+          cd seat-sleuth-client
+          npm run build
+          npx serve -s dist -l 3000 &
+
+      - name: Run Lighthouse CI
+        run: |
+          lhci autorun --collect.url=http://localhost:3000

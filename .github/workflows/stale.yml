@@ -1,0 +1,19 @@
+name: Close Stale Issues & PRs
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 30   s
+          days-before-close: 7
+          stale-issue-message: '⚠️ This issue is stale due to inactivity. It will be closed soon if no updates occur.'
+          stale-pr-message: '⚠️ This PR is stale due to inactivity. Please update or close it.'
+          close-issue-message: '⏳ Issue closed due to inactivity.'
+          exempt-issue-labels: 'keep, important'
+          exempt-pr-labels: 'keep, in-progress' # PRs with these labels won't be marked stale
