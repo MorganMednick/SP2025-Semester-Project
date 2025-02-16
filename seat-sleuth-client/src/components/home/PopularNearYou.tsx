@@ -25,7 +25,7 @@ export default function PopularNearYou() {
       setLoading(true);
       fetchTicketMasterEvents(nearMeParams)
         .then((res) => {
-          console.log(JSON.stringify(res.raw)); //TODO: Morgan print out raw data, want to get picture info besides seatmap.
+          console.log(JSON.stringify(res.raw)); //TODO: Remove when done
           setEventsNearYou(res.data || []);
         })
         .finally(() => setLoading(false));
@@ -58,7 +58,7 @@ export default function PopularNearYou() {
       <Card shadow="sm" padding="lg" radius="md" withBorder>
         <Card.Section>
           <Image
-            src={event.venue_seat_map || 'https://via.placeholder.com/300'}
+            src={event.image || 'https://via.placeholder.com/300'}
             height={160}
             alt={event.event_name}
           />

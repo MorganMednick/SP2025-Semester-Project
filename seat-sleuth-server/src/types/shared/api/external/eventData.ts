@@ -9,4 +9,5 @@ export interface EventData {
   venue_seat_map?: string;
   tm_link?: string;
   event_type?: string;
+  image?: string;
 }

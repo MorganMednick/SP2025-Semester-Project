@@ -14,6 +14,7 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
     });
 
     const eventsRaw = response.data?._embedded?.events || [];
+    console.log(JSON.stringify(eventsRaw))
     // TODO: Create Typing of raw ticketmaster response
     const events: EventData[] = eventsRaw.map((event: any) => ({
       event_name: event.name,
@@ -23,6 +24,7 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
       event_location: event?._embedded?.venues?.[0]?.name || null,
       start_time: event?.dates?.start?.localDate || 'TBD',
       venue_seat_map: event?.seatmap?.staticUrl || null,
+      image: event?.images?.[4]?.url || null,
       tm_link: null,
       event_type: null,
     }));
