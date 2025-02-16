@@ -2,6 +2,7 @@ import { User } from '@prisma/client';
 
 export interface ApiResponse<T> {
   data?: T;
+  raw?: any;
   message: string;
   error?: any;
   statusCode: number;

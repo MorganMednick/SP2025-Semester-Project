@@ -23,12 +23,15 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
       event_location: event?._embedded?.venues?.[0]?.name || null,
       start_time: event?.dates?.start?.localDate || 'TBD',
       venue_seat_map: event?.seatmap?.staticUrl || null,
+      tm_link: null,
+      event_type: null,
     }));
 
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
       message: 'Fetched Ticketmaster Events',
       data: events,
+      raw: response,
     });
   } catch (error) {
     console.error('TicketMaster API Error:', error);
