@@ -18,7 +18,7 @@ export default function PopularNearYou() {
         radius: '50',
         unit: 'miles',
         sort: 'relevance,desc',
-        size: '20',
+        size: '40',
         page: '1',
       };
 
@@ -37,15 +37,15 @@ export default function PopularNearYou() {
       <Text size="xl" mb="md">
         Events near you:
       </Text>
-      <Grid>
+      <Grid gutter="xl" p="md">
         {loading
           ? Array.from({ length: 4 }, (_, index: number) => (
-              <Grid.Col key={index} span={3}>
+              <Grid.Col key={index} span={4}>
                 <Skeleton height={250} />
               </Grid.Col>
             ))
           : eventsNearYou.map((event: EventData, index: number) => (
-              <Grid.Col key={index} span={3}>
+              <Grid.Col key={index} span={4}>
                 <EventCard event={event} />
               </Grid.Col>
             ))}
