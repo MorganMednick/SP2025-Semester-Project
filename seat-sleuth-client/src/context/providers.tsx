@@ -23,24 +23,24 @@ const theme = createTheme({
   },
   fontFamily: "'Source Sans 3'",
   fontSizes: {
-    xs: '16',
-    sm: '20',
-    md: '24',
-    lg: '28',
-    xl: '32',
+    xs: '16px',
+    sm: '18px',
+    md: '20px',
+    lg: '22px',
+    xl: '24px',
   },
   headings: {
     sizes: {
       h1: {
         fontWeight: '700',
-        fontSize: '48',
+        fontSize: '48px',
       },
       h2: {
-        fontSize: '32',
+        fontSize: '32px',
         fontWeight: '700',
       },
       h3: {
-        fontSize: '32',
+        fontSize: '32px',
       },
     },
   },
