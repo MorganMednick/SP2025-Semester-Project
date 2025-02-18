@@ -1,5 +1,5 @@
 // Strict typing as extracted from https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/#anchor_find
-export type TicketMasterSearchParams = {
+export interface TicketMasterSearchParams {
   id?: string;
   keyword?: string;
   attractionId?: string;
@@ -64,4 +64,4 @@ export type TicketMasterSearchParams = {
   preferredCountry?: 'us' | 'ca';
   includeSpellcheck?: 'yes' | 'no';
   domain?: string[];
-};
+}
