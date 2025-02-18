@@ -13,7 +13,7 @@ export default function About() {
             </Title>
           </Center>
           <Center>
-            <SearchBar width={1000} size={'xl'}></SearchBar>
+            <SearchBar width={1000} size={'xl'} />
           </Center>
           <Center py={30}>
             <Divider size="md" w={'100%'} color="green.8" />
