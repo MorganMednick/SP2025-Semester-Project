@@ -1,4 +1,4 @@
 // TODO: Handle the browsing of events
 export default function Events() {
-  return <></>;
+  return <></>; //TODO: MORGAN Pass the parsed data from homepage to this eventpage.
 }
