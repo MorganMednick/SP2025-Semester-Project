@@ -7,4 +7,7 @@ export interface EventData {
   event_location?: string;
   start_time: string;
   venue_seat_map?: string;
+  tm_link?: string;
+  event_type?: string;
+  image?: string;
 }

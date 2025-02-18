@@ -3,10 +3,14 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { EventData } from '@shared/api/external/eventData';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
+import { Skeleton, Grid, Text } from '@mantine/core';
+import EventCard from '../events/EventCard';
 
 export default function PopularNearYou() {
   const { geoPoint } = useGeoPoint();
   const [eventsNearYou, setEventsNearYou] = useState<EventData[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (geoPoint) {
       const nearMeParams: TicketMasterSearchParams = {
@@ -14,12 +18,37 @@ export default function PopularNearYou() {
         radius: '50',
         unit: 'miles',
         sort: 'relevance,desc',
-        size: '20',
+        size: '40',
         page: '1',
       };
-      fetchTicketMasterEvents(nearMeParams).then((res) => setEventsNearYou(res.data || []));
+
+      setLoading(true);
+      fetchTicketMasterEvents(nearMeParams)
+        .then((res) => {
+          setEventsNearYou(res.data || []);
+        })
+        .finally(() => setLoading(false));
     }
   }, [geoPoint]);
-  // TODO: Handle loading state for api response as well as general rendering. Take a look at https://mantine.dev/core/skeleton/ for loading state and https://mantine.dev/core/card/ for popular events near you section.
-  return JSON.stringify(eventsNearYou);
+
+  return (
+    <div>
+      <Text size="xl" mb="md">
+        Events near you:
+      </Text>
+      <Grid gutter="xl" p="md">
+        {loading
+          ? Array.from({ length: 4 }, (_, index: number) => (
+              <Grid.Col key={index} span={3}>
+                <Skeleton height={250} />
+              </Grid.Col>
+            ))
+          : eventsNearYou.map((event: EventData, index: number) => (
+              <Grid.Col key={index} span={3}>
+                <EventCard event={event} />
+              </Grid.Col>
+            ))}
+      </Grid>
+    </div>
+  );
 }
