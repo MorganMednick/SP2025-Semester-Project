@@ -1,13 +1,21 @@
 // Defines the data that we want for any event. No matter how we get it lol... -Jayce
 export interface EventData {
-  price_min?: number;
-  price_max?: number;
-  event_name: string;
-  seat_location?: string;
-  event_location?: string;
-  start_time: string;
-  venue_seat_map?: string;
-  tm_link?: string;
-  event_type?: string;
-  image?: string;
+  id: string;
+  priceMin?: number;
+  priceMax?: number;
+  currency?: string;
+  name: string;
+  seatLocation?: string;
+  startTime: string;
+  saleStart?: string;
+  saleEnd?: string;
+  venueName?: string;
+  venueAddressOne?: string;
+  venueAddressTwo?: string;
+  venueSeatMapSrc?: string;
+  city: string;
+  country: string;
+  url?: string;
+  genre?: string;
+  imageSrc?: string[];
 }

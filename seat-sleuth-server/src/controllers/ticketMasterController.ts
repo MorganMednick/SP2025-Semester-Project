@@ -1,12 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 import { sendError, sendSuccess } from '../util/responseUtils';
 import { Request, Response } from 'express';
-import { TicketMasterSearchParams } from '../types/shared/api/external/ticketMaster';
+import {
+  EventImage,
+  RawTMEventData,
+  TicketMasterSearchParams,
+} from '../types/shared/api/external/ticketMaster';
 import { ticketMasterApiClient } from '../util/externalClientUtils';
 import { EventData } from '../types/shared/api/external/eventData';
-
-const firstEvent = 0;
-const bigPicture = 4;
 
 export const fetchTicketMasterEvents = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -16,21 +17,45 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
       params: { ...params },
     });
 
-    const eventsRaw = response.data?._embedded?.events || [];
-    // TODO: Create Typing of raw ticketmaster response
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const events: EventData[] = eventsRaw.map((event: any) => ({
-      event_name: event.name,
-      price_min: event?.priceRanges?.[firstEvent]?.min || null,
-      price_max: event?.priceRanges?.[firstEvent]?.max || null,
-      seat_location: event?.seatmap?.staticUrl || null,
-      event_location: event?._embedded?.venues?.[firstEvent]?.name || null,
-      start_time: event?.dates?.start?.localDate || 'TBD',
-      venue_seat_map: event?.seatmap?.staticUrl || null,
-      image: event?.images?.[bigPicture]?.url || null,
-      tm_link: null,
-      event_type: null,
-    }));
+    const eventsRaw: RawTMEventData[] = response.data?._embedded?.events || [];
+    console.log(eventsRaw[0]);
+    const events: EventData[] = eventsRaw.map(
+      ({
+        id,
+        name,
+        url,
+        classifications,
+        priceRanges,
+        seatmap,
+        sales,
+        _embedded,
+        dates,
+        images,
+      }: RawTMEventData) => ({
+        id,
+        priceMin: priceRanges?.[0]?.min ?? undefined,
+        priceMax: priceRanges?.[0]?.max ?? undefined,
+        currency: priceRanges?.[0]?.currency ?? undefined,
+        name,
+        seatLocation: seatmap?.staticUrl ?? undefined,
+        startTime: dates?.start?.localDate ?? 'TBD',
+        venueName: _embedded?.venues?.[0]?.name ?? undefined,
+        venueAddressOne: _embedded?.venues?.[0]?.address?.line1 ?? undefined,
+        venueAddressTwo: _embedded?.venues?.[0]?.address?.line2 ?? undefined,
+        venueSeatMapSrc: seatmap?.staticUrl ?? undefined,
+        city: _embedded?.venues?.[0]?.city?.name ?? 'Unknown',
+        country: _embedded?.venues?.[0]?.country?.name ?? 'Unknown',
+        url: url ?? undefined,
+        genre: classifications[0]?.genre?.name ?? undefined,
+        saleStart: sales?.public?.startDateTime ?? undefined,
+        saleEnd: sales?.public?.endDateTime ?? undefined,
+        imageSrc: images
+          ? images.map((image: EventImage) => {
+              return image.url;
+            })
+          : undefined,
+      }),
+    );
 
     sendSuccess(res, {
       statusCode: StatusCodes.OK,

@@ -1,34 +1,39 @@
 import { Card, Image, Text, Button } from '@mantine/core';
-import { TicketMasterResponse } from '@shared/api/ticketMasterResponse';
+import { EventData } from '@shared/api/external/eventData';
 
-export default function EventCard({ event }: { event: TicketMasterResponse }) {
+export default function EventCard({ event }: { event: EventData }) {
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Card.Section>
         <Image
-          src={event.image || 'https://via.placeholder.com/300'}
+          src={event?.imageSrc?.[0] || 'https://via.placeholder.com/300'}
           height={160}
-          alt={event.event_name}
+          alt={event.name}
         />
       </Card.Section>
 
       <Text size="lg" mt="md">
-        {event.event_name}
+        {event.name}
       </Text>
       <Text size="sm" c="dimmed">
-        {event.event_location || 'Location TBD'}
+        {event.venueName || 'Location TBD'}
       </Text>
       <Text size="sm" c="dimmed">
-        {event.start_time}
+        {event.startTime}
       </Text>
 
-      {event.price_min && (
+      {event.priceMin && event.priceMax && (
         <Text size="sm" mt="sm">
-          Ticket Range: ${event.price_min} - ${event.price_max || 'N/A'}
+          Ticket Range: ${event.priceMin} - ${event.priceMax || 'N/A'}
         </Text>
       )}
 
-      <Button component="a" href={event.tm_link} target="_blank" fullWidth mt="md">
+      <Text size="sm" mt="sm">
+        Sale Dates: {event.saleStart?.split('T')[0]} - {event.saleEnd?.split('T')[0]}
+      </Text>
+
+      {/* Point to TM for now */}
+      <Button component="a" href={event.url} target="_blank" fullWidth mt="md">
         View Event Details
       </Button>
     </Card>

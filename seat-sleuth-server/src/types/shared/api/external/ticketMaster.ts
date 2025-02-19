@@ -65,3 +65,77 @@ export interface TicketMasterSearchParams {
   includeSpellcheck?: 'yes' | 'no';
   domain?: string[];
 }
+
+export interface EventImage {
+  url: string;
+  ratio: string;
+  width: number;
+  height: number;
+}
+
+export interface Venue {
+  name: string;
+  address: {
+    line1?: string;
+    line2?: string;
+  };
+  city: {
+    name: string;
+  };
+  country: {
+    name: string;
+  };
+}
+
+export interface StartDate {
+  localDate: string;
+  localTime?: string;
+  dateTime?: string;
+}
+
+export interface Seatmap {
+  staticUrl: string;
+}
+
+export interface PriceRange {
+  currency: string;
+  min?: number;
+  max?: number;
+}
+
+export interface Genre {
+  id: string;
+  name: string;
+}
+export interface Classification {
+  genre?: Genre;
+  subGenre?: Genre;
+}
+
+export interface RawTMEventData {
+  id: string;
+  name: string;
+  url: string;
+  priceRanges?: PriceRange[];
+  classifications: Classification[];
+  images: EventImage[];
+  seatmap?: Seatmap;
+  _embedded?: {
+    venues?: Venue[];
+  };
+  _links?: {
+    self: {
+      href: string;
+    };
+  };
+  dates?: {
+    start?: StartDate;
+  };
+  distance: number;
+  sales: {
+    public: {
+      startDateTime: string;
+      endDateTime: string;
+    };
+  };
+}
