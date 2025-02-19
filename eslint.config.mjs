@@ -6,7 +6,17 @@ export default tseslint.config(
   tseslint.configs.strict,
   tseslint.configs.stylistic,
   {
-    files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['**/node_modules/'],
+    ignores: [
+      '**/node_modules/',
+      '**/dist/',
+      '**/build/',
+      '**/coverage/',
+      '**/prisma/generated/',
+      '**/public/',
+      '**/static/',
+      '**/tests/',
+      `**/*.cjs`,
+      `**/*.js`,
+    ],
   },
 );

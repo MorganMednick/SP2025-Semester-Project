@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 export interface ApiResponse<T> {
   data?: T;
   message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error?: any;
   statusCode: number;
 }
