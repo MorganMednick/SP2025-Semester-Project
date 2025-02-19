@@ -11,6 +11,7 @@ export const apiClient: AxiosInstance = axios.create({
 
 apiClient.interceptors.response.use(
   (response) => {
+    console.log('test');
     return response;
   },
   (error) => {
