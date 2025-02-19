@@ -5,6 +5,9 @@ import { TicketMasterSearchParams } from '../types/shared/api/external/ticketMas
 import { ticketMasterApiClient } from '../util/externalClientUtils';
 import { EventData } from '../types/shared/api/external/eventData';
 
+const firstEvent = 0;
+const bigPicture = 4;
+
 export const fetchTicketMasterEvents = async (req: Request, res: Response): Promise<void> => {
   try {
     const params: TicketMasterSearchParams = req.body;
@@ -17,12 +20,15 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
     // TODO: Create Typing of raw ticketmaster response
     const events: EventData[] = eventsRaw.map((event: any) => ({
       event_name: event.name,
-      price_min: event?.priceRanges?.[0]?.min || null,
-      price_max: event?.priceRanges?.[0]?.max || null,
+      price_min: event?.priceRanges?.[firstEvent]?.min || null,
+      price_max: event?.priceRanges?.[firstEvent]?.max || null,
       seat_location: event?.seatmap?.staticUrl || null,
-      event_location: event?._embedded?.venues?.[0]?.name || null,
+      event_location: event?._embedded?.venues?.[firstEvent]?.name || null,
       start_time: event?.dates?.start?.localDate || 'TBD',
       venue_seat_map: event?.seatmap?.staticUrl || null,
+      image: event?.images?.[bigPicture]?.url || null,
+      tm_link: null,
+      event_type: null,
     }));
 
     sendSuccess(res, {
