@@ -15,8 +15,7 @@ if (!SESSION_SECRET) {
   throw new Error(`\n\nSESSION_SECRET must be set in your .env to run this application. \n\n\n`);
 }
 
-if (NODE_ENV && (RUN_ENVIRONMENTS.includes(NODE_ENV) || NODE_ENV === 'test')) {
-} else {
+if (!(NODE_ENV && (RUN_ENVIRONMENTS.includes(NODE_ENV) || NODE_ENV === 'test'))) {
   throw new Error(
     `\n\nNODE_ENV must be set in your .env to run this application. Possible runtime options are: ${RUN_ENVIRONMENTS.toString()}\n\n\n`,
   );

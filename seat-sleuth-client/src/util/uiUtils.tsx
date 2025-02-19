@@ -1,10 +1,10 @@
 import { notifications } from '@mantine/notifications';
 
-export type CustomNotificationRequirements = {
+export interface CustomNotificationRequirements {
   message: string;
   type: 'INFO' | 'SUCCESS' | 'ERROR';
   position?: 'top-center' | 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
-};
+}
 
 export const showMantineNotification = ({
   message,

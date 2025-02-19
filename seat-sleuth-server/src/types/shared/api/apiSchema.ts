@@ -13,7 +13,7 @@ export const AUTH_API_SCHEMA = {
     route: '/health',
     method: 'GET',
     payload: null,
-    response: {} as any,
+    response: {},
   },
   AUTH_LOGIN: {
     route: '/auth/login',
