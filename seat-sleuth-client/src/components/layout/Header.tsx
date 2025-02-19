@@ -5,9 +5,12 @@ import { slothLogo, slothLogoWithText } from '../../util/assetReconcileUtil';
 import { useAuth } from '../../context/authContext';
 import Search from '../search/Search';
 import { Link, useLocation } from 'react-router-dom';
+import NavMenu from '../settings/NavMenu';
+import { useDisclosure } from '@mantine/hooks';
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [navOpened, { toggle: toggleNav, close: closeNav }] = useDisclosure(false);
   const location = useLocation();
   let logoOrSearchBar;
   // TODO: Update this to be responsive to mobile. Maybe get rid of logo  or use the smaller one for mobile layout
@@ -42,10 +45,7 @@ export default function Header() {
             Sign In
           </Button>
         ) : (
-          // TODO: Remove this logout button and replace it with hamburger menu: https://mantine.dev/core/menu/ & https://mantine.dev/core/burger/ The menu should be its own component for refactorability.
-          <Button onClick={logout} size="md" color="red">
-            Log Out
-          </Button>
+          <NavMenu opened={navOpened} onChange={toggleNav} onClose={closeNav}></NavMenu>
         )}
       </Flex>
     </AppShell.Header>
