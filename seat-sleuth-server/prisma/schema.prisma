@@ -7,9 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Notifications {
+  EMAIL
+  OFF
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
+  name      String?
+  notif     Notifications @default(OFF)
   password  String
   createdAt DateTime @default(now())
 }
