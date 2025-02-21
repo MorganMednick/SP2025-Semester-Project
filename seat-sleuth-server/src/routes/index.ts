@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import authRoutes from './authRoutes';
 import ticketMasterRoutes from './ticketMasterRoutes';
+import userRoutes from './userRoutes';
 
 const router = Router();
 
@@ -15,5 +16,7 @@ router.get('/health', (req, res) => {
 router.use('/auth', authRoutes);
 
 router.use('/tm', ticketMasterRoutes);
+
+router.use('/user', userRoutes);
 
 export default router;

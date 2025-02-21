@@ -1,5 +1,5 @@
-import { AuthPayload } from './payloads';
-import { AuthResponse } from './responses';
+import { AuthPayload, UpdatePasswordPayload, UserPayload } from './payloads';
+import { AuthResponse, User } from './responses';
 import { EventData } from './external/eventData';
 import { TicketMasterSearchParams } from './external/ticketMaster';
 
@@ -50,9 +50,31 @@ export const TM_API_SCHEMA = {
   },
 } as const;
 
+export const USER_API_SCHEMA = {
+  GET_USER_INFO: {
+    route: '/user/info',
+    method: 'GET',
+    payload: null,
+    response: {} as User,
+  },
+  UPDATE_USER_INFO: {
+    route: '/user/info',
+    method: 'PUT',
+    payload: {} as UserPayload,
+    response: null,
+  },
+  UPDATE_PASSWORD: {
+    route: '/user/password',
+    method: 'PUT',
+    payload: {} as UpdatePasswordPayload,
+    response: null,
+  },
+} as const;
+
 export const MERGED_API_SCHEMA = {
   ...AUTH_API_SCHEMA,
   ...TM_API_SCHEMA,
+  ...USER_API_SCHEMA,
 } as const;
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;
