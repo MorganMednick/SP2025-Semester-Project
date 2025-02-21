@@ -49,19 +49,18 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     if (opened){
       getUserInfo()
         .then((res) => {
-          form.setValues({"email": res.data?.email, "name": res.data?.name ?? "", "notif": res.data?.notif });
+          form.setValues({"email": res.data?.email, "name": res.data?.name ?? "", "notif": res.data?.notif ? "EMAIL" : "OFF" });
       })
       .catch((err: Error) => console.error(err.message));
     }
   } , [opened]);
 
-  
-
 const handleSaveChanges = async () => {
   const validationResult = form.validate();
   if (!validationResult.hasErrors) {
     const { name, email, notif } = form.values;
-    const response: ApiResponse<null> = await updateUserInfo({ name, email, notif });
+    const notifBool = notif === "EMAIL";
+    const response: ApiResponse<null> = await updateUserInfo({ name, email, notif: notifBool });
     if (response?.statusCode >= 200 && response.statusCode < 300) {
       closeSettingsModal();
       showMantineNotification({ message: `User settings saved successfully.`, type: 'INFO' });

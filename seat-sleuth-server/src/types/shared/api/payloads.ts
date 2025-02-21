@@ -6,7 +6,7 @@ export interface AuthPayload {
 export interface UserPayload {
   email: string,
   name: string,
-  notif: Enumerator
+  notif: boolean
 }
 
 export interface UpdatePasswordPayload {
