@@ -18,7 +18,6 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
     });
 
     const eventsRaw: RawTMEventData[] = response.data?._embedded?.events || [];
-    console.log(eventsRaw[0]);
     const events: EventData[] = eventsRaw.map(
       ({
         id,
@@ -46,7 +45,7 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
         city: _embedded?.venues?.[0]?.city?.name ?? 'Unknown',
         country: _embedded?.venues?.[0]?.country?.name ?? 'Unknown',
         url: url ?? undefined,
-        genre: classifications[0]?.genre?.name ?? undefined,
+        genre: classifications?.[0]?.genre?.name ?? undefined,
         saleStart: sales?.public?.startDateTime ?? undefined,
         saleEnd: sales?.public?.endDateTime ?? undefined,
         imageSrc: images

@@ -10,23 +10,12 @@ export const apiClient: AxiosInstance = axios.create({
 });
 
 apiClient.interceptors.response.use(
-  (response) => {
-    console.log('test');
-    return response;
-  },
+  (response) => response,
   (error) => {
     return Promise.reject(error);
   },
 );
 
-/**
- * A generic API request handler ensuring strict type safety.
- *
- * @template E - The endpoint key from `ValidServerEndpoints`.
- * @param endpoint - The API endpoint key.
- * @param payload - The request body (must match the endpoint's expected payload).
- * @returns A promise resolving to `ApiResponse` with the expected response type.
- */
 export const handleServerRequest = async <E extends ValidServerEndpoints>(
   endpoint: E,
   payload?: EndpointPayload<E>,
@@ -42,6 +31,7 @@ export const handleServerRequest = async <E extends ValidServerEndpoints>(
     .then((res) => res?.data)
     .catch((err) => {
       const error = err as AxiosError;
-      return error.response?.data as ApiErrorResponse<null>;
+      // Reject the promise so React Query recognizes it as an error
+      return Promise.reject(error.response?.data as ApiErrorResponse<null>);
     });
 };

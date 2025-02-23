@@ -5,6 +5,7 @@ import axios from 'axios';
 import { AuthContext } from '../types/clitentAuth';
 import { showMantineNotification } from '../util/uiUtils';
 import { ApiResponse, AuthResponse } from '@shared/api/responses';
+import { responseIsOk } from '../util/apiUtils';
 
 axios.defaults.withCredentials = true;
 
@@ -14,7 +15,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const verifyLogin = async () => {
       const response: ApiResponse<AuthResponse> = await checkLogin();
-      if (response?.statusCode && response.statusCode >= 200 && response.statusCode < 300) {
+      if (responseIsOk(response)) {
         setIsAuthenticated(true);
         showMantineNotification({ message: 'You are already logged in!', type: 'INFO' });
       } else {
@@ -26,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (credentials: AuthPayload) => {
     const response: ApiResponse<AuthResponse> = await loginUser(credentials);
-    if (response?.statusCode && response.statusCode >= 200 && response.statusCode < 300) {
+    if (responseIsOk(response)) {
       setIsAuthenticated(true);
       showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
     } else {
@@ -36,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     const response: ApiResponse<AuthResponse> = await logoutUser();
-    if (response?.statusCode >= 200 && response.statusCode < 300) {
+    if (responseIsOk(response)) {
       showMantineNotification({ message: `You have been logged out.`, type: 'INFO' });
       setIsAuthenticated(false);
     } else {
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (credentials: AuthPayload) => {
     const response: ApiResponse<AuthResponse> = await registerUser(credentials);
-    if (response?.statusCode >= 200 && response.statusCode < 300) {
+    if (responseIsOk(response)) {
       showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
       setIsAuthenticated(true);
     } else {
