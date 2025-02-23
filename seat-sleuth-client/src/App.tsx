@@ -6,6 +6,7 @@ import Shell from './components/layout/AppShell';
 import NotFound from './pages/NotFound';
 import Providers from './context/providers';
 import Events from './pages/Events';
+import SearchResults from './pages/SearchResults';
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
       { path: 'events', element: <Events /> },
       { path: 'watchlist', element: <></> },
+      { path: 'search/:q', element: <SearchResults /> },
     ],
   },
 ]);

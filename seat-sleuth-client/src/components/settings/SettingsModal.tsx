@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { showMantineNotification } from '../../util/uiUtils';
 import { ApiResponse } from '@shared/api/responses';
+import { responseIsOk } from '../../util/apiUtils';
 
 interface SettingsModalProps {
   opened: boolean;
@@ -75,7 +76,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
       const { name, email, notif } = form.values;
       const notifBool = notif === 'EMAIL';
       const response: ApiResponse<null> = await updateUserInfo({ name, email, notif: notifBool });
-      if (response?.statusCode >= 200 && response.statusCode < 300) {
+      if (responseIsOk(response)) {
         closeSettingsModal();
         showMantineNotification({ message: `User settings saved successfully.`, type: 'INFO' });
       } else {
@@ -89,7 +90,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     if (!validationResult.hasErrors) {
       const { oldPassword, newPassword } = form.values;
       const response: ApiResponse<null> = await updatePassword({ oldPassword, newPassword });
-      if (response?.statusCode >= 200 && response.statusCode < 300) {
+      if (responseIsOk(response)) {
         closeSettingsModal();
         showMantineNotification({ message: `Password updated successfully.`, type: 'INFO' });
       } else {
