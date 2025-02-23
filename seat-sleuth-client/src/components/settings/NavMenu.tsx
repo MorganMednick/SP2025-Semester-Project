@@ -1,7 +1,8 @@
-import { Menu, Burger } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { SettingsModal } from "./SettingsModal";
-import { useAuth } from "../../context/authContext";
+import { Menu, Burger } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { SettingsModal } from './SettingsModal';
+import { useAuth } from '../../context/authContext';
+import { useNavigate } from 'react-router-dom';
 
 interface NavMenuProps {
   opened: boolean;
@@ -12,6 +13,7 @@ interface NavMenuProps {
 export default function NavMenu({ opened, onChange, onClose }: NavMenuProps) {
   const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -20,15 +22,11 @@ export default function NavMenu({ opened, onChange, onClose }: NavMenuProps) {
           <Burger size="md" opened={opened} onClick={onChange} />
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item component="a" href="/watchlist">
-            Watchlist
-          </Menu.Item>
-          <Menu.Item onClick={openSettings}>
-            Settings
-          </Menu.Item> 
+          <Menu.Item onClick={() => navigate('/watchlist')}>Watchlist</Menu.Item>
+          <Menu.Item onClick={openSettings}>Settings</Menu.Item>
           <Menu.Item onClick={logout} c="red">
             Log out
-            </Menu.Item>
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
 
