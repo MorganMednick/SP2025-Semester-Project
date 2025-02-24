@@ -2,7 +2,7 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { EventData } from '@shared/api/external/eventData';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
-import { Skeleton, Grid, Text, Card } from '@mantine/core';
+import { Skeleton, Grid, Text, Card, Container } from '@mantine/core';
 import EventCard from '../events/EventCard';
 import { useQuery } from 'react-query';
 
@@ -32,9 +32,9 @@ export default function PopularNearYou() {
   );
 
   return (
-    <div>
-      <Text size="xl" mb="md">
-        Events near you:
+    <Container size="lg" py="xl">
+      <Text size="xl" mb="md" style={{ textAlign: 'center', fontWeight:'bold' }}>
+        Popular near you:
       </Text>
 
       {isError && (
@@ -45,19 +45,30 @@ export default function PopularNearYou() {
 
       <Grid gutter="xl" p="md">
         {isLoading
-          ? Array.from({ length: 4 }, (_, index: number) => (
-              <Grid.Col key={index} span={3}>
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
+          ? Array.from({ length: 8 }, (_, index: number) => (
+              <Grid.Col key={index} span={3} style={{ display: 'flex' }}>
+                <Card
+                  shadow="sm"
+                  padding="lg"
+                  radius="md"
+                  withBorder
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Skeleton height={250} />
                 </Card>
               </Grid.Col>
             ))
-          : eventsNearYou?.map((event: EventData, index: number) => (
-              <Grid.Col key={index} span={3}>
+          : eventsNearYou?.slice(0, 8).map((event: EventData, index: number) => (
+              <Grid.Col key={index} span={3} style={{ display: 'flex' }}>
                 <EventCard event={event} />
               </Grid.Col>
             ))}
       </Grid>
-    </div>
+    </Container>
   );
 }

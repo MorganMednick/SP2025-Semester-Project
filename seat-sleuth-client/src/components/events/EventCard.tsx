@@ -33,7 +33,7 @@ export default function EventCard({ event }: { event: EventData }) {
       </Text>
 
       {/* Point to TM for now */}
-      <Button component="a" href={event.url} target="_blank" fullWidth mt="md">
+      <Button component="a" href={event.url} target="_blank" fullWidth mt="auto">
         View Event Details
       </Button>
     </Card>
