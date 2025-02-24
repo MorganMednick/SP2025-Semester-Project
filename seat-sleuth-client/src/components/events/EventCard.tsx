@@ -1,6 +1,6 @@
 import { Card, Image, Text, Button } from '@mantine/core';
 import { EventData } from '@shared/api/external/eventData';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function EventCard({ event }: { event: EventData }) {
   const navigate = useNavigate();
@@ -34,8 +34,13 @@ export default function EventCard({ event }: { event: EventData }) {
         Sale Dates: {event.saleStart?.split('T')[0]} - {event.saleEnd?.split('T')[0]}
       </Text>
 
-      {/* Point to TM for now */}
-      <Button component="a" href={event.url} target="_blank" fullWidth mt="md" onClick={() => navigate(`/events/${event.id}`)}>
+      <Button
+        component="a"
+        target="_blank"
+        fullWidth
+        mt="md"
+        onClick={() => navigate(`/events/${event.id}`)}
+      >
         View Event Details
       </Button>
     </Card>
