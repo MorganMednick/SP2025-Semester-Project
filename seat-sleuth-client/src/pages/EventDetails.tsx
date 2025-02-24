@@ -1,14 +1,13 @@
-import { Container } from '@mantine/core';
+import { Container, Grid } from '@mantine/core';
 import { EventData } from '@shared/api/external/eventData';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
+import EventCard from '../components/events/EventCard';
 export default function EventDetails() {
   const { id } = useParams();
-  const {
-    data: events,
-  } = useQuery<EventData[], Error>(['ticketMasterEvents', id], async () => {
+  const { data: events } = useQuery<EventData[], Error>(['ticketMasterEvents', id], async () => {
     const params: TicketMasterSearchParams = {
       id,
     };
@@ -17,7 +16,14 @@ export default function EventDetails() {
   });
   return (
     <Container size="lg" py="xl">
-      {JSON.stringify(events)}
+      <Grid gutter="xl" p="md">
+        {events &&
+          events.map((event) => (
+            <Grid.Col key={event.id} span={6}>
+              <EventCard event={event} />
+            </Grid.Col>
+          ))}
+      </Grid>
     </Container>
   );
 }
