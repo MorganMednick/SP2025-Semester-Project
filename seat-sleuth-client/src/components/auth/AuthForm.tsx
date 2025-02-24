@@ -1,10 +1,11 @@
-import { TextInput, PasswordInput, Button, Stack, Image } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Image, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { AuthState } from '../../types/clitentAuth';
 import { slothLogoWithText } from '../../util/assetReconcileUtil';
 import { useAuth } from '../../context/authContext';
 import { AuthPayload } from '@shared/api/payloads';
 import { modals } from '@mantine/modals';
+import { useMutation } from 'react-query';
 
 interface AuthFormProps {
   authState: AuthState;
@@ -33,22 +34,43 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
     validateInputOnChange: ['email', 'confirmPassword'],
   });
 
+  const loginMutation = useMutation(
+    ({ email, password }: AuthPayload) => login({ email, password }),
+    {
+      onSuccess: () => {
+        modals.closeAll();
+      },
+      onError: (err: Error) => {
+        console.error(err.message);
+      },
+    },
+  );
+
+  const registerMutation = useMutation(
+    ({ email, password }: AuthPayload) => register({ email, password }),
+    {
+      onSuccess: () => {
+        modals.closeAll();
+      },
+      onError: (err: Error) => {
+        console.error(err.message);
+      },
+    },
+  );
+
   const handleSubmit = (values: typeof form.values) => {
     const { email, password }: AuthPayload = values;
     if (authState === AuthState.LOGIN) {
-      login({ email, password })
-        .then(() => {
-          modals.closeAll();
-        })
-        .catch((err: Error) => console.error(err.message));
+      loginMutation.mutate({ email, password });
     } else {
-      register({ email, password })
-        .then(() => {
-          modals.closeAll();
-        })
-        .catch((err: Error) => console.error(err.message));
+      registerMutation.mutate({ email, password });
     }
   };
+
+  const isLoading =
+    authState === AuthState.LOGIN ? loginMutation.isLoading : registerMutation.isLoading;
+
+  const error = authState === AuthState.LOGIN ? loginMutation.error : registerMutation.error;
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -82,9 +104,15 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
           />
         )}
 
-        <Button type="submit" w="90%">
-          {authState === AuthState.LOGIN ? AuthState.LOGIN : AuthState.REGISTER}
+        <Button type="submit" w="90%" loading={isLoading}>
+          {authState === AuthState.LOGIN ? 'Login' : 'Register'}
         </Button>
+
+        {error && (
+          <Text c="red" ta="center">
+            {error instanceof Error ? error.message : 'An error occurred'}
+          </Text>
+        )}
 
         <Button
           variant="subtle"
