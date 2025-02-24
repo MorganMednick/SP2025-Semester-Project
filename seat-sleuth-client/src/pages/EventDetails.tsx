@@ -8,9 +8,6 @@ export default function EventDetails() {
   const { id } = useParams();
   const {
     data: events,
-    // isLoading,
-    // isError,
-    // error,
   } = useQuery<EventData[], Error>(['ticketMasterEvents', id], async () => {
     const params: TicketMasterSearchParams = {
       id,
