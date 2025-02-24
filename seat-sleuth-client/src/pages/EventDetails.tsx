@@ -1,4 +1,4 @@
-import { Card, Image, Text, Button, Container } from '@mantine/core';
+import { Container } from '@mantine/core';
 import { EventData } from '@shared/api/external/eventData';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { useQuery } from 'react-query';
@@ -8,9 +8,9 @@ export default function EventDetails() {
   const { id } = useParams();
   const {
     data: events,
-    isLoading,
-    isError,
-    error,
+    // isLoading,
+    // isError,
+    // error,
   } = useQuery<EventData[], Error>(['ticketMasterEvents', id], async () => {
     const params: TicketMasterSearchParams = {
       id,
