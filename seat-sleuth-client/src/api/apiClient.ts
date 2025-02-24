@@ -31,7 +31,6 @@ export const handleServerRequest = async <E extends ValidServerEndpoints>(
     .then((res) => res?.data)
     .catch((err) => {
       const error = err as AxiosError;
-      // Reject the promise so React Query recognizes it as an error
       return Promise.reject(error.response?.data as ApiErrorResponse<null>);
     });
 };

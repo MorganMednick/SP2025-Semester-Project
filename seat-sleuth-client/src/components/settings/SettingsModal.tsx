@@ -9,13 +9,15 @@ import {
   Title,
   Group,
   Center,
+  Loader,
 } from '@mantine/core';
 import { getUserInfo, updatePassword, updateUserInfo } from '../../api/functions/user';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import { showMantineNotification } from '../../util/uiUtils';
 import { ApiResponse } from '@shared/api/responses';
 import { responseIsOk } from '../../util/apiUtils';
+import { useQuery, useMutation } from 'react-query';
 
 interface SettingsModalProps {
   opened: boolean;
@@ -23,6 +25,8 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ opened, onClose }: SettingsModalProps) {
+  const [changePassword, setChangePassword] = useState(false);
+
   const form = useForm({
     mode: 'controlled',
     initialValues: {
@@ -33,7 +37,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
       confirmNewPassword: '',
       notif: '',
     },
-
     validate: {
       email: (value: string) => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Invalid email address'),
       newPassword: (value) =>
@@ -43,7 +46,61 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     },
   });
 
-  const [changePassword, setChangePassword] = useState(false);
+  const {
+    isLoading: userLoading,
+    error: userError,
+  } = useQuery('userInfo', () => getUserInfo().then((res) => res.data), {
+    enabled: opened,
+    onSuccess: (data) => {
+      form.setValues({
+        email: data?.email,
+        name: data?.name ?? '',
+        notif: data?.notif ? 'EMAIL' : 'OFF',
+        oldPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      });
+    },
+    onError: (err: Error) => {
+      console.error(err.message);
+    },
+  });
+
+  const updateUserInfoMutation = useMutation(
+    ({ name, email, notif }: { name: string; email: string; notif: boolean }) =>
+      updateUserInfo({ name, email, notif }),
+    {
+      onSuccess: (response: ApiResponse<null>) => {
+        if (responseIsOk(response)) {
+          closeSettingsModal();
+          showMantineNotification({ message: 'User settings saved successfully.', type: 'INFO' });
+        } else {
+          showMantineNotification({ message: 'Error saving user settings.', type: 'ERROR' });
+        }
+      },
+      onError: (error: Error) => {
+        showMantineNotification({ message: error.message, type: 'ERROR' });
+      },
+    },
+  );
+
+  const updatePasswordMutation = useMutation(
+    ({ oldPassword, newPassword }: { oldPassword: string; newPassword: string }) =>
+      updatePassword({ oldPassword, newPassword }),
+    {
+      onSuccess: (response: ApiResponse<null>) => {
+        if (responseIsOk(response)) {
+          closeSettingsModal();
+          showMantineNotification({ message: 'Password updated successfully.', type: 'INFO' });
+        } else {
+          showMantineNotification({ message: response.message, type: 'ERROR' });
+        }
+      },
+      onError: (error: Error) => {
+        showMantineNotification({ message: error.message, type: 'ERROR' });
+      },
+    },
+  );
 
   const closeSettingsModal = () => {
     setChangePassword(false);
@@ -56,104 +113,104 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     form.setValues({ oldPassword: '', newPassword: '', confirmNewPassword: '' });
   };
 
-  useEffect(() => {
-    if (opened) {
-      getUserInfo()
-        .then((res) => {
-          form.setValues({
-            email: res.data?.email,
-            name: res.data?.name ?? '',
-            notif: res.data?.notif ? 'EMAIL' : 'OFF',
-          });
-        })
-        .catch((err: Error) => console.error(err.message));
-    }
-  }, [opened]);
-
-  const handleSaveChanges = async () => {
+  const handleSaveChanges = () => {
     const validationResult = form.validate();
     if (!validationResult.hasErrors) {
       const { name, email, notif } = form.values;
       const notifBool = notif === 'EMAIL';
-      const response: ApiResponse<null> = await updateUserInfo({ name, email, notif: notifBool });
-      if (responseIsOk(response)) {
-        closeSettingsModal();
-        showMantineNotification({ message: `User settings saved successfully.`, type: 'INFO' });
-      } else {
-        showMantineNotification({ message: `Error saving user settings.`, type: 'ERROR' });
-      }
+      updateUserInfoMutation.mutate({ name, email, notif: notifBool });
     }
   };
 
-  const handleUpdatePassword = async () => {
+  const handleUpdatePassword = () => {
     const validationResult = form.validate();
     if (!validationResult.hasErrors) {
       const { oldPassword, newPassword } = form.values;
-      const response: ApiResponse<null> = await updatePassword({ oldPassword, newPassword });
-      if (responseIsOk(response)) {
-        closeSettingsModal();
-        showMantineNotification({ message: `Password updated successfully.`, type: 'INFO' });
-      } else {
-        showMantineNotification({ message: response.message, type: 'ERROR' });
-      }
+      updatePasswordMutation.mutate({ oldPassword, newPassword });
     }
   };
 
   return (
     <Modal opened={opened} onClose={closeSettingsModal} size="lg">
-      {!changePassword ? (
-        <Stack gap="10px" mx="30">
-          <Title order={2}>Settings</Title>
-
-          <TextInput label="Name" placeholder="What's your name?" {...form.getInputProps('name')} />
-          <TextInput label="Email" type="email" {...form.getInputProps('email')} />
-          <Stack gap="5">
-            <PasswordInput disabled label="Password" placeholder="••••••••••••••" />
-            <Text
-              size="xs"
-              ta="right"
-              style={{ cursor: 'pointer', textDecoration: 'underline' }}
-              onClick={() => setChangePassword(!changePassword)}
-            >
-              Reset Password
-            </Text>
-          </Stack>
-          <Stack gap="0">
-            <Text size="sm" fw={500}>
-              {' '}
-              Watchlist notifications{' '}
-            </Text>
-            <SegmentedControl
-              size="xs"
-              fullWidth
-              data={['EMAIL', 'OFF']}
-              {...form.getInputProps('notif')}
-            />
-          </Stack>
-          <Center pt="20">
-            <Button w="200" type="submit" size="md" onClick={handleSaveChanges}>
-              Save changes
-            </Button>
-          </Center>
-        </Stack>
+      {userLoading ? (
+        <Center>
+          <Loader />
+        </Center>
       ) : (
-        <Stack gap="10px" mx="30">
-          <Title order={2}>Change password</Title>
-          <PasswordInput label="Old password" {...form.getInputProps('oldPassword')} />
-          <PasswordInput label="New password" {...form.getInputProps('newPassword')} />
-          <PasswordInput
-            label="Confirm new password"
-            {...form.getInputProps('confirmNewPassword')}
-          />
-          <Group justify="center" gap="20" pt="20">
-            <Button onClick={closeChangePasswordView} size="md" variant="light">
-              Cancel
-            </Button>
-            <Button type="submit" size="md" onClick={handleUpdatePassword}>
-              Update password
-            </Button>
-          </Group>
-        </Stack>
+        <>
+          {userError && (
+            <Text c="red" ta="center">
+              Error loading user info.
+            </Text>
+          )}
+          {!changePassword ? (
+            <Stack gap="10px" mx="30">
+              <Title order={2}>Settings</Title>
+              <TextInput
+                label="Name"
+                placeholder="What's your name?"
+                {...form.getInputProps('name')}
+              />
+              <TextInput label="Email" type="email" {...form.getInputProps('email')} />
+              <Stack gap="5">
+                <PasswordInput disabled label="Password" placeholder="••••••••••••••" />
+                <Text
+                  size="xs"
+                  ta="right"
+                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                  onClick={() => setChangePassword(true)}
+                >
+                  Reset Password
+                </Text>
+              </Stack>
+              <Stack gap="0">
+                <Text size="sm" fw={500}>
+                  Watchlist notifications
+                </Text>
+                <SegmentedControl
+                  size="xs"
+                  fullWidth
+                  data={['EMAIL', 'OFF']}
+                  {...form.getInputProps('notif')}
+                />
+              </Stack>
+              <Center pt="20">
+                <Button
+                  w="200"
+                  type="submit"
+                  size="md"
+                  onClick={handleSaveChanges}
+                  loading={updateUserInfoMutation.isLoading}
+                >
+                  Save changes
+                </Button>
+              </Center>
+            </Stack>
+          ) : (
+            <Stack gap="10px" mx="30">
+              <Title order={2}>Change password</Title>
+              <PasswordInput label="Old password" {...form.getInputProps('oldPassword')} />
+              <PasswordInput label="New password" {...form.getInputProps('newPassword')} />
+              <PasswordInput
+                label="Confirm new password"
+                {...form.getInputProps('confirmNewPassword')}
+              />
+              <Group justify="center" gap="20" pt="20">
+                <Button onClick={closeChangePasswordView} size="md" variant="light">
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="md"
+                  onClick={handleUpdatePassword}
+                  loading={updatePasswordMutation.isLoading}
+                >
+                  Update password
+                </Button>
+              </Group>
+            </Stack>
+          )}
+        </>
       )}
     </Modal>
   );
