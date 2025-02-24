@@ -13,7 +13,7 @@ export default function EventCard({ event }: { event: EventData }) {
         />
       </Card.Section>
       <Text size="xs" mt="md">
-        {event.id}
+        {'ID PLACEHOLDER: ' + event.id}
       </Text>
       <Text size="lg" mt="md">
         {event.event_name}

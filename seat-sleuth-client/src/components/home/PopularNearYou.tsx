@@ -32,6 +32,7 @@ export default function PopularNearYou() {
   }, [geoPoint]);
 
   return (
+    //TODO: Modify this to list ~8 events, show more button to go to events page
     <div>
       <Text size="xl" mb="md">
         Events near you:
