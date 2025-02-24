@@ -47,7 +47,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   });
 
   const {
-    data: userInfo,
     isLoading: userLoading,
     error: userError,
   } = useQuery('userInfo', () => getUserInfo().then((res) => res.data), {
