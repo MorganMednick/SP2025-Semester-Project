@@ -5,8 +5,8 @@ import Home from './pages/Home';
 import Shell from './components/layout/AppShell';
 import NotFound from './pages/NotFound';
 import Providers from './context/providers';
-import Events from './pages/Events';
 import SearchResults from './pages/SearchResults';
+import EventDetails from './pages/EventDetails';
 
 const router = createBrowserRouter([
   {
@@ -15,9 +15,9 @@ const router = createBrowserRouter([
     children: [
       { path: '', element: <Home /> },
       { path: '*', element: <NotFound /> },
-      { path: 'events', element: <Events /> },
       { path: 'watchlist', element: <></> },
       { path: 'search/:q', element: <SearchResults /> },
+      { path: '/events/:id', element: <EventDetails /> },
     ],
   },
 ]);
