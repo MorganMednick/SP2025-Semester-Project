@@ -46,7 +46,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     },
   });
 
-  // Fetch user info only when the modal is opened
   const {
     data: userInfo,
     isLoading: userLoading,
@@ -68,7 +67,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     },
   });
 
-  // Mutation for updating user info
   const updateUserInfoMutation = useMutation(
     ({ name, email, notif }: { name: string; email: string; notif: boolean }) =>
       updateUserInfo({ name, email, notif }),
@@ -87,7 +85,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     },
   );
 
-  // Mutation for updating password
   const updatePasswordMutation = useMutation(
     ({ oldPassword, newPassword }: { oldPassword: string; newPassword: string }) =>
       updatePassword({ oldPassword, newPassword }),
