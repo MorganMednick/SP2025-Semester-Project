@@ -1,5 +1,6 @@
 // Defines the data that we want for any event. No matter how we get it lol... -Jayce
 export interface EventData {
+  id: string;
   price_min?: number;
   price_max?: number;
   event_name: string;

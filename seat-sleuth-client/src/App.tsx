@@ -6,6 +6,7 @@ import Shell from './components/layout/AppShell';
 import NotFound from './pages/NotFound';
 import Providers from './context/providers';
 import Events from './pages/Events';
+import Event from './pages/Event';
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,14 @@ const router = createBrowserRouter([
     children: [
       { path: '', element: <Home /> },
       { path: '*', element: <NotFound /> },
-      { path: 'events', element: <Events /> },
+      {
+        path: 'events',
+        element: <Events />,
+      },
+      {
+        path: 'events/:id',
+        element: <Event />,
+      },
       { path: 'watchlist', element: <></> },
     ],
   },

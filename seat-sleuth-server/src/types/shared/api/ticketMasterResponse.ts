@@ -1,4 +1,5 @@
 export interface TicketMasterResponse {
+  id: string;
   price_min?: number;
   price_max?: number;
   event_name: string;

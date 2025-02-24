@@ -1,7 +1,8 @@
 import { Card, Image, Text, Button } from '@mantine/core';
-import { TicketMasterResponse } from '@shared/api/ticketMasterResponse';
+import { EventData } from '@shared/api/external/eventData';
+import { Link } from 'react-router-dom';
 
-export default function EventCard({ event }: { event: TicketMasterResponse }) {
+export default function EventCard({ event }: { event: EventData }) {
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Card.Section>
@@ -11,7 +12,9 @@ export default function EventCard({ event }: { event: TicketMasterResponse }) {
           alt={event.event_name}
         />
       </Card.Section>
-
+      <Text size="xs" mt="md">
+        {event.id}
+      </Text>
       <Text size="lg" mt="md">
         {event.event_name}
       </Text>
@@ -28,9 +31,11 @@ export default function EventCard({ event }: { event: TicketMasterResponse }) {
         </Text>
       )}
 
-      <Button component="a" href={event.tm_link} target="_blank" fullWidth mt="md">
-        View Event Details
-      </Button>
+      <Link to={`/events/${event.id}`}>
+        <Button component="a" href={event.tm_link} target="_blank" fullWidth mt="md">
+          View Event Details
+        </Button>
+      </Link>
     </Card>
   );
 }

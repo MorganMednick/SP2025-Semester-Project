@@ -20,6 +20,7 @@ export const fetchTicketMasterEvents = async (req: Request, res: Response): Prom
     // TODO: Create Typing of raw ticketmaster response
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const events: EventData[] = eventsRaw.map((event: any) => ({
+      id: event.id,
       event_name: event.name,
       price_min: event?.priceRanges?.[firstEvent]?.min || null,
       price_max: event?.priceRanges?.[firstEvent]?.max || null,
