@@ -86,7 +86,6 @@ export default function EventDetails() {
               {event.name}
             </Title>
             <Checkbox
-              defaultChecked
               color={theme.colors?.ticket_prices?.[0]}
               iconColor="white"
               label="Watch price"
