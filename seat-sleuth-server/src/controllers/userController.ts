@@ -1,12 +1,11 @@
 import prisma from '../config/db';
 import bcryptjs from 'bcryptjs';
 import { StatusCodes } from 'http-status-codes';
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { Event, User } from '@prisma/client';
 import { BCRYPT_SALT_ROUNDS } from '../data/constants';
-import { EventImage, RawTMEventData } from '../types/shared/api/external/ticketMaster';
-import { ticketMasterApiClient } from '../util/externalClientUtils';
+import { handleTicketMasterEventRequest } from '../util/ticketMasterUtils';
 
 export const getUserInfo = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -150,42 +149,8 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
 
     const { eventId } = req.body;
 
-    const response = await ticketMasterApiClient.get('events.json', {
-      params: { id: eventId },
-    });
-
-    const eventsRaw: RawTMEventData[] = response.data?._embedded?.events || [];
-
-    if (eventsRaw.length === 0) {
-      sendError(res, {
-        statusCode: StatusCodes.NOT_FOUND,
-        message: 'Event not found',
-        error: null,
-      });
-      return;
-    }
-
-    //TODO:  Temporary. Jayce you need to fix this you idiot. Extract the mapping into a util and force prisma schema you freaking idiot
-    const event: Event = {
-      id: eventsRaw?.[0].id,
-      priceMin: eventsRaw?.[0].priceRanges?.[0]?.min ?? null,
-      priceMax: eventsRaw?.[0].priceRanges?.[0]?.max ?? null,
-      currency: eventsRaw?.[0].priceRanges?.[0]?.currency ?? null,
-      name: eventsRaw?.[0].name,
-      seatLocation: eventsRaw?.[0].seatmap?.staticUrl ?? null,
-      startTime: new Date(),
-      venueName: eventsRaw?.[0]._embedded?.venues?.[0]?.name ?? null,
-      venueAddressOne: eventsRaw?.[0]._embedded?.venues?.[0]?.address?.line1 ?? null,
-      venueAddressTwo: eventsRaw?.[0]._embedded?.venues?.[0]?.address?.line2 ?? null,
-      venueSeatMapSrc: eventsRaw?.[0].seatmap?.staticUrl ?? null,
-      city: eventsRaw?.[0]._embedded?.venues?.[0]?.city?.name ?? 'Unknown',
-      country: eventsRaw?.[0]._embedded?.venues?.[0]?.country?.name ?? 'Unknown',
-      url: eventsRaw?.[0].url ?? undefined,
-      genre: eventsRaw?.[0].classifications?.[0]?.genre?.name ?? null,
-      saleStart: new Date(),
-      saleEnd: new Date(),
-      imageSrc: eventsRaw?.[0].images?.map((image: EventImage) => image.url) ?? undefined,
-    };
+    const events: Event[] = await handleTicketMasterEventRequest({ id: eventId });
+    const event: Event = events?.[0];
 
     await prisma.event.upsert({
       where: { id: event.id },
