@@ -17,6 +17,8 @@ router.put('/info', updateUserInfo);
 
 router.put('/watchlist', addToWatchList);
 
+router.get('/watchlist')
+
 router.put('/password', updatePassword);
 
 export default router;

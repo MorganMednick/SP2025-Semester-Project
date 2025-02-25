@@ -5,8 +5,8 @@ import {
   UserPayload,
 } from './payloads';
 import { AuthResponse, User } from './responses';
-import { EventData } from './external/eventData';
 import { TicketMasterSearchParams } from './external/ticketMaster';
+import { Event } from '@prisma/client';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -51,7 +51,7 @@ export const TM_API_SCHEMA = {
     route: '/tm/events',
     method: 'POST',
     payload: {} as TicketMasterSearchParams,
-    response: {} as EventData[],
+    response: {} as Event[],
   },
 } as const;
 

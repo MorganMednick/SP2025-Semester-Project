@@ -25,9 +25,9 @@ model Event {
   currency        String?
   name            String
   seatLocation    String?
-  startTime       DateTime
-  saleStart       DateTime?
-  saleEnd         DateTime?
+  startTime       String
+  saleStart       String?
+  saleEnd         String?
   venueName       String?
   venueAddressOne String?
   venueAddressTwo String?
