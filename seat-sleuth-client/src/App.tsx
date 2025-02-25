@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound';
 import Providers from './context/providers';
 import SearchResults from './pages/SearchResults';
 import EventDetails from './pages/EventDetails';
+import Watchlist from './pages/Watchlist';
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,7 @@ const router = createBrowserRouter([
     children: [
       { path: '', element: <Home /> },
       { path: '*', element: <NotFound /> },
-      { path: 'watchlist', element: <></> },
+      { path: 'watchlist', element: <Watchlist /> },
       { path: 'search/:q', element: <SearchResults /> },
       { path: '/events/:id', element: <EventDetails /> },
     ],
