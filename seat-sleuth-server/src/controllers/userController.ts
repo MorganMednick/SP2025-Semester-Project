@@ -1,7 +1,7 @@
 import prisma from '../config/db';
 import bcryptjs from 'bcryptjs';
 import { StatusCodes } from 'http-status-codes';
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { Event, User } from '@prisma/client';
 import { BCRYPT_SALT_ROUNDS } from '../data/constants';
