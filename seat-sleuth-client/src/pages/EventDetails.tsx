@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import EventCard from '../components/events/EventCard';
+import EventDetailsCard from '../components/events/EventDetailsCard';
 export default function EventDetails() {
   const { id } = useParams();
   const { data: events } = useQuery<EventData[], Error>(['ticketMasterEvents', id], async () => {
@@ -20,7 +21,7 @@ export default function EventDetails() {
         {events &&
           events.map((event) => (
             <Grid.Col key={event.id} span={6}>
-              <EventCard event={event} />
+              <EventDetailsCard event={event} />
             </Grid.Col>
           ))}
       </Grid>
