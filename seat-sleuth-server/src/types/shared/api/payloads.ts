@@ -4,12 +4,16 @@ export interface AuthPayload {
 }
 
 export interface UserPayload {
-  email: string,
-  name: string,
-  notif: boolean
+  email: string;
+  name: string;
+  notif: boolean;
 }
 
 export interface UpdatePasswordPayload {
-  oldPassword: string,
-  newPassword: string
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface UpdateWatchlistPayload {
+  eventId: string;
 }

@@ -11,7 +11,32 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
-  notif     Boolean @default(true)
+  notif     Boolean  @default(true)
   password  String
   createdAt DateTime @default(now())
+
+  watchlist Event[]
+}
+
+model Event {
+  id               String    @id
+  priceMin        Float?
+  priceMax        Float?
+  currency        String?
+  name            String
+  seatLocation    String?
+  startTime       DateTime
+  saleStart       DateTime?
+  saleEnd         DateTime?
+  venueName       String?
+  venueAddressOne String?
+  venueAddressTwo String?
+  venueSeatMapSrc String?
+  city            String
+  country         String
+  url             String?
+  genre           String?
+  imageSrc        String[]
+
+  users           User[]
 }

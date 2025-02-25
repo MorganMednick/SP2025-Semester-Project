@@ -33,7 +33,7 @@ export default function PopularNearYou() {
 
   return (
     <Container size="lg" py="xl">
-      <Text size="xl" mb="md" style={{ textAlign: 'center', fontWeight:'bold' }}>
+      <Text size="xl" mb="md" style={{ textAlign: 'center', fontWeight: 'bold' }}>
         Popular near you:
       </Text>
 
@@ -43,6 +43,7 @@ export default function PopularNearYou() {
         </Text>
       )}
 
+      {/* TODO: Clean this render up. It's so easy to make this responsive and clean  */}
       <Grid gutter="xl" p="md">
         {isLoading
           ? Array.from({ length: 8 }, (_, index: number) => (

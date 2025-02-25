@@ -1,6 +1,6 @@
 import { ApiResponse, User } from "@shared/api/responses";
 import { handleServerRequest } from "../apiClient";
-import { UpdatePasswordPayload, UserPayload } from "@shared/api/payloads";
+import { UpdatePasswordPayload, UpdateWatchlistPayload, UserPayload } from "@shared/api/payloads";
 
 
 export const getUserInfo = async (): Promise<ApiResponse<User>> => {
@@ -13,4 +13,8 @@ export const updateUserInfo = async (user: UserPayload): Promise<ApiResponse<nul
 
 export const updatePassword = async (password: UpdatePasswordPayload): Promise<ApiResponse<null>> => {
     return await handleServerRequest('UPDATE_PASSWORD', password);
+};
+
+export const addToWatchList = async (eventId: UpdateWatchlistPayload): Promise<ApiResponse<null>> => {
+  return await handleServerRequest('UPDATE_WATCHLIST', eventId);
 };
