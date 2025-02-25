@@ -165,7 +165,7 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    // Temporary. Jayce you need to fix this you idiot.
+    //TODO:  Temporary. Jayce you need to fix this you idiot. Extract the mapping into a util and force prisma schema you freaking idiot
     const event: Event = {
       id: eventsRaw?.[0].id,
       priceMin: eventsRaw?.[0].priceRanges?.[0]?.min ?? null,

@@ -1,4 +1,9 @@
-import { AuthPayload, UpdatePasswordPayload, UpdateWatchlistPayload, UserPayload } from './payloads';
+import {
+  AuthPayload,
+  UpdatePasswordPayload,
+  UpdateWatchlistPayload,
+  UserPayload,
+} from './payloads';
 import { AuthResponse, User } from './responses';
 import { EventData } from './external/eventData';
 import { TicketMasterSearchParams } from './external/ticketMaster';
@@ -38,7 +43,7 @@ export const AUTH_API_SCHEMA = {
     method: 'POST',
     payload: {} as AuthPayload,
     response: null as AuthResponse,
-  }
+  },
 } as const;
 
 export const TM_API_SCHEMA = {
@@ -69,6 +74,7 @@ export const USER_API_SCHEMA = {
     payload: {} as UpdatePasswordPayload,
     response: null,
   },
+  // TODO: Add fetch spec for watchlist
   UPDATE_WATCHLIST: {
     route: '/user/watchlist',
     method: 'PUT',

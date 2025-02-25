@@ -1,4 +1,5 @@
 // Defines the data that we want for any event. No matter how we get it lol... -Jayce
+// TODO: Jayce you are an absolute idiot. You need to delete this and pull directly from prisma. I can't believe you didn't think of that. This needs TO GO BYE BYE
 export interface EventData {
   id: string;
   priceMin?: number;
