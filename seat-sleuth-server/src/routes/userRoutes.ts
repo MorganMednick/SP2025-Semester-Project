@@ -5,6 +5,7 @@ import {
   updatePassword,
   updateUserInfo,
   addToWatchList,
+  getUserWatchList,
 } from '../controllers/userController';
 
 const router = Router();
@@ -17,7 +18,7 @@ router.put('/info', updateUserInfo);
 
 router.put('/watchlist', addToWatchList);
 
-router.get('/watchlist')
+router.get('/watchlist', getUserWatchList);
 
 router.put('/password', updatePassword);
 

@@ -1,10 +1,10 @@
 import { Card, Image, Text, Button } from '@mantine/core';
-import { EventData } from '@shared/api/external/eventData';
 import { useNavigate } from 'react-router-dom';
 import { showMantineNotification } from '../../util/uiUtils';
 import { addToWatchList } from '../../api/functions/user';
+import { Event } from '@shared/api/responses';
 
-export default function EventCard({ event }: { event: EventData }) {
+export default function EventCard({ event }: { event: Event }) {
   const navigate = useNavigate();
 
   const watchEvent = async (eventId: string) => {

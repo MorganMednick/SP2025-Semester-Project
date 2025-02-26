@@ -32,5 +32,5 @@
     "../seat-sleuth-server/src/types/shared/api/api.ts",
     "../seat-sleuth-server/src/types/shared/api/external/*",
     "postcss.config.cjs"
-  ]
+, "../seat-sleuth-server/src/types/shared/api/prisma.ts"  ]
 }

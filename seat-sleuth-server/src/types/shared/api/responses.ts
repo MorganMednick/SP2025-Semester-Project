@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { User, Event } from '@prisma/client';
 
 export interface ApiResponse<T> {
   data?: T;
@@ -14,4 +14,4 @@ export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
 
 export type AuthResponse = null;
 
-export type { User };
+export type { User, Event };

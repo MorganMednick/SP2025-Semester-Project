@@ -1,10 +1,10 @@
 import { useGeoPoint } from '../../hooks/hooks';
-import { EventData } from '@shared/api/external/eventData';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { Skeleton, Grid, Text, Card, Container } from '@mantine/core';
 import EventCard from '../events/EventCard';
 import { useQuery } from 'react-query';
+import { Event } from '@shared/api/responses';
 
 export default function PopularNearYou() {
   const { geoPoint } = useGeoPoint();
@@ -14,7 +14,7 @@ export default function PopularNearYou() {
     isLoading,
     isError,
     error,
-  } = useQuery<EventData[], Error>(
+  } = useQuery<Event[], Error>(
     ['ticketMasterEvents', geoPoint],
     async () => {
       const nearMeParams: TicketMasterSearchParams = {
@@ -64,7 +64,7 @@ export default function PopularNearYou() {
                 </Card>
               </Grid.Col>
             ))
-          : eventsNearYou?.slice(0, 8).map((event: EventData, index: number) => (
+          : eventsNearYou?.slice(0, 8).map((event: Event, index: number) => (
               <Grid.Col key={index} span={3} style={{ display: 'flex' }}>
                 <EventCard event={event} />
               </Grid.Col>

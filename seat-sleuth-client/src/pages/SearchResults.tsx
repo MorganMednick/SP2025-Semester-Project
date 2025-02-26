@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
-import { EventData } from '@shared/api/external/eventData';
 import { useParams } from 'react-router-dom';
 import EventCard from '../components/events/EventCard';
 import { Container, Grid } from '@mantine/core';
+import { Event } from '@shared/api/responses';
 
 export default function SearchResults() {
   const { q } = useParams();
@@ -18,7 +18,7 @@ export default function SearchResults() {
     isLoading,
     isError,
     error,
-  } = useQuery<EventData[], Error>(['ticketMasterEvents', searchParams], () =>
+  } = useQuery<Event[], Error>(['ticketMasterEvents', searchParams], () =>
     fetchTicketMasterEvents(searchParams).then((res) => res.data || []),
   );
 

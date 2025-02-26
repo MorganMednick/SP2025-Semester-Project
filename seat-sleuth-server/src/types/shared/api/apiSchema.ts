@@ -74,7 +74,12 @@ export const USER_API_SCHEMA = {
     payload: {} as UpdatePasswordPayload,
     response: null,
   },
-  // TODO: Add fetch spec for watchlist
+  GET_WATCHLIST: {
+    route: '/user/watchlist',
+    method: 'GET',
+    payload: null,
+    response: {} as Event[]
+  },
   UPDATE_WATCHLIST: {
     route: '/user/watchlist',
     method: 'PUT',
