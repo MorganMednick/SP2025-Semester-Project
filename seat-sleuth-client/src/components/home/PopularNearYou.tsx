@@ -1,6 +1,6 @@
 import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
-import { Text, Container } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { Event } from '@shared/api/responses';
 import EventCardGrid from '../events/EventCardGrid';

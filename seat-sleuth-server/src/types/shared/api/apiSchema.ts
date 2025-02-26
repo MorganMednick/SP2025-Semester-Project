@@ -78,7 +78,7 @@ export const USER_API_SCHEMA = {
     route: '/user/watchlist',
     method: 'GET',
     payload: null,
-    response: {} as Event[]
+    response: {} as Event[],
   },
   UPDATE_WATCHLIST: {
     route: '/user/watchlist',

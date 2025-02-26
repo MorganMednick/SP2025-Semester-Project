@@ -7,5 +7,3 @@ export const fetchTicketMasterEvents = (
 ): Promise<ApiResponse<Event[]>> => {
   return handleServerRequest('TM_EVENTS', params);
 };
-
-

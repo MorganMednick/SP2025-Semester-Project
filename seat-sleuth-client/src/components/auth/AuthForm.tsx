@@ -1,4 +1,4 @@
-import { TextInput, PasswordInput, Button, Stack, Image, Text } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Image } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { AuthState } from '../../types/clitentAuth';
 import { slothLogoWithText } from '../../util/assetReconcileUtil';
@@ -70,8 +70,6 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
 
   const isLoading =
     authState === AuthState.LOGIN ? loginMutation.isLoading : registerMutation.isLoading;
-
-  const error = authState === AuthState.LOGIN ? loginMutation.error : registerMutation.error;
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>

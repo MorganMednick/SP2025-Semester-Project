@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error(response.message);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showMantineNotification({
         message: error.message || 'Login failed. Please try again.',
@@ -56,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error(response.message);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showMantineNotification({
         message: error.message || 'Logout failed. Please try again.',
@@ -73,6 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error(response.message);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showMantineNotification({
         message: error.message || 'Registration failed. Please try again.',

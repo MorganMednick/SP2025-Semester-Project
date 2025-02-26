@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 import { fetchUserWatchList } from '../api/functions/user';
 import { Event } from '@shared/api/responses';
-import { Container } from '@mantine/core';
 import EventCardGrid from '../components/events/EventCardGrid';
 import PageLayout from '../components/layout/PageLayout';
 

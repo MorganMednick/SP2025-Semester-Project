@@ -1,4 +1,4 @@
-import { Card, Image, Text, Button, Stack, Group } from '@mantine/core';
+import { Card, Image, Text, Button, Stack } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { Event } from '@shared/api/responses';
 
