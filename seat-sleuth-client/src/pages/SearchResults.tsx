@@ -2,15 +2,19 @@ import { useQuery } from 'react-query';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useParams } from 'react-router-dom';
-import EventCard from '../components/events/EventCard';
-import { Container, Grid } from '@mantine/core';
+import { Container } from '@mantine/core';
 import { Event } from '@shared/api/responses';
+import EventCardGrid from '../components/events/EventCardGrid';
+import { useGeoPoint } from '../hooks/hooks';
+import PageLayout from '../components/layout/PageLayout';
 
 export default function SearchResults() {
   const { q } = useParams();
+  const { geoPoint } = useGeoPoint();
 
   const searchParams: TicketMasterSearchParams = {
     keyword: q || '',
+    geoPoint: geoPoint || '',
   };
 
   const {
@@ -22,19 +26,9 @@ export default function SearchResults() {
     fetchTicketMasterEvents(searchParams).then((res) => res.data || []),
   );
 
-  if (isLoading) return <div>Loading events...</div>;
-  if (isError) return <div>Error loading events: {error.message}</div>;
-
   return (
-    <Container py="xl">
-      <Grid gutter="xl" p="md">
-        {events &&
-          events.map((event) => (
-            <Grid.Col key={event.id} span={6}>
-              <EventCard event={event} />
-            </Grid.Col>
-          ))}
-      </Grid>
-    </Container>
+    <PageLayout>
+      <EventCardGrid events={events} isLoading={isLoading} isError={isError} error={error} />
+    </PageLayout>
   );
 }

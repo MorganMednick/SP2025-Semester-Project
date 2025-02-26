@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import geohash from 'ngeohash';
+import { useMediaQuery } from '@mantine/hooks';
 
 export const useGeoPoint = () => {
   const [geoPoint, setGeoPoint] = useState<string | null>(null);
@@ -27,4 +28,8 @@ export const useGeoPoint = () => {
   }, []);
 
   return { geoPoint, location, error };
+};
+
+export const useIsMobile = () => {
+  return useMediaQuery('(max-width: 725px)');
 };
