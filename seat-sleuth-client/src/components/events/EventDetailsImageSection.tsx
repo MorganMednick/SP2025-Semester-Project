@@ -7,7 +7,7 @@ interface ImageProps {
 
 export default function EventDetailsImageSection({ name, image }: ImageProps) {
   return (
-    <div>
+    <>
       {image && name && (
         <Container fluid w="100%" p={0} m={0} pos="relative" mt={-25}>
           <Image src={image[0]} alt={name} width="100%" height={400} />
@@ -40,6 +40,6 @@ export default function EventDetailsImageSection({ name, image }: ImageProps) {
           </Flex>
         </Container>
       )}
-    </div>
+    </>
   );
 }

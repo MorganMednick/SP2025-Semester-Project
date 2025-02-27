@@ -17,7 +17,7 @@ export default function EventDetailsInfoSection({ startTime, venueMap, venue, ci
   });
 
   return (
-    <div>
+    <>
       <Flex direction={{ base: 'column', sm: 'row' }} align="center" mt="s" pl={50}>
         {/* Location & Section Selectors */}
         <Stack gap="xl" mt={20}>
@@ -66,6 +66,6 @@ export default function EventDetailsInfoSection({ startTime, venueMap, venue, ci
           </Stack>
         </Flex>
       </Flex>
-    </div>
+    </>
   );
 }
