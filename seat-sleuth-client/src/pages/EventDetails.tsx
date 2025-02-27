@@ -1,5 +1,6 @@
 import {
   Text,
+  Container
 } from '@mantine/core';
 import { Event } from '@shared/api/responses';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
@@ -26,7 +27,7 @@ export default function EventDetails() {
   const event = events[0];
 
   return (
-    <>
+    <Container fluid w="100%" p={0} m={0}>
       <EventDetailsImageSection name={event.name} image={event.imageSrc} />
       <EventDetailsInfoSection
         startTime={event.startTime}
@@ -35,6 +36,6 @@ export default function EventDetails() {
         city={event.city}
       />
       <EventDetailsTicketCard priceMin={event.priceMin} url={event.url} />
-    </>
+    </Container>
   );
 }
