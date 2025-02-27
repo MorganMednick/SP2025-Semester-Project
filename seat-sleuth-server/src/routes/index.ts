@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import authRoutes from './authRoutes';
 import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
+import emailRoutes from './emailRoutes';
 
 const router = Router();
 
@@ -18,5 +19,7 @@ router.use('/auth', authRoutes);
 router.use('/tm', ticketMasterRoutes);
 
 router.use('/user', userRoutes);
+
+router.use('/email', emailRoutes);
 
 export default router;

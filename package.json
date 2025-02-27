@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "@mantine/core": "^7.16.2",
-    "@mantine/hooks": "^7.16.2"
+    "@mantine/hooks": "^7.16.2",
+    "emailjs-com": "^3.2.0"
   },
   "type": "module",
   "scripts": {
