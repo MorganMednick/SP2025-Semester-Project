@@ -1,13 +1,14 @@
-import { Container, Center, Stack, Image, NavLink } from '@mantine/core';
+import { Center, Stack, Image, NavLink } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconHome } from '@tabler/icons-react';
 import { fourOhFour } from '../util/assetReconcileUtil';
+import PageLayout from '../components/layout/PageLayout';
 
 export default function NotFound() {
   const { hovered, ref } = useHover();
   return (
     <Center>
-      <Container size="md" p="xl">
+      <PageLayout>
         <Stack align="center" justify="space-around" gap="xl">
           <Image src={fourOhFour} alt="404 - Not Found" w={400} maw="90%" />
           <NavLink
@@ -22,7 +23,7 @@ export default function NotFound() {
             ref={ref}
           />
         </Stack>
-      </Container>
+      </PageLayout>
     </Center>
   );
 }

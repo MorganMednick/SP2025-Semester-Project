@@ -14,44 +14,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const verifyLogin = async () => {
-      const response: ApiResponse<AuthResponse> = await checkLogin();
-      if (responseIsOk(response)) {
-        setIsAuthenticated(true);
-        showMantineNotification({ message: 'You are already logged in!', type: 'INFO' });
-      } else {
+      try {
+        const response: ApiResponse<AuthResponse> = await checkLogin();
+        if (responseIsOk(response)) {
+          setIsAuthenticated(true);
+          showMantineNotification({ message: 'Session saved. You are logged in!', type: 'INFO' });
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch {
         setIsAuthenticated(false);
       }
     };
+
     verifyLogin();
   }, []);
 
   const login = async (credentials: AuthPayload) => {
-    const response: ApiResponse<AuthResponse> = await loginUser(credentials);
-    if (responseIsOk(response)) {
-      setIsAuthenticated(true);
-      showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
-    } else {
-      showMantineNotification({ message: response.message, type: 'ERROR' });
+    try {
+      const response: ApiResponse<AuthResponse> = await loginUser(credentials);
+      if (responseIsOk(response)) {
+        setIsAuthenticated(true);
+        showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
+      } else {
+        throw new Error(response.message);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      showMantineNotification({
+        message: error.message || 'Login failed. Please try again.',
+        type: 'ERROR',
+      });
     }
   };
 
   const logout = async () => {
-    const response: ApiResponse<AuthResponse> = await logoutUser();
-    if (responseIsOk(response)) {
-      showMantineNotification({ message: `You have been logged out.`, type: 'INFO' });
-      setIsAuthenticated(false);
-    } else {
-      showMantineNotification({ message: response.message, type: 'ERROR' });
+    try {
+      const response: ApiResponse<AuthResponse> = await logoutUser();
+      if (responseIsOk(response)) {
+        setIsAuthenticated(false);
+        showMantineNotification({ message: 'You have been logged out.', type: 'INFO' });
+      } else {
+        throw new Error(response.message);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      showMantineNotification({
+        message: error.message || 'Logout failed. Please try again.',
+        type: 'ERROR',
+      });
     }
   };
 
   const register = async (credentials: AuthPayload) => {
-    const response: ApiResponse<AuthResponse> = await registerUser(credentials);
-    if (responseIsOk(response)) {
-      showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
-      setIsAuthenticated(true);
-    } else {
-      showMantineNotification({ message: response.message, type: 'ERROR' });
+    try {
+      const response: ApiResponse<AuthResponse> = await registerUser(credentials);
+      if (responseIsOk(response)) {
+        setIsAuthenticated(true);
+        showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
+      } else {
+        throw new Error(response.message);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      showMantineNotification({
+        message: error.message || 'Registration failed. Please try again.',
+        type: 'ERROR',
+      });
     }
   };
 

@@ -46,25 +46,26 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     },
   });
 
-  const {
-    isLoading: userLoading,
-    error: userError,
-  } = useQuery('userInfo', () => getUserInfo().then((res) => res.data), {
-    enabled: opened,
-    onSuccess: (data) => {
-      form.setValues({
-        email: data?.email,
-        name: data?.name ?? '',
-        notif: data?.notif ? 'EMAIL' : 'OFF',
-        oldPassword: '',
-        newPassword: '',
-        confirmNewPassword: '',
-      });
+  const { isLoading: userLoading, error: userError } = useQuery(
+    'userInfo',
+    () => getUserInfo().then((res) => res.data),
+    {
+      enabled: opened,
+      onSuccess: (data) => {
+        form.setValues({
+          email: data?.email,
+          name: data?.name ?? '',
+          notif: data?.notif ? 'EMAIL' : 'OFF',
+          oldPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
+        });
+      },
+      onError: (err: Error) => {
+        console.error(err.message);
+      },
     },
-    onError: (err: Error) => {
-      console.error(err.message);
-    },
-  });
+  );
 
   const updateUserInfoMutation = useMutation(
     ({ name, email, notif }: { name: string; email: string; notif: boolean }) =>

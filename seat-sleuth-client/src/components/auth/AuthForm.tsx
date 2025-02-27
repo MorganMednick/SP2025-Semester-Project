@@ -1,4 +1,4 @@
-import { TextInput, PasswordInput, Button, Stack, Image, Text } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Image } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { AuthState } from '../../types/clitentAuth';
 import { slothLogoWithText } from '../../util/assetReconcileUtil';
@@ -6,6 +6,7 @@ import { useAuth } from '../../context/authContext';
 import { AuthPayload } from '@shared/api/payloads';
 import { modals } from '@mantine/modals';
 import { useMutation } from 'react-query';
+import { showMantineNotification } from '../../util/uiUtils';
 
 interface AuthFormProps {
   authState: AuthState;
@@ -41,7 +42,7 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
         modals.closeAll();
       },
       onError: (err: Error) => {
-        console.error(err.message);
+        showMantineNotification({ message: err.message, type: 'ERROR', position: 'top-center' });
       },
     },
   );
@@ -53,7 +54,7 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
         modals.closeAll();
       },
       onError: (err: Error) => {
-        console.error(err.message);
+        showMantineNotification({ message: err.message, type: 'ERROR', position: 'top-center' });
       },
     },
   );
@@ -69,8 +70,6 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
 
   const isLoading =
     authState === AuthState.LOGIN ? loginMutation.isLoading : registerMutation.isLoading;
-
-  const error = authState === AuthState.LOGIN ? loginMutation.error : registerMutation.error;
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -107,12 +106,6 @@ export default function AuthForm({ authState, setAuthState }: AuthFormProps) {
         <Button type="submit" w="90%" loading={isLoading}>
           {authState === AuthState.LOGIN ? 'Login' : 'Register'}
         </Button>
-
-        {error && (
-          <Text c="red" ta="center">
-            {error instanceof Error ? error.message : 'An error occurred'}
-          </Text>
-        )}
 
         <Button
           variant="subtle"

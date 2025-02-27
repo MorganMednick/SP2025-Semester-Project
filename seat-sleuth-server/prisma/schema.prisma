@@ -15,7 +15,7 @@ model User {
   password  String
   createdAt DateTime @default(now())
 
-  watchlist Event[]
+  watchlist UserWatchlist[] 
 }
 
 model Event {
@@ -38,5 +38,15 @@ model Event {
   genre           String?
   imageSrc        String[]
 
-  users           User[]
+  users UserWatchlist[]
+}
+
+model UserWatchlist {
+  userId  Int   @map("user_id")
+  eventId String @map("event_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
 }

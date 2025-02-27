@@ -1,4 +1,28 @@
-// TODO: Jayce you suck. You are lazy. Do this.
+import { useQuery } from 'react-query';
+import { fetchUserWatchList } from '../api/functions/user';
+import { Event } from '@shared/api/responses';
+import EventCardGrid from '../components/events/EventCardGrid';
+import PageLayout from '../components/layout/PageLayout';
+
 export default function Watchlist() {
-  return <div>Watchlist</div>;
+  const {
+    data: watchlist,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Event[], Error>(['userWatchlist'], async () => {
+    const res = await fetchUserWatchList();
+    return res?.data || [];
+  });
+
+  return (
+    <PageLayout>
+      <EventCardGrid
+        events={watchlist || []}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+      />
+    </PageLayout>
+  );
 }

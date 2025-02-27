@@ -135,6 +135,55 @@ export const updatePassword = async (req: Request, res: Response): Promise<void>
   }
 };
 
+export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      sendError(res, {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: 'User not logged in',
+        error: null,
+      });
+      return;
+    }
+
+    const userWithWatchlist = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        watchlist: {
+          include: {
+            event: true,
+          },
+        },
+      },
+    });
+
+    if (!userWithWatchlist) {
+      sendError(res, {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: 'User not found',
+        error: null,
+      });
+      return;
+    }
+
+    const userWatchlist: Event[] = userWithWatchlist.watchlist.map((entry) => entry.event);
+
+    sendSuccess(res, {
+      statusCode: StatusCodes.OK,
+      data: userWatchlist,
+      message: 'Watchlist successfully feteched',
+    });
+  } catch (error) {
+    console.error('Error updating user watchlist:', error);
+    sendError(res, {
+      statusCode: StatusCodes.BAD_REQUEST,
+      message: 'Error updating user watchlist.',
+      error: error,
+    });
+  }
+};
+
 export const addToWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.session.userId;
@@ -149,8 +198,26 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
 
     const { eventId } = req.body;
 
+    if (!eventId) {
+      sendError(res, {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'Event ID is required',
+        error: null,
+      });
+      return;
+    }
+
     const events: Event[] = await handleTicketMasterEventRequest({ id: eventId });
-    const event: Event = events?.[0];
+    const event: Event | undefined = events?.[0];
+
+    if (!event) {
+      sendError(res, {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: 'Event not found',
+        error: null,
+      });
+      return;
+    }
 
     await prisma.event.upsert({
       where: { id: event.id },
@@ -158,12 +225,14 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       create: event,
     });
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        watchlist: {
-          connect: { id: event.id },
-        },
+    await prisma.userWatchlist.upsert({
+      where: {
+        userId_eventId: { userId, eventId: event.id },
+      },
+      update: {},
+      create: {
+        userId,
+        eventId: event.id,
       },
     });
 
@@ -174,9 +243,9 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
   } catch (error) {
     console.error('Error updating user watchlist:', error);
     sendError(res, {
-      statusCode: StatusCodes.BAD_REQUEST,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Error updating user watchlist.',
-      error: error,
+      error,
     });
   }
 };
