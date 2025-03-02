@@ -29,6 +29,11 @@ const theme = createTheme({
     md: '20px',
     lg: '22px',
     xl: '24px',
+    xxl: '32px',
+    x: '36px',
+    xx: '40px',
+    xxx: '48px',
+    xxxx: '64px',
   },
   headings: {
     sizes: {
