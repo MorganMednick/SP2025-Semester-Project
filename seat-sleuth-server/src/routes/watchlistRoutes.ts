@@ -1,14 +1,16 @@
 import { Router } from 'express';
-import { addToWatchList, getUserWatchList, removeFromWatchList } from '../controllers/watchlistController';
-import { protectRoutes } from '../middleware/protectRoutes';
-
+import {
+  addToWatchList,
+  getUserWatchList,
+  removeFromWatchList,
+} from '../controllers/watchlistController';
 
 const router = Router();
 
-router.get('/', protectRoutes, getUserWatchList);
+router.get('/', getUserWatchList);
 
-router.post('/', protectRoutes, addToWatchList);
+router.post('/', addToWatchList);
 
-router.delete('/', protectRoutes, removeFromWatchList);
+router.delete('/', removeFromWatchList);
 
 export default router;
