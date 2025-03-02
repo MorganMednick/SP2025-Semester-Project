@@ -27,6 +27,7 @@ export default function PopularNearYou() {
         page: '1',
       };
       const res = await fetchTicketMasterEvents(nearMeParams);
+      console.log(res);
       return res.data || [];
     },
     { enabled: !!geoPoint },
