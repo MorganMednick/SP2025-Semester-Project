@@ -36,23 +36,21 @@ export default function EventCardGrid({ events, isLoading, isError, error }: Eve
     );
   }
 
-  if (!events || events.length === 0) {
-    return (
-      <Center py="xl">
-        <Text size="lg" fw={500} c="dimmed">
-          No events found.
-        </Text>
-      </Center>
-    );
-  }
-
   return (
     <Grid gutter="xl" p="md">
-      {events.map((event) => (
-        <Grid.Col key={event.id} span={isMobile ? 12 : 6}>
-          <EventCard event={event} />
-        </Grid.Col>
-      ))}
+      {events && events.length > 0 ? (
+        events.map((event) => (
+          <Grid.Col key={event.id} span={isMobile ? 12 : 6}>
+            <EventCard event={event} />
+          </Grid.Col>
+        ))
+      ) : (
+        <Center py="xl">
+          <Text size="lg" fw={500} c="dimmed">
+            No events found.
+          </Text>
+        </Center>
+      )}
     </Grid>
   );
 }

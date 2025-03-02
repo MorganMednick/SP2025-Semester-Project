@@ -5,6 +5,7 @@ import authRoutes from './authRoutes';
 import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
 import emailRoutes from './emailRoutes';
+import watchlistRoutes from './watchlistRoutes';
 
 const router = Router();
 
@@ -21,5 +22,7 @@ router.use('/tm', ticketMasterRoutes);
 router.use('/user', userRoutes);
 
 router.use('/email', emailRoutes);
+
+router.use('/watchlist', watchlistRoutes);
 
 export default router;
