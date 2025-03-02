@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
-import { fetchUserWatchList } from '../api/functions/user';
-import { Event } from '@shared/api/responses';
+import { ApiResponse, UserWatchListEntry } from '@shared/api/responses';
 import EventCardGrid from '../components/events/EventCardGrid';
 import PageLayout from '../components/layout/PageLayout';
+import { fetchUserWatchList } from '../api/functions/watchlist';
 
 export default function Watchlist() {
   const {
@@ -10,15 +10,16 @@ export default function Watchlist() {
     isLoading,
     isError,
     error,
-  } = useQuery<Event[], Error>(['userWatchlist'], async () => {
-    const res = await fetchUserWatchList();
+  } = useQuery<UserWatchListEntry[], Error>(['userWatchlist'], async () => {
+    const res: ApiResponse<UserWatchListEntry[]> = await fetchUserWatchList();
+    console.log(res);
     return res?.data || [];
   });
 
   return (
     <PageLayout>
       <EventCardGrid
-        events={watchlist || []}
+        events={watchlist?.map((watched) => watched.event) || []}
         isLoading={isLoading}
         isError={isError}
         error={error}

@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 import authRoutes from './authRoutes';
 import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
+import watchlistRoutes from './watchlistRoutes';
+import { protectRoutes } from '../middleware/protectRoutes';
 
 const router = Router();
 
@@ -17,6 +19,8 @@ router.use('/auth', authRoutes);
 
 router.use('/tm', ticketMasterRoutes);
 
-router.use('/user', userRoutes);
+router.use('/user', protectRoutes, userRoutes);
+
+router.use('/watchlist', protectRoutes, watchlistRoutes);
 
 export default router;

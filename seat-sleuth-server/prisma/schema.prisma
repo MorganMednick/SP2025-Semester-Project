@@ -15,7 +15,7 @@ model User {
   password  String
   createdAt DateTime @default(now())
 
-  watchlist UserWatchlist[] 
+  watchlist UserWatchlist[]
 }
 
 model Event {
@@ -41,12 +41,32 @@ model Event {
   users UserWatchlist[]
 }
 
+enum TicketSites {
+  TICKETMASTER
+  STUBHUB
+  SEATGEEK
+}
+
+model WatchedPrice {
+  id            Int        @id @default(autoincrement())
+  startingPrice Float
+  currentPrice  Float
+  ticketSite    TicketSites
+  watchlist     UserWatchlist @relation(fields: [watchlistId], references: [id])
+
+  watchlistId   Int
+}
+
 model UserWatchlist {
-  userId  Int   @map("user_id")
-  eventId String @map("event_id")
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  eventId    String   @map("event_id")
+  watchStart DateTime @default(now())
+
+  watchedPrices WatchedPrice[]
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@id([userId, eventId])
+  @@unique([userId, eventId])
 }
