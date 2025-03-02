@@ -12,6 +12,7 @@ export default function Watchlist() {
     error,
   } = useQuery<UserWatchListEntry[], Error>(['userWatchlist'], async () => {
     const res: ApiResponse<UserWatchListEntry[]> = await fetchUserWatchList();
+    console.log(res);
     return res?.data || [];
   });
 
