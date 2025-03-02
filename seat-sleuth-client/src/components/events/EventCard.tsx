@@ -31,7 +31,14 @@ export default function EventCard({ event }: { event: Event }) {
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder w="100%">
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+      w="100%"
+      onClick={() => navigate(`/events/${event.id}`)}
+    >
       <Stack justify="space-between">
         <Card.Section>
           <Image
