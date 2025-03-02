@@ -10,14 +10,6 @@ import { AddToWatchListPayload, RemoveFromWatchListPayload } from '../types/shar
 export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId: number | undefined = req.session.userId;
-    if (!userId) {
-      sendError(res, {
-        statusCode: StatusCodes.UNAUTHORIZED,
-        message: 'User not logged in',
-        error: null,
-      });
-      return;
-    }
 
     const userWithWatchlist: UserWithWatchList = await prisma.user.findUnique({
       where: { id: userId },
@@ -63,6 +55,7 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
 export const addToWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId: number | undefined = req.session.userId;
+
     if (!userId) {
       sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
@@ -112,7 +105,6 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       },
     });
 
-
     const existingWatchedPrice = await prisma.watchedPrice.findFirst({
       where: {
         watchlistId: watchlistEntry.id,
@@ -129,7 +121,10 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
           ticketSite,
         },
       });
-      console.info(`Added watched price for event: ${eventId}, ticket site: ${ticketSite}`, newWatchedPrice);
+      console.info(
+        `Added watched price for event: ${eventId}, ticket site: ${ticketSite}`,
+        newWatchedPrice,
+      );
     }
 
     sendSuccess(res, {
@@ -189,11 +184,9 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
       return;
     }
 
-
     await prisma.watchedPrice.deleteMany({
       where: { watchlistId: watchlistEntry.id },
     });
-
 
     await prisma.userWatchlist.delete({
       where: {
