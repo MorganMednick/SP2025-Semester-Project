@@ -4,22 +4,15 @@ import {
   getUserInfo,
   updatePassword,
   updateUserInfo,
-  addToWatchList,
-  getUserWatchList,
 } from '../controllers/userController';
+import { protectRoutes } from '../middleware/protectRoutes';
 
 const router = Router();
 
-// TODO: Protect auth routes
+router.get('/info', protectRoutes, getUserInfo);
 
-router.get('/info', getUserInfo);
+router.put('/info', protectRoutes, updateUserInfo);
 
-router.put('/info', updateUserInfo);
-
-router.put('/watchlist', addToWatchList);
-
-router.get('/watchlist', getUserWatchList);
-
-router.put('/password', updatePassword);
+router.put('/password', protectRoutes, updatePassword);
 
 export default router;

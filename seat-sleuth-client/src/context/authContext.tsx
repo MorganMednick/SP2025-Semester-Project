@@ -36,6 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (responseIsOk(response)) {
         setIsAuthenticated(true);
         showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
+        window.location.reload();
       } else {
         throw new Error(response.message);
       }
@@ -54,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (responseIsOk(response)) {
         setIsAuthenticated(false);
         showMantineNotification({ message: 'You have been logged out.', type: 'INFO' });
+        window.location.reload();
       } else {
         throw new Error(response.message);
       }

@@ -1,3 +1,5 @@
+import { TicketSites } from "@prisma/client";
+
 export interface AuthPayload {
   email: string;
   password: string;
@@ -14,6 +16,12 @@ export interface UpdatePasswordPayload {
   newPassword: string;
 }
 
-export interface UpdateWatchlistPayload {
+export interface AddToWatchListPayload {
+  eventId: string;
+  startingPrice: number;
+  ticketSite: TicketSites;
+}
+
+export interface RemoveFromWatchListPayload {
   eventId: string;
 }
