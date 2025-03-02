@@ -74,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (responseIsOk(response)) {
         setIsAuthenticated(true);
         showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
+        window.location.reload();
       } else {
         throw new Error(response.message);
       }

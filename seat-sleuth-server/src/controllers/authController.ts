@@ -105,19 +105,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const checkLogin = async (req: Request, res: Response): Promise<void> => {
-  if (req.session.userId) {
-    sendSuccess<AuthResponse>(res, {
-      statusCode: StatusCodes.OK,
-      message: 'User is logged in',
-    });
-    return;
-  }
-
-  sendError(res, {
-    statusCode: StatusCodes.UNAUTHORIZED,
-    message: 'User not logged in',
-    error: null,
+  sendSuccess<AuthResponse>(res, {
+    statusCode: StatusCodes.OK,
+    message: 'User is logged in',
   });
+  return;
 };
 
 export const logoutUser = async (req: Request, res: Response): Promise<void> => {

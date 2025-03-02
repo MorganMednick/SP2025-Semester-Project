@@ -6,6 +6,7 @@ import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
 import emailRoutes from './emailRoutes';
 import watchlistRoutes from './watchlistRoutes';
+import { protectRoutes } from '../middleware/protectRoutes';
 
 const router = Router();
 
@@ -19,10 +20,10 @@ router.use('/auth', authRoutes);
 
 router.use('/tm', ticketMasterRoutes);
 
-router.use('/user', userRoutes);
+router.use('/user', protectRoutes, userRoutes);
 
 router.use('/email', emailRoutes);
 
-router.use('/watchlist', watchlistRoutes);
+router.use('/watchlist', protectRoutes, watchlistRoutes);
 
 export default router;

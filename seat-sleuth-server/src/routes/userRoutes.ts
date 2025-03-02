@@ -1,18 +1,13 @@
 import { Router } from 'express';
 
-import {
-  getUserInfo,
-  updatePassword,
-  updateUserInfo,
-} from '../controllers/userController';
-import { protectRoutes } from '../middleware/protectRoutes';
+import { getUserInfo, updatePassword, updateUserInfo } from '../controllers/userController';
 
 const router = Router();
 
-router.get('/info', protectRoutes, getUserInfo);
+router.get('/info', getUserInfo);
 
-router.put('/info', protectRoutes, updateUserInfo);
+router.put('/info', updateUserInfo);
 
-router.put('/password', protectRoutes, updatePassword);
+router.put('/password', updatePassword);
 
 export default router;

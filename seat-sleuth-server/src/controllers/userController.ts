@@ -10,14 +10,6 @@ export const getUserInfo = async (req: Request, res: Response): Promise<void> =>
   try {
     const userId = req.session.userId;
 
-    if (!userId) {
-      sendError(res, {
-        statusCode: StatusCodes.UNAUTHORIZED,
-        message: 'User not logged in',
-        error: null,
-      });
-    }
-
     const user: User | null = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -47,13 +39,6 @@ export const getUserInfo = async (req: Request, res: Response): Promise<void> =>
 export const updateUserInfo = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.session.userId;
-    if (!userId) {
-      sendError(res, {
-        statusCode: StatusCodes.UNAUTHORIZED,
-        message: 'User not logged in',
-        error: null,
-      });
-    }
 
     const { name, email, notif } = req.body;
 
@@ -83,13 +68,6 @@ export const updateUserInfo = async (req: Request, res: Response): Promise<void>
 export const updatePassword = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.session.userId;
-    if (!userId) {
-      sendError(res, {
-        statusCode: StatusCodes.UNAUTHORIZED,
-        message: 'User not logged in',
-        error: null,
-      });
-    }
 
     const { oldPassword, newPassword } = req.body;
 
