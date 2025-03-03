@@ -1,6 +1,7 @@
 import {
   AddToWatchListPayload,
   AuthPayload,
+  EmailNotificationPayload,
   UpdatePasswordPayload,
   RemoveFromWatchListPayload,
   UserPayload,
@@ -90,10 +91,13 @@ export const WATCHLIST_API_SCHEMA = {
     payload: {} as AddToWatchListPayload,
     response: null,
   },
-  REMOVE_FROM_WATCHLIST: {
-    route: '/watchlist',
-    method: 'DELETE',
-    payload: {} as RemoveFromWatchListPayload,
+} as const;
+
+export const EMAIL_API_SCHEMA = {
+  EMAIL_NOTIF: {
+    route: '/email/send-price-alert',
+    method: 'POST',
+    payload: {} as EmailNotificationPayload,
     response: null,
   }
 } as const;
@@ -102,6 +106,7 @@ export const MERGED_API_SCHEMA = {
   ...AUTH_API_SCHEMA,
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
+  ...EMAIL_API_SCHEMA,
   ...WATCHLIST_API_SCHEMA
 } as const;
 

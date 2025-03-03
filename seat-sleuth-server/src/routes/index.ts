@@ -7,7 +7,6 @@ import userRoutes from './userRoutes';
 import emailRoutes from './emailRoutes';
 import watchlistRoutes from './watchlistRoutes';
 import { protectRoutes } from '../middleware/protectRoutes';
-import emailRoutes from './emailRoutes';
 
 const router = Router();
 
@@ -27,6 +26,5 @@ router.use('/email', emailRoutes);
 
 router.use('/watchlist', protectRoutes, watchlistRoutes);
 
-router.use('/email', emailRoutes);
 
 export default router;

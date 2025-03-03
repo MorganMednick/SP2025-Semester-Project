@@ -14,7 +14,7 @@ export const sendPriceDropEmail = async (req: Request, res: Response): Promise<v
     const ticketPrice = req.params.ticket_price;
     console.log('sendPriceDropEmail call'); //TODO delete
 
-    const response = await emailjs.send(
+    await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
       {
@@ -28,7 +28,7 @@ export const sendPriceDropEmail = async (req: Request, res: Response): Promise<v
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
       message: 'Email sent successfully!',
-      data: response,
+      
     });
   } catch (error) {
     console.error('Email Send Error:', error);

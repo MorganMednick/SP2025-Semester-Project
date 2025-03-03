@@ -2,34 +2,34 @@ import { Card, Image, Text, Button, Stack } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { Event } from '@shared/api/responses';
 import { useState } from 'react';
-import axios from 'axios'; // Ensure axios is installed
+// import axios from 'axios'; // Ensure axios is installed
+import { EmailNotificationPayload } from '@shared/api/payloads';
+import { useQuery } from 'react-query';
+import { sendPriceDropEmail } from '../../api/functions/email';
 
 export default function EventCard({ event }: { event: Event }) {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>('');
 
-  const sendPriceDropEmail = async () => {
-    setLoading(true);
+  const userEmail: string = 'sammyfalvey@gmail.com';
 
-    try {
-      const userEmail = 'mmednick25@gmail.com'; // TODO: Replace with the actual user's email
-
-      const response = await axios.post('/api/email/send-price-alert', {
-        userEmail,
-        ticketName: event.name,
-        ticketPrice: event.priceMin,
-      });
-
-      setMessage('✅ Email sent successfully!');
-    } catch (error) {
-      setMessage('❌ Failed to send email.');
-      console.error('Error sending email:', error);
-    } finally {
-      setLoading(false);
-    }
+  const emailParams: EmailNotificationPayload = {
+    email: userEmail,
+    ticketName: event.name,
+    ticketPrice: event.priceMin,
   };
 
+  // UseQuery setup
+  const { refetch, isFetching } = useQuery({
+    queryKey: ['sendEmail', emailParams],
+    queryFn: () => sendPriceDropEmail(emailParams),
+    enabled: false, // Don't run on mount, only on demand
+    retry: false,
+    onSuccess: () => setMessage('✅ Email sent successfully!'),
+    onError: () => setMessage('❌ Failed to send email.'),
+  });
+
+  
   return (
     <Card
       shadow="sm"
@@ -37,7 +37,7 @@ export default function EventCard({ event }: { event: Event }) {
       radius="md"
       withBorder
       w="100%"
-      onClick={() => navigate(`/events/${event.id}`)}
+      //onClick={() => navigate(`/events/${event.id}`)}
       style={{ cursor: 'pointer' }}
     >
       <Stack justify="space-between">
@@ -68,8 +68,8 @@ export default function EventCard({ event }: { event: Event }) {
           View Event Details
         </Button>
 
-        <Button fullWidth mt="md" color="green" onClick={sendPriceDropEmail} disabled={loading}>
-          {loading ? 'Sending...' : 'Notify Me of Price Drop'}
+        <Button fullWidth mt="md" color="green" onClick={() => refetch()} disabled={isFetching}>
+          {isFetching ? 'Sending...' : 'Notify Me of Price Drop'}
         </Button>
 
         {message && <Text mt="sm">{message}</Text>}

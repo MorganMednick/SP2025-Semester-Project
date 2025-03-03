@@ -25,3 +25,9 @@ export interface AddToWatchListPayload {
 export interface RemoveFromWatchListPayload {
   eventId: string;
 }
+
+export interface EmailNotificationPayload {
+  email: string,
+  ticketName: string,
+  ticketPrice: number | null,
+}
