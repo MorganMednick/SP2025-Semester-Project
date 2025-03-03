@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx prisma migrate deploy && npx prisma db push && nodemon",
+    "dev": "npx prisma migrate deploy && npx prisma db push --accept-data-loss && nodemon",
     "build": "tsc",
     "test": "cross-env NODE_ENV=test npx jest --detectOpenHandles --bail --coverage",
     "start": "node dist/server.js"
