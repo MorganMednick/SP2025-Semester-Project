@@ -211,13 +211,11 @@ describe('Auth Controller', () => {
       (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (bcryptjs.compare as jest.Mock).mockResolvedValue(true);
 
-      // Log in first
       await agent.post('/api/auth/login').send({
         email: 'test@example.com',
         password: 'password123',
       });
 
-      // Mock session destroy properly
       (destroySessionAndClearCookies as jest.Mock).mockImplementationOnce((req, res) => {
         req.session.destroy((err: any) => {
           if (err) {
@@ -229,7 +227,6 @@ describe('Auth Controller', () => {
         });
       });
 
-      // Logout request
       const res = await agent.post('/api/auth/logout');
 
       expect(res.status).toBe(200);

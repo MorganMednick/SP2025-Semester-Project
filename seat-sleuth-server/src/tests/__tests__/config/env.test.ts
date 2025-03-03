@@ -1,13 +1,13 @@
 describe('Environment Variables Validation', () => {
-  const OLD_ENV = process.env; // Store original environment variables
+  const OLD_ENV = process.env;
 
   beforeEach(() => {
-    jest.resetModules(); // Reset modules to force fresh import
-    process.env = { ...OLD_ENV }; // Reset environment variables before each test
+    jest.resetModules();
+    process.env = { ...OLD_ENV };
   });
 
   afterAll(() => {
-    process.env = OLD_ENV; // Restore original env variables after all tests
+    process.env = OLD_ENV;
   });
 
   /** ===============================
