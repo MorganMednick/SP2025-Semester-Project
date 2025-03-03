@@ -12,13 +12,11 @@ services:
         condition: service_healthy
       client:
         condition: service_healthy
-      prisma-studio:
-        condition: service_healthy
     command:
       [
         '/bin/sh',
         '-c',
-        "until nc -z server 4000 && nc -z client 5173 && nc -z database 5432 && nc -z prisma-studio 5555; do sleep 1; done; echo '✅ All services are healthy!'",
+        'until nc -z server 4000 && nc -z client 5173 && nc -z database 5432; do sleep 1; done;',
       ]
 
   database:
@@ -41,6 +39,7 @@ services:
 
   client:
     container_name: client
+    # image: jaycebordelon/seat-sleuth-client:mvp <== Will build before tuesday
     build:
       context: ./seat-sleuth-client
       dockerfile: Dockerfile
@@ -69,6 +68,7 @@ services:
 
   server:
     container_name: server
+    # image: jaycebordelon/seat-sleuth-server:mvp <== Will build before tuesday
     build:
       context: ./seat-sleuth-server
       dockerfile: Dockerfile
@@ -81,7 +81,7 @@ services:
     volumes:
       - ./seat-sleuth-server:/app
       - node_modules_server:/app/node_modules
-    command: sh -c "npx prisma migrate reset --force && npm run dev"
+    command: sh -c "npm run dev"
     depends_on:
       database:
         condition: service_healthy
@@ -105,10 +105,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5555']
-      interval: 1s
-      retries: 10
 
 volumes:
   postgres_data:
