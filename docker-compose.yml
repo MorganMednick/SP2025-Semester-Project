@@ -1,24 +1,5 @@
 name: seat-sleuth
 services:
-  health-check:
-    container_name: health
-    image: busybox
-    restart: 'no'
-    stop_grace_period: 0s
-    depends_on:
-      database:
-        condition: service_healthy
-      server:
-        condition: service_healthy
-      client:
-        condition: service_healthy
-    command:
-      [
-        '/bin/sh',
-        '-c',
-        'until nc -z server 4000 && nc -z client 5173 && nc -z database 5432; do sleep 1; done;',
-      ]
-
   database:
     image: postgres:15
     container_name: database
@@ -36,10 +17,9 @@ services:
       test: ['CMD-SHELL', 'pg_isready -U seat-sleuth-user -h database -d seat-sleuth']
       interval: 1s
       retries: 10
-
   client:
     container_name: client
-    # image: jaycebordelon/seat-sleuth-client:mvp <== Will build before tuesday
+    image: jaycebordelon/seat-sleuth-client # TODO: Jayce -- tag with mvp and build before demo tmrw
     build:
       context: ./seat-sleuth-client
       dockerfile: Dockerfile
@@ -65,10 +45,9 @@ services:
       test: ['CMD', 'curl', '-f', 'http://localhost:5173']
       interval: 1s
       retries: 10
-
   server:
     container_name: server
-    # image: jaycebordelon/seat-sleuth-server:mvp <== Will build before tuesday
+    image: jaycebordelon/seat-sleuth-server # TODO: Jayce -- tag with mvp and build before demo tmrw
     build:
       context: ./seat-sleuth-server
       dockerfile: Dockerfile
@@ -89,23 +68,6 @@ services:
       test: ['CMD', 'curl', '-f', 'http://localhost:4000/api/health']
       interval: 1s
       retries: 10
-
-  prisma-studio:
-    container_name: prisma-studio
-    build:
-      context: ./seat-sleuth-server
-    environment:
-      - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@database:5432/seat-sleuth
-    ports:
-      - '5555:5555'
-    volumes:
-      - ./seat-sleuth-server:/app
-      - node_modules_server:/app/node_modules
-    command: sh -c "npx prisma studio"
-    depends_on:
-      database:
-        condition: service_healthy
-
 volumes:
   postgres_data:
     name: seat-sleuth-postgres-data
