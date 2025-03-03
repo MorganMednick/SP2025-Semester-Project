@@ -13,12 +13,12 @@ interface EventCardGridProps {
 
 export default function EventCardGrid({ events, isLoading, isError, error }: EventCardGridProps) {
   const isMobile = useIsMobile();
-
+  const COL_SPAN = isMobile ? 12 : 4;
   if (isLoading) {
     return (
       <Grid gutter="xl" p="md">
         {Array.from({ length: 8 }, (_, index) => (
-          <Grid.Col key={index} span={isMobile ? 12 : 6}>
+          <Grid.Col key={index} span={COL_SPAN}>
             <EventCardSkeleton />
           </Grid.Col>
         ))}
@@ -37,10 +37,10 @@ export default function EventCardGrid({ events, isLoading, isError, error }: Eve
   }
 
   return (
-    <Grid gutter="xl" p="md">
+    <Grid gutter="xl" py="md">
       {events && events.length > 0 ? (
         events.map((event) => (
-          <Grid.Col key={event.id} span={isMobile ? 12 : 6}>
+          <Grid.Col key={event.id} span={COL_SPAN}>
             <EventCard event={event} />
           </Grid.Col>
         ))
