@@ -13,6 +13,7 @@ export default function EventCard({ event }: { event: Event }) {
       withBorder
       w="100%"
       onClick={() => navigate(`/events/${event.id}`)}
+      style={{ cursor: 'pointer' }}
     >
       <Stack justify="space-between">
         <Card.Section>

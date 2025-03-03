@@ -5,5 +5,9 @@ interface PageLayoutProps {
   children: ReactNode;
 }
 export default function PageLayout({ children }: PageLayoutProps) {
-  return <Container py="xl">{children}</Container>;
+  return (
+    <Container fluid p="xl">
+      {children}
+    </Container>
+  );
 }

@@ -8,7 +8,7 @@ import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import PageLayout from '../layout/PageLayout';
 
 export default function PopularNearYou() {
-  const { geoPoint } = useGeoPoint();
+  const { geoPoint, geoPointFetching } = useGeoPoint();
 
   const {
     data: eventsNearYou,
@@ -20,24 +20,31 @@ export default function PopularNearYou() {
     async () => {
       const nearMeParams: TicketMasterSearchParams = {
         geoPoint: geoPoint || '',
-        radius: '50',
+        radius: '200',
         unit: 'miles',
-        sort: 'relevance,desc',
+        sort: 'relevance,asc',
         size: '40',
         page: '1',
       };
       const res = await fetchTicketMasterEvents(nearMeParams);
       return res.data || [];
     },
-    { enabled: !!geoPoint },
+    { enabled: !geoPointFetching },
   );
+
+  const isFetching = geoPointFetching || isLoading;
 
   return (
     <PageLayout>
       <Text size="xl" mb="md" style={{ textAlign: 'center', fontWeight: 'bold' }}>
-        {isLoading ? <>Fetching Popular Events Near You</> : <>Popular near you:</>}
+        {isFetching ? <>Fetching Popular Events Near You</> : <>Popular near you:</>}
       </Text>
-      <EventCardGrid error={error} isLoading={isLoading} isError={isError} events={eventsNearYou} />
+      <EventCardGrid
+        error={error}
+        isLoading={isFetching}
+        isError={isError}
+        events={eventsNearYou}
+      />
     </PageLayout>
   );
 }

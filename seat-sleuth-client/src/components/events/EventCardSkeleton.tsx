@@ -11,7 +11,7 @@ export default function EventCardSkeleton() {
         <Skeleton h={25} w="100%" />
         <Skeleton h={25} w="100%" />
 
-        <Button fullWidth mt="md" variant="outline">
+        <Button fullWidth mt="md" variant="outline" disabled>
           View Event Details
         </Button>
       </Stack>
