@@ -1,5 +1,6 @@
 describe('Environment Variables Validation', () => {
   const OLD_ENV = process.env;
+  console.log('OLD_ENV', OLD_ENV);
 
   beforeEach(() => {
     jest.resetModules();
