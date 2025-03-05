@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useParams } from 'react-router-dom';
-import { Event } from '@shared/api/responses';
+import { Event, EventWithOptions } from '@shared/api/responses';
 import EventCardGrid from '../components/events/EventCardGrid';
 import { useGeoPoint } from '../hooks/hooks';
 import PageLayout from '../components/layout/PageLayout';
@@ -21,7 +21,7 @@ export default function SearchResults() {
     isLoading,
     isError,
     error,
-  } = useQuery<Event[], Error>(['ticketMasterEvents', searchParams], () =>
+  } = useQuery<EventWithOptions[], Error>(['ticketMasterEvents', searchParams], () =>
     fetchTicketMasterEvents(searchParams).then((res) => res.data || []),
   );
 

@@ -1,5 +1,5 @@
 import { Container, Image, Flex, Title, Checkbox } from '@mantine/core';
-import { ApiResponse, Event } from '@shared/api/responses';
+import { ApiResponse, Event, EventWithOptions } from '@shared/api/responses';
 import { useState } from 'react';
 import { addToWatchList, removeFromWatchList } from '../../api/functions/watchlist';
 import { AddToWatchListPayload } from '@shared/api/payloads';
@@ -8,7 +8,7 @@ import { checkLogin } from '../../api/functions/auth';
 import { useQuery } from 'react-query';
 
 interface ImageProps {
-  event: Event;
+  event: EventWithOptions;
 }
 
 export default function EventDetailsImageSection({ event }: ImageProps) {
@@ -20,32 +20,32 @@ export default function EventDetailsImageSection({ event }: ImageProps) {
     return Boolean(responseIsOk(res));
   });
 
-  const handleCheckboxChange = async (checked: boolean) => {
-    setDisabled(true);
-    setIsChecked(checked);
-    if (checked) {
-      const addToWatchListPayload: AddToWatchListPayload = {
-        eventId: event.id,
-        startingPrice: event.priceMin || 0.0,
-        ticketSite: 'TICKETMASTER',
-      };
-      const res: ApiResponse<null> = await addToWatchList(addToWatchListPayload);
-      if (responseIsOk(res)) {
-        setDisabled(false);
-      }
-    } else {
-      const res: ApiResponse<null> = await removeFromWatchList({ eventId: event.id });
-      if (responseIsOk(res)) {
-        setDisabled(false);
-      }
-    }
-  };
+  // const handleCheckboxChange = async (checked: boolean) => {
+  //   setDisabled(true);
+  //   setIsChecked(checked);
+  //   if (checked) {
+  //     const addToWatchListPayload: AddToWatchListPayload = {
+  //       eventId: event.id,
+  //       startingPrice: event.priceMin || 0.0,
+  //       ticketSite: 'TICKETMASTER',
+  //     };
+  //     const res: ApiResponse<null> = await addToWatchList(addToWatchListPayload);
+  //     if (responseIsOk(res)) {
+  //       setDisabled(false);
+  //     }
+  //   } else {
+  //     const res: ApiResponse<null> = await removeFromWatchList({ eventId: event.id });
+  //     if (responseIsOk(res)) {
+  //       setDisabled(false);
+  //     }
+  //   }
+  // };
 
   return (
     <>
       {event && (
         <Container fluid w="100%" p={0} m={0} pos="relative" mt={-25}>
-          <Image src={event.imageSrc?.[0]} alt={event.name} width="100%" height={400} />
+          <Image src={event.imageSrc?.[0]} alt={event.eventName} width="100%" height={400} />
 
           <Flex
             justify="space-between"
@@ -63,7 +63,7 @@ export default function EventDetailsImageSection({ event }: ImageProps) {
                 backdropFilter: 'blur(10px)',
               }}
             >
-              {event.name}
+              {event.eventName}
             </Title>
             {!isLoading && !isError ? (
               <Checkbox
@@ -74,7 +74,7 @@ export default function EventDetailsImageSection({ event }: ImageProps) {
                 c="white"
                 checked={isChecked}
                 disabled={disabled}
-                onChange={(event) => handleCheckboxChange(event.currentTarget.checked)}
+                // onChange={(event) => handleCheckboxChange(event.currentTarget.checked)}
               />
             ) : (
               <Checkbox

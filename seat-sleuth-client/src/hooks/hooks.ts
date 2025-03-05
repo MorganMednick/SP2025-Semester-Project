@@ -34,6 +34,16 @@ export const useGeoPoint = () => {
   return { geoPoint, location, error, geoPointFetching };
 };
 
-export const useIsMobile = () => {
-  return useMediaQuery('(max-width: 725px)');
+export const useAppropriateGridColumnCount = (): number => {
+  const isXl = useMediaQuery('(max-width: 1440px)');
+  const isLg = useMediaQuery('(max-width: 1024px)');
+  const isMd = useMediaQuery('(max-width: 768px)');
+  const isSm = useMediaQuery('(max-width: 450px)');
+
+  if (isSm) return 12 / 1;
+  if (isMd) return 12 / 2;
+  if (isLg) return 12 / 3;
+  if (isXl) return 12 / 4;
+
+  return 12 / 4;
 };

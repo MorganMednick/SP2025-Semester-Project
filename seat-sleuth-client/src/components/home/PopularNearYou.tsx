@@ -2,7 +2,7 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { Text } from '@mantine/core';
 import { useQuery } from 'react-query';
-import { Event } from '@shared/api/responses';
+import { EventWithOptions } from '@shared/api/responses';
 import EventCardGrid from '../events/EventCardGrid';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import PageLayout from '../layout/PageLayout';
@@ -15,12 +15,12 @@ export default function PopularNearYou() {
     isLoading,
     isError,
     error,
-  } = useQuery<Event[], Error>(
+  } = useQuery<EventWithOptions[], Error>(
     ['ticketMasterEvents', geoPoint],
     async () => {
       const nearMeParams: TicketMasterSearchParams = {
         geoPoint: geoPoint || '',
-        radius: '200',
+        radius: '40',
         unit: 'miles',
         sort: 'relevance,asc',
         size: '40',

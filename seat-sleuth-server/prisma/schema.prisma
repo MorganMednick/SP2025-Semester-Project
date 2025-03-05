@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Design reduction to keep user lightweight. All the user has is the mappings of their id to an event option ID.
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -15,58 +16,64 @@ model User {
   password  String
   createdAt DateTime @default(now())
 
-  watchlist UserWatchlist[]
+  watchlist WatchedEvent[]
 }
 
-model Event {
-  id               String    @id
-  priceMin        Float?
-  priceMax        Float?
-  currency        String?
-  name            String
-  seatLocation    String?
-  startTime       String
-  saleStart       String?
-  saleEnd         String?
-  venueName       String?
-  venueAddressOne String?
-  venueAddressTwo String?
-  venueSeatMapSrc String?
+/// For persistent watchlist data. Maps a userId to an event option (NOT AN EVENT LOL).
+model WatchedEvent {
+  userId        Int
+  eventOptionId String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventOption   EventOption @relation(fields: [eventOptionId], references: [id], onDelete: Cascade) // Not a event. Do not reference Event model when fetching, silly.
+
+  @@id([userId, eventOptionId])
+}
+
+enum OptionSource {
+  Ticketmaster
+  Stubhub
+  Seatgeek
+}
+
+/// For storing TM, SH, SG prices for a single event option
+/// TODO: If we want to handle different section types, we would add that to this particular schema here.
+model PriceOption {
+  id            String       @id @default(uuid())
+  eventOptionId String
+  priceMin      Float
+  priceMax      Float
+  source        OptionSource
+
+  eventOption   EventOption  @relation(fields: [eventOptionId], references: [id], onDelete: Cascade)
+
+  @@unique([eventOptionId, source])
+}
+
+/// Holds the actual data for the event. I do not know how I'm feelin about the PriceOptions schema yet but it seems intuitive.
+model EventOption {
+  id              String       @id @default(uuid())
+  eventId         String
+  venueName       String
+  address         String
+  seatMapSrc      String?
   city            String
   country         String
   url             String?
-  genre           String?
-  imageSrc        String[]
+  currency        String?
+  startTime       DateTime
+  saleStart       DateTime?
+  saleEnd         DateTime?
 
-  users UserWatchlist[]
+  event           Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  watchers       WatchedEvent[]
+  priceOptions   PriceOption[]
 }
 
-enum TicketSites {
-  TICKETMASTER
-  STUBHUB
-  SEATGEEK
-}
-
-model WatchedPrice {
-  id            Int        @id @default(autoincrement())
-  startingPrice Float
-  currentPrice  Float
-  ticketSite    TicketSites
-  watchlist     UserWatchlist @relation(fields: [watchlistId], references: [id])
-
-  watchlistId   Int
-}
-
-model UserWatchlist {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  eventId    String   @map("event_id")
-  watchStart DateTime @default(now())
-
-  watchedPrices WatchedPrice[]
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, eventId])
+/// Event model now doesn't store specific data. It is used primarily for grouping EventOptions.
+model Event {
+  id          String        @id // This actually comes from the Ticketmaster API. Do not auto increment ever you silly goose.
+  eventName   String        @unique
+  genre       String?
+  imageSrc    String[]
+  options     EventOption[]
 }

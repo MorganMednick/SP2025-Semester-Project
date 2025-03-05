@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { TM_API_KEY, TM_BASE_URL } from '../config/env';
 import {
-  EventImage,
   RawTMEventData,
   TicketMasterSearchParams,
 } from '../types/shared/api/external/ticketMaster';
-import { Event } from '@prisma/client';
+import { OptionSource, PriceOption } from '@prisma/client';
+import { EventOptionData, EventWithOptions } from '../types/shared/api/responses';
 
 export const ticketMasterApiClient = axios.create({
   baseURL: TM_BASE_URL,
@@ -44,13 +44,17 @@ ticketMasterApiClient.interceptors.response.use(
 
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
-): Promise<Event[]> => {
+): Promise<EventWithOptions[]> => {
   const response = await ticketMasterApiClient.get('events.json', {
     params: { ...params },
   });
+
   const eventsRaw: RawTMEventData[] = response.data?._embedded?.events || [];
-  const events: Event[] = eventsRaw.map(
-    ({
+
+  const eventMap: Map<string, EventWithOptions> = new Map();
+
+  eventsRaw.forEach((rawEvent) => {
+    const {
       id,
       name,
       url,
@@ -61,31 +65,58 @@ export const handleTicketMasterEventRequest = async (
       _embedded,
       dates,
       images,
-    }: RawTMEventData) => ({
-      id,
-      priceMin: priceRanges?.[0]?.min ?? null,
-      priceMax: priceRanges?.[0]?.max ?? null,
-      currency: priceRanges?.[0]?.currency ?? null,
-      name,
-      seatLocation: seatmap?.staticUrl ?? null,
-      startTime: dates?.start?.localDate ?? 'TBD',
-      venueName: _embedded?.venues?.[0]?.name ?? null,
-      venueAddressOne: _embedded?.venues?.[0]?.address?.line1 ?? null,
-      venueAddressTwo: _embedded?.venues?.[0]?.address?.line2 ?? null,
-      venueSeatMapSrc: seatmap?.staticUrl ?? null,
-      city: _embedded?.venues?.[0]?.city?.name ?? 'Unknown',
-      country: _embedded?.venues?.[0]?.country?.name ?? 'Unknown',
-      url: url ?? null,
-      genre: classifications?.[0]?.genre?.name ?? null,
-      saleStart: sales?.public?.startDateTime ?? null,
-      saleEnd: sales?.public?.endDateTime ?? null,
-      imageSrc: images
-        ? images.map((image: EventImage) => {
-            return image.url;
-          })
-        : [],
-    }),
-  );
+    } = rawEvent;
 
-  return events;
+    const startTime = dates?.start?.dateTime ? new Date(dates.start.dateTime) : null;
+    const saleStart = sales?.public?.startDateTime ? new Date(sales.public.startDateTime) : null;
+    const saleEnd = sales?.public?.endDateTime ? new Date(sales.public.endDateTime) : null;
+
+    const priceOptions: PriceOption[] =
+      priceRanges?.map((priceRange) => ({
+        id: crypto.randomUUID(),
+        eventOptionId: id,
+        priceMin: priceRange.min !== undefined ? parseFloat(priceRange.min.toString()) : 0,
+        priceMax: priceRange.max !== undefined ? parseFloat(priceRange.max.toString()) : 0,
+        source: OptionSource.Ticketmaster,
+      })) ?? [];
+
+    const eventOption: EventOptionData = {
+      id,
+      eventId: '',
+      venueName: _embedded?.venues?.[0]?.name ?? 'Unknown Venue',
+      address: _embedded?.venues?.[0]?.address?.line1 ?? '',
+      city: _embedded?.venues?.[0]?.city?.name ?? 'Unknown City',
+      country: _embedded?.venues?.[0]?.country?.name ?? 'Unknown Country',
+      startTime: startTime ?? new Date(),
+      saleStart,
+      saleEnd,
+      seatMapSrc: seatmap?.staticUrl ?? null,
+      currency: priceRanges?.[0]?.currency ?? null,
+      url: url ?? null,
+      priceOptions,
+      event: {
+        id,
+        eventName: name,
+        genre: classifications?.[0]?.genre?.name ?? null,
+        imageSrc: images.map((img) => img.url) || [],
+      },
+    };
+
+    if (eventMap.has(name)) {
+      eventMap.get(name)!.options.push(eventOption);
+    } else {
+      eventMap.set(name, {
+        id,
+        eventName: name,
+        genre: classifications?.[0]?.genre?.name ?? null,
+        imageSrc: images.map((img) => img.url) || [],
+        options: [eventOption],
+      });
+    }
+  });
+  const finalEventsArray: EventWithOptions[] = Array.from(eventMap.values());
+
+  console.log(finalEventsArray.find((evt) => evt.eventName === 'Remi Wolf')?.options.length);
+  console.log(finalEventsArray);
+  return finalEventsArray;
 };

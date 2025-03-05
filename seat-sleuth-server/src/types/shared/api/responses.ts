@@ -1,4 +1,10 @@
-import { User, Event, UserWatchlist, WatchedPrice } from '@prisma/client';
+import {
+  User,
+  Event,
+  PriceOption,
+  EventOption as PrismaEventOption,
+  WatchedEvent,
+} from '@prisma/client';
 
 export interface ApiResponse<T> {
   data?: T;
@@ -9,20 +15,20 @@ export interface ApiResponse<T> {
 }
 
 export type ApiSuccessResponse<T> = Omit<ApiResponse<T>, 'error'>;
-
 export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
-
 export type AuthResponse = null;
 
-export type UserWithWatchList =
-  | (User & {
-      watchlist: (UserWatchlist & { event: Event; watchedPrices: WatchedPrice[] })[];
-    })
-  | null;
-
-export interface UserWatchListEntry {
+export interface EventOptionData extends PrismaEventOption {
   event: Event;
-  watchedPrices: WatchedPrice[];
+  priceOptions: PriceOption[];
+}
+
+export interface EventWithOptions extends Event {
+  options: EventOptionData[];
+}
+
+export interface UserWithWatchlist extends User {
+  watchlist: (WatchedEvent & { eventOption: EventOptionData })[];
 }
 
 export type { User, Event };

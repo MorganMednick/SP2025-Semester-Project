@@ -18,7 +18,7 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
       { path: 'watchlist', element: <Watchlist /> },
       { path: 'search/:q', element: <SearchResults /> },
-      { path: '/events/:id', element: <EventDetails /> },
+      { path: '/events/:name', element: <EventDetails /> },
     ],
   },
 ]);

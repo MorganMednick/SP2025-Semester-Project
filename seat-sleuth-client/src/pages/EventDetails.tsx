@@ -1,29 +1,24 @@
 import { Text, Container } from '@mantine/core';
-import { Event } from '@shared/api/responses';
-import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
-import { useQuery } from 'react-query';
+import { EventOptionData, EventWithOptions } from '@shared/api/responses';
 import { useParams } from 'react-router-dom';
-import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
-import EventDetailsImageSection from '../components/events/EventDetailsImageSection';
-import EventDetailsTicketCard from '../components/events/EventDetailsTicketCard';
-import EventDetailsInfoSection from '../components/events/EventDetailsInfoSection';
 import { useState } from 'react';
+import { useQuery } from 'react-query';
+import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 
 export default function EventDetails() {
-  const { id } = useParams();
-  const [event, setEvent] = useState<Event>({} as Event);
-  useQuery<Event, Error>(
-    ['ticketMasterEvents', id],
+  const { name } = useParams();
+  const {
+    data: eventWithOptions,
+    isLoading,
+    isError,
+  } = useQuery<EventWithOptions | null, Error>(
+    ['eventWithOptions', name],
     async () => {
-      const params: TicketMasterSearchParams = { id };
-      const res = await fetchTicketMasterEvents(params);
-      const event: Event = res.data?.[0] || ({} as Event);
-      setEvent(event);
-      return event;
+      const res = await fetchTicketMasterEvents({ keyword: name });
+      console.info('EventDetails.tsx: fetchTicketMasterEvents', res);
+      return res?.data?.[0] ?? null; // ✅ Return `null` if no event is found
     },
-    {
-      enabled: true,
-    },
+    { enabled: !!name },
   );
 
   if (!event) {
@@ -32,9 +27,19 @@ export default function EventDetails() {
 
   return (
     <Container fluid w="100%" p={0} m={0}>
-      <EventDetailsImageSection event={event} />
-      <EventDetailsInfoSection event={event} setEvent={setEvent} />
-      <EventDetailsTicketCard priceMin={event.priceMin} url={event.url} />
+      {name}
+      <br />
+      <br />
+      Stringified res:
+      <br />
+      <br />
+      {!isError && !isLoading && eventWithOptions && JSON.stringify(eventWithOptions)}
+      <br />
+      <br />
+      There are {eventWithOptions?.options?.length} options.
+      <br />
+      <br />
+      {!isError && !isLoading && eventWithOptions && JSON.stringify(eventWithOptions.options)}
     </Container>
   );
 }

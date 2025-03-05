@@ -1,19 +1,18 @@
-import { Event } from '@shared/api/responses';
+import { EventWithOptions } from '@shared/api/responses';
 import { Grid, Text, Center } from '@mantine/core';
 import EventCard from '../events/EventCard';
 import EventCardSkeleton from '../events/EventCardSkeleton';
-import { useIsMobile } from '../../hooks/hooks';
+import { useAppropriateGridColumnCount } from '../../hooks/hooks';
 
 interface EventCardGridProps {
-  events?: Event[];
+  events?: EventWithOptions[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
 }
 
 export default function EventCardGrid({ events, isLoading, isError, error }: EventCardGridProps) {
-  const isMobile = useIsMobile();
-  const COL_SPAN = isMobile ? 12 : 4;
+  const COL_SPAN = useAppropriateGridColumnCount();
   if (isLoading) {
     return (
       <Grid gutter="xl" p="md">

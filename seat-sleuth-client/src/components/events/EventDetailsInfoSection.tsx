@@ -1,35 +1,35 @@
-import { Flex, Stack, Text, Anchor, NativeSelect, Divider } from '@mantine/core';
+import { Flex, Stack, Text, NativeSelect, Divider } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { useMemo } from 'react';
-import { Event } from '@shared/api/responses';
+import { Event, EventOptionData, EventWithOptions } from '@shared/api/responses';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { useNavigate } from 'react-router-dom';
 
 interface InfoProps {
-  event: Event;
+  eventOption: EventOptionData;
   setEvent: React.Dispatch<React.SetStateAction<Event>>;
 }
 
-export default function EventDetailsInfoSection({ event, setEvent }: InfoProps) {
+export default function EventDetailsInfoSection({ eventOption, setEvent }: InfoProps) {
   const navigate = useNavigate();
 
-  const formattedDate = useMemo(
-    () =>
-      new Date(event.startTime).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }),
-    [event.startTime],
-  );
+  // const formattedDate = useMemo(
+  //   () =>
+  //     eventOption.startTime.toLocaleDateString('en-US', {
+  //       year: 'numeric',
+  //       month: 'long',
+  //       day: 'numeric',
+  //     }),
+  //   [eventOption.startTime],
+  // );
 
-  const { data: otherLocationsForEvent = [] } = useQuery<Event[], Error>(
-    ['eventsWithSameLocation', event.name],
+  const { data: otherLocationsForEvent = [] } = useQuery<EventWithOptions[], Error>(
+    ['eventWithAlternativeOptions', eventOption.event.eventName],
     async () => {
-      const res = await fetchTicketMasterEvents({ keyword: event.name });
-      return res?.data?.filter((other) => other.name === event.name) || [];
+      const res = await fetchTicketMasterEvents({ keyword: eventOption.event.eventName });
+      return res?.data?.filter((other) => other.eventName === eventOption.event.eventName) || [];
     },
-    { enabled: !!event.name },
+    { enabled: !!eventOption.event.eventName },
   );
 
   const locationOptions = useMemo(
@@ -37,7 +37,7 @@ export default function EventDetailsInfoSection({ event, setEvent }: InfoProps) 
       otherLocationsForEvent.length
         ? otherLocationsForEvent.map((evt) => ({
             value: evt.id,
-            label: evt.venueName || 'Unknown Location',
+            label: evt.eventName || 'Unknown Location',
           }))
         : [{ value: '', label: 'Fetching Locations...' }],
     [otherLocationsForEvent],
@@ -57,7 +57,7 @@ export default function EventDetailsInfoSection({ event, setEvent }: InfoProps) 
           size="md"
           c="green.7"
           data={locationOptions}
-          value={event.id || ''}
+          // value={event. || ''}
           w={400}
           h={60}
           labelProps={{ style: { fontWeight: 'bold' } }}
@@ -78,13 +78,13 @@ export default function EventDetailsInfoSection({ event, setEvent }: InfoProps) 
       <Flex direction="row" align="center" ml="auto" pr={350} gap="xl" mt={-10}>
         <Stack align="flex-end" gap="xs">
           <Text size="x" tt="uppercase" ta="left">
-            {formattedDate}
+            {/* {formattedDate} */}Fake Date
           </Text>
         </Stack>
 
         <Divider size="lg" color="black" orientation="vertical" h={100} />
 
-        <Stack align="flex-start" gap={5}>
+        {/* <Stack align="flex-start" gap={5}>
           <Text size="xxl" fw={700} ta="left">
             {event.city}
           </Text>
@@ -96,7 +96,7 @@ export default function EventDetailsInfoSection({ event, setEvent }: InfoProps) 
               See map
             </Anchor>
           )}
-        </Stack>
+        </Stack> */}
       </Flex>
     </Flex>
   );
