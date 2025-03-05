@@ -3,6 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { SettingsModal } from './SettingsModal';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
+import { IconEye, IconLogout, IconSettings } from '@tabler/icons-react';
 
 interface NavMenuProps {
   opened: boolean;
@@ -14,6 +15,7 @@ export default function NavMenu({ opened, onChange, onClose }: NavMenuProps) {
   const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const menuIconSize = 14;
 
   return (
     <>
@@ -22,9 +24,16 @@ export default function NavMenu({ opened, onChange, onClose }: NavMenuProps) {
           <Burger size="md" opened={opened} onClick={onChange} />
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item onClick={() => navigate('/watchlist')}>Watchlist</Menu.Item>
-          <Menu.Item onClick={openSettings}>Settings</Menu.Item>
-          <Menu.Item onClick={logout} c="red">
+          <Menu.Item
+            leftSection={<IconEye size={menuIconSize} />}
+            onClick={() => navigate('/watchlist')}
+          >
+            Watchlist
+          </Menu.Item>
+          <Menu.Item leftSection={<IconSettings size={menuIconSize} />} onClick={openSettings}>
+            Settings
+          </Menu.Item>
+          <Menu.Item leftSection={<IconLogout size={menuIconSize} />} onClick={logout} c="red">
             Log out
           </Menu.Item>
         </Menu.Dropdown>
