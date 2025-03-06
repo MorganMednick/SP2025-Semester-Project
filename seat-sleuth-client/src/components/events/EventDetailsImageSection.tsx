@@ -4,14 +4,12 @@ import { useState } from 'react';
 import { responseIsOk } from '../../util/apiUtils';
 import { checkLogin } from '../../api/functions/auth';
 import { useQuery } from 'react-query';
-import { set } from 'zod';
 
 interface ImageProps {
   event: EventWithOptions;
 }
 
-
-  /* TODO - @Veda Fix Me with new props! */
+/* TODO - @Veda Fix Me with new props! */
 
 export default function EventDetailsImageSection({ event }: ImageProps) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
