@@ -1,7 +1,6 @@
 import { Text, Container } from '@mantine/core';
-import { EventOptionData, EventWithOptions } from '@shared/api/responses';
+import { EventWithOptions } from '@shared/api/responses';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 

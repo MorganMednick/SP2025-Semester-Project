@@ -6,7 +6,7 @@ import {
   UserPayload,
   TicketMasterQueryParams,
 } from './payloads';
-import { AuthResponse, EventOptionData, EventWithOptions, TicketMasterQueryResponse, User } from './responses';
+import { AuthResponse, EventOptionData, TicketMasterQueryResponse, User } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 

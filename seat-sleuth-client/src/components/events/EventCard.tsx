@@ -1,4 +1,4 @@
-import { Card, Image, Text, Overlay, Center, Tooltip, Transition } from '@mantine/core';
+import { Card, Image, Text, Overlay, Center, Tooltip } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { EventWithOptions } from '@shared/api/responses';
 import { useHover } from '@mantine/hooks';

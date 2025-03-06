@@ -20,12 +20,14 @@ export const ticketMasterApiClient = axios.create({
 ticketMasterApiClient.interceptors.request.use(logRequest);
 ticketMasterApiClient.interceptors.response.use((response) => response, handleErrorResponse);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function logRequest(config: any) {
   const fullUrl = `${config.baseURL}${config.url}?${new URLSearchParams(config.params as Record<string, string>)}`;
   console.log(`[TicketMaster API Request] ${config.method?.toUpperCase()} ${fullUrl}`);
   return config;
 }
 
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleErrorResponse(error: any) {
   const status = error?.response?.status || 'UNKNOWN';
   const statusText = error?.response?.statusText || 'No status text';
@@ -49,6 +51,7 @@ export const handleTicketMasterEventRequest = async (
 };
 
 function mapRawEventsToQueryResponse(rawTmEventData: RawTMEventData[]): TicketMasterQueryResponse {
+  // eslint-disable-next-line @typescript-eslint/consistent-generic-constructors
   const eventMap: Map<string, EventWithOptions> = new Map();
 
   rawTmEventData.forEach((rawEvent) => {
@@ -56,6 +59,7 @@ function mapRawEventsToQueryResponse(rawTmEventData: RawTMEventData[]): TicketMa
     const eventName = eventOption.event.eventName;
 
     if (eventMap.has(eventName)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       eventMap.get(eventName)!.options.push(eventOption);
     } else {
       eventMap.set(eventName, {

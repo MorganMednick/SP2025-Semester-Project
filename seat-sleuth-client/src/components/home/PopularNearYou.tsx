@@ -2,7 +2,7 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { Text } from '@mantine/core';
 import { useQuery } from 'react-query';
-import { EventWithOptions, TicketMasterQueryResponse } from '@shared/api/responses';
+import { TicketMasterQueryResponse } from '@shared/api/responses';
 import EventCardGrid from '../events/EventCardGrid';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import PageLayout from '../layout/PageLayout';

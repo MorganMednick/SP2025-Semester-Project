@@ -1,8 +1,6 @@
 import { Container, Image, Flex, Title, Checkbox } from '@mantine/core';
-import { ApiResponse, Event, EventWithOptions } from '@shared/api/responses';
+import { EventWithOptions } from '@shared/api/responses';
 import { useState } from 'react';
-import { addToWatchList, removeFromWatchList } from '../../api/functions/watchlist';
-import { AddToWatchListPayload } from '@shared/api/payloads';
 import { responseIsOk } from '../../util/apiUtils';
 import { checkLogin } from '../../api/functions/auth';
 import { useQuery } from 'react-query';
@@ -12,7 +10,9 @@ interface ImageProps {
 }
 
 export default function EventDetailsImageSection({ event }: ImageProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabled, setDisabled] = useState<boolean>(false);
 
   const { isLoading, isError } = useQuery<boolean, Error>(['isLoggedIn'], async () => {

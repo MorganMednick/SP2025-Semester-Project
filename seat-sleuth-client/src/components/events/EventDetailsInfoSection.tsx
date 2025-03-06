@@ -1,7 +1,7 @@
 import { Flex, Stack, Text, NativeSelect, Divider } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { useMemo } from 'react';
-import { Event, EventOptionData, EventWithOptions, TicketMasterQueryResponse } from '@shared/api/responses';
+import { Event, EventOptionData, TicketMasterQueryResponse } from '@shared/api/responses';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { useNavigate } from 'react-router-dom';
 
