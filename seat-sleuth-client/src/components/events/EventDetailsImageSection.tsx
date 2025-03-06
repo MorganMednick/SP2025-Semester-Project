@@ -9,6 +9,9 @@ interface ImageProps {
   event: EventWithOptions;
 }
 
+
+  /* TODO - Fix Me with new props! */
+
 export default function EventDetailsImageSection({ event }: ImageProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isChecked, setIsChecked] = useState<boolean>(false);
