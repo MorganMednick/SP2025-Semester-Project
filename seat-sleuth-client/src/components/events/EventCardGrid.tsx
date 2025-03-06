@@ -14,11 +14,13 @@ interface EventCardGridProps {
 
 export default function EventCardGrid({ events, isLoading, isError, error }: EventCardGridProps) {
   const COL_SPAN = useAppropriateGridColumnCount();
+  const CARD_SLIDE_ANIMATION_DELAY = 25;
+  const CARD_SLIDE_ANIMATION_DURATION = 250;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     if (events) {
-      setMounted(true);
+      setTimeout(() => setMounted(true), CARD_SLIDE_ANIMATION_DURATION);
     } else {
       setMounted(false);
     }
@@ -54,8 +56,8 @@ export default function EventCardGrid({ events, isLoading, isError, error }: Eve
             <Transition
               mounted={mounted}
               transition="slide-right" // Check this out if you wanna change transition effect: https://mantine.dev/core/transition/
-              duration={250}
-              enterDelay={index * 25}
+              duration={CARD_SLIDE_ANIMATION_DURATION}
+              enterDelay={index * CARD_SLIDE_ANIMATION_DELAY}
               timingFunction="ease"
             >
               {(styles) => (

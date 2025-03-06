@@ -3,7 +3,7 @@ import { sendError, sendSuccess } from '../util/responseUtils';
 import { Request, Response } from 'express';
 import { TicketMasterSearchParams } from '../types/shared/api/external/ticketMaster';
 import { handleTicketMasterEventRequest } from '../util/ticketMasterUtils';
-import { EventWithOptions, TicketMasterQueryResponse } from '../types/shared/api/responses';
+import {  TicketMasterQueryResponse } from '../types/shared/api/responses';
 
 export const fetchTicketMasterEvents = async (req: Request, res: Response): Promise<void> => {
   try {
