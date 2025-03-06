@@ -4,9 +4,9 @@ import {
   UpdatePasswordPayload,
   RemoveFromWatchListPayload,
   UserPayload,
+  TicketMasterQueryParams,
 } from './payloads';
-import { AuthResponse, EventOptionData, EventWithOptions, User } from './responses';
-import { TicketMasterSearchParams } from './external/ticketMaster';
+import { AuthResponse, EventOptionData, EventWithOptions, TicketMasterQueryResponse, User } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -50,8 +50,8 @@ export const TM_API_SCHEMA = {
   TM_EVENTS: {
     route: '/tm/events',
     method: 'POST',
-    payload: {} as TicketMasterSearchParams,
-    response: {} as EventWithOptions[],
+    payload: {} as TicketMasterQueryParams,
+    response: {} as TicketMasterQueryResponse,
   },
 } as const;
 

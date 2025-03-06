@@ -1,3 +1,5 @@
+import { TicketMasterSearchParams } from "./external/ticketMaster";
+
 export interface AuthPayload {
   email: string;
   password: string;
@@ -21,3 +23,6 @@ export interface AddToWatchListPayload {
 export interface RemoveFromWatchListPayload {
   eventOptionId: string;
 }
+
+
+export type TicketMasterQueryParams = TicketMasterSearchParams;

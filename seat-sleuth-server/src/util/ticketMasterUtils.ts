@@ -5,7 +5,11 @@ import {
   TicketMasterSearchParams,
 } from '../types/shared/api/external/ticketMaster';
 import { OptionSource, PriceOption } from '@prisma/client';
-import { EventOptionData, EventWithOptions } from '../types/shared/api/responses';
+import {
+  EventOptionData,
+  EventWithOptions,
+  TicketMasterQueryResponse,
+} from '../types/shared/api/responses';
 
 export const ticketMasterApiClient = axios.create({
   baseURL: TM_BASE_URL,
@@ -44,7 +48,7 @@ ticketMasterApiClient.interceptors.response.use(
 
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
-): Promise<EventWithOptions[]> => {
+): Promise<TicketMasterQueryResponse> => {
   const response = await ticketMasterApiClient.get('events.json', {
     params: { ...params },
   });
@@ -114,7 +118,7 @@ export const handleTicketMasterEventRequest = async (
       });
     }
   });
-  const finalEventsArray: EventWithOptions[] = Array.from(eventMap.values());
+  const finalEventsArray: TicketMasterQueryResponse = Array.from(eventMap.values());
 
   console.log(finalEventsArray.find((evt) => evt.eventName === 'Remi Wolf')?.options.length);
   console.log(finalEventsArray);

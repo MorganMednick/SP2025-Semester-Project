@@ -1,7 +1,7 @@
 import { Flex, Stack, Text, NativeSelect, Divider } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { useMemo } from 'react';
-import { Event, EventOptionData, EventWithOptions } from '@shared/api/responses';
+import { Event, EventOptionData, EventWithOptions, TicketMasterQueryResponse } from '@shared/api/responses';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ export default function EventDetailsInfoSection({ eventOption, setEvent }: InfoP
   //   [eventOption.startTime],
   // );
 
-  const { data: otherLocationsForEvent = [] } = useQuery<EventWithOptions[], Error>(
+  const { data: otherLocationsForEvent = [] } = useQuery<TicketMasterQueryResponse, Error>(
     ['eventWithAlternativeOptions', eventOption.event.eventName],
     async () => {
       const res = await fetchTicketMasterEvents({ keyword: eventOption.event.eventName });

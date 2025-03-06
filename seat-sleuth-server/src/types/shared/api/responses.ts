@@ -18,6 +18,8 @@ export type ApiSuccessResponse<T> = Omit<ApiResponse<T>, 'error'>;
 export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
 export type AuthResponse = null;
 
+export type TicketMasterQueryResponse = EventWithOptions[];
+
 export interface EventOptionData extends PrismaEventOption {
   event: Event;
   priceOptions: PriceOption[];
