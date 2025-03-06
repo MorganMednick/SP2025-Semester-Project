@@ -4,22 +4,23 @@ import { useState } from 'react';
 import { responseIsOk } from '../../util/apiUtils';
 import { checkLogin } from '../../api/functions/auth';
 import { useQuery } from 'react-query';
+import { set } from 'zod';
 
 interface ImageProps {
   event: EventWithOptions;
 }
 
 
-  /* TODO - Fix Me with new props! */
+  /* TODO - @Veda Fix Me with new props! */
 
 export default function EventDetailsImageSection({ event }: ImageProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabled, setDisabled] = useState<boolean>(false);
 
   const { isLoading, isError } = useQuery<boolean, Error>(['isLoggedIn'], async () => {
     const res = await checkLogin();
+    setIsChecked(false);
+    setDisabled(true);
     return Boolean(responseIsOk(res));
   });
 

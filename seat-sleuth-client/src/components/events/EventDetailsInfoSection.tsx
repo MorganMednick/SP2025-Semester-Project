@@ -9,7 +9,6 @@ interface InfoProps {
   eventOption: EventOptionData;
   setEvent: React.Dispatch<React.SetStateAction<Event>>;
 }
-
 export default function EventDetailsInfoSection({ eventOption, setEvent }: InfoProps) {
   const navigate = useNavigate();
 
