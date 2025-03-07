@@ -2,7 +2,7 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { Text } from '@mantine/core';
 import { useQuery } from 'react-query';
-import { TicketMasterQueryResponse } from '@shared/api/responses';
+import { EventMetaData } from '@shared/api/responses';
 import EventCardGrid from '../events/EventCardGrid';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import PageLayout from '../layout/PageLayout';
@@ -11,11 +11,11 @@ export default function PopularNearYou() {
   const { geoPoint, geoPointFetching } = useGeoPoint();
 
   const {
-    data: eventsNearYou,
+    data: eventsNearYouMetaData,
     isLoading,
     isError,
     error,
-  } = useQuery<TicketMasterQueryResponse, Error>(
+  } = useQuery<EventMetaData | [], Error>(
     ['ticketMasterEvents', geoPoint],
     async () => {
       const nearMeParams: TicketMasterSearchParams = {
@@ -27,7 +27,8 @@ export default function PopularNearYou() {
         page: '1',
       };
       const res = await fetchTicketMasterEvents(nearMeParams);
-      return res.data || [];
+      const metaData: EventMetaData[] | [] = res?.data?.map(({ options, ...rest }) => rest) || [];
+      return metaData;
     },
     { enabled: !geoPointFetching },
   );
@@ -43,7 +44,7 @@ export default function PopularNearYou() {
         error={error}
         isLoading={isFetching}
         isError={isError}
-        events={eventsNearYou}
+        events={eventsNearYouMetaData}
       />
     </PageLayout>
   );

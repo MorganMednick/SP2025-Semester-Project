@@ -1,9 +1,9 @@
 import { Card, Image, Text, Overlay, Center, Tooltip } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { EventWithOptions } from '@shared/api/responses';
+import { EventMetaData } from '@shared/api/responses';
 import { useHover } from '@mantine/hooks';
 
-export default function EventCard({ event }: { event: EventWithOptions }) {
+export default function EventCard({ event }: { event: EventMetaData }) {
   const navigate = useNavigate();
   const { hovered, ref } = useHover();
 
@@ -18,7 +18,7 @@ export default function EventCard({ event }: { event: EventWithOptions }) {
       >
         <Card.Section>
           <Image
-            src={event?.imageSrc?.[0] || 'https://picsum.photos/400'}
+            src={event?.coverImage || 'https://picsum.photos/400'}
             height={160}
             alt={event.eventName}
           />
@@ -27,7 +27,7 @@ export default function EventCard({ event }: { event: EventWithOptions }) {
             gradient="linear-gradient(145deg, rgba(0, 0, 0, 0.95) 10%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 90%)"
             opacity={hovered ? 1.0 : 0.95}
             style={{ cursor: 'pointer' }}
-            onClick={() => navigate(`/events/${event.eventName}`)}
+            onClick={() => navigate(`/events/${event.eventName.replace(/ /g, '-').replace(/\//g, "_")}`)}
           >
             <Center w="100%" h="100%" px={12}>
               <Text c="white" size="xl" fw={600} ta="center" lineClamp={2}>

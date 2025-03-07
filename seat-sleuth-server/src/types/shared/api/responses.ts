@@ -1,10 +1,4 @@
-import {
-  User,
-  Event,
-  PriceOption,
-  EventOption as PrismaEventOption,
-  WatchedEvent,
-} from '@prisma/client';
+import { User, WatchedEvent, PriceOption, EventMetaData, EventInstance } from '@prisma/client';
 
 export interface ApiResponse<T> {
   data?: T;
@@ -18,19 +12,20 @@ export type ApiSuccessResponse<T> = Omit<ApiResponse<T>, 'error'>;
 export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
 export type AuthResponse = null;
 
-export type TicketMasterQueryResponse = EventWithOptions[];
+export type EventData = EventMetaData & {
+  options: SpecificEventData[];
+};
 
-export interface EventOptionData extends PrismaEventOption {
-  event: Event;
+export type SpecificEventData = EventInstance & {
+  watchers: WatchedEventData[];
   priceOptions: PriceOption[];
-}
+};
 
-export interface EventWithOptions extends Event {
-  options: EventOptionData[];
-}
+export type WatchedEventData = WatchedEvent & {
+  user: User;
+};
 
-export interface UserWithWatchlist extends User {
-  watchlist: (WatchedEvent & { eventOption: EventOptionData })[];
-}
+export type TicketMasterQueryResponse = EventData[];
+export type GetWatchlistForUserResponse = EventData[];
 
-export type { User, Event };
+export { EventMetaData };

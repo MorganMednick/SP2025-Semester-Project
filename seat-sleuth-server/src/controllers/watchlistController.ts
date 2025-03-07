@@ -3,7 +3,12 @@ import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { AddToWatchListPayload, RemoveFromWatchListPayload } from '../types/shared/api/payloads';
-import { EventOptionData } from '../types/shared/api/responses';
+import {
+  EventData,
+  SpecificEventData,
+  GetWatchlistForUserResponse,
+} from '../types/shared/api/responses';
+import { PriceOption } from '@prisma/client';
 
 export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -16,15 +21,19 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
       return;
     }
 
+    // Fetch user watchlist with necessary relations
     const userWithWatchlist = await prisma.user.findUnique({
       where: { id: userId },
       include: {
         watchlist: {
           include: {
-            eventOption: {
+            specificEvent: {
               include: {
                 event: true,
                 priceOptions: true,
+                watchers: {
+                  include: { user: true },
+                },
               },
             },
           },
@@ -40,9 +49,35 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    const userWatchlist: EventOptionData[] = userWithWatchlist.watchlist.map(
-      (entry) => entry.eventOption,
-    );
+    // Map the data to EventData[]
+    const eventMap: Map<string, EventData> = new Map();
+
+    userWithWatchlist.watchlist.forEach(({ specificEvent }) => {
+      if (!specificEvent) return;
+
+      const eventId = specificEvent.ticketMasterId;
+
+      // Map to SpecificEventData
+      const mappedSpecificEvent: SpecificEventData = {
+        ...specificEvent,
+        watchers: specificEvent.watchers.map((watch) => ({
+          ...watch,
+          user: watch.user,
+        })),
+        priceOptions: specificEvent.priceOptions as PriceOption[],
+      };
+
+      if (eventMap.has(eventId)) {
+        eventMap.get(eventId)!.options.push(mappedSpecificEvent);
+      } else {
+        eventMap.set(eventId, {
+          ...specificEvent.event,
+          options: [mappedSpecificEvent], // Now using SpecificEventData
+        });
+      }
+    });
+
+    const userWatchlist: GetWatchlistForUserResponse = Array.from(eventMap.values());
 
     console.info('User watchlist:', userWatchlist);
 
@@ -81,8 +116,9 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const eventOption = await prisma.eventOption.findUnique({
-      where: { id: eventOptionId },
+    // Check if event option exists
+    const eventOption = await prisma.eventInstance.findUnique({
+      where: { ticketMasterId: eventOptionId },
     });
 
     if (!eventOption) {
@@ -135,6 +171,7 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
       return;
     }
 
+    // Check if entry exists in the watchlist
     const watchlistEntry = await prisma.watchedEvent.findUnique({
       where: {
         userId_eventOptionId: { userId, eventOptionId },

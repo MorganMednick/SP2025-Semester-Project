@@ -1,53 +1,24 @@
 import { Container, Image, Flex, Title, Checkbox } from '@mantine/core';
-import { EventWithOptions } from '@shared/api/responses';
 import { useState } from 'react';
 import { responseIsOk } from '../../util/apiUtils';
 import { checkLogin } from '../../api/functions/auth';
 import { useQuery } from 'react-query';
+import { EventDetailsChildProps } from '../../types/eventDetail';
 
-interface ImageProps {
-  event: EventWithOptions;
-}
 
 /* TODO - @Veda Fix Me with new props! */
 
-export default function EventDetailsImageSection({ event }: ImageProps) {
+export default function EventDetailsImageSection({ selectedOption, setSelectedOption }: EventDetailsChildProps) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
 
-  const { isLoading, isError } = useQuery<boolean, Error>(['isLoggedIn'], async () => {
-    const res = await checkLogin();
-    setIsChecked(false);
-    setDisabled(true);
-    return Boolean(responseIsOk(res));
-  });
 
-  // const handleCheckboxChange = async (checked: boolean) => {
-  //   setDisabled(true);
-  //   setIsChecked(checked);
-  //   if (checked) {
-  //     const addToWatchListPayload: AddToWatchListPayload = {
-  //       eventId: event.id,
-  //       startingPrice: event.priceMin || 0.0,
-  //       ticketSite: 'TICKETMASTER',
-  //     };
-  //     const res: ApiResponse<null> = await addToWatchList(addToWatchListPayload);
-  //     if (responseIsOk(res)) {
-  //       setDisabled(false);
-  //     }
-  //   } else {
-  //     const res: ApiResponse<null> = await removeFromWatchList({ eventId: event.id });
-  //     if (responseIsOk(res)) {
-  //       setDisabled(false);
-  //     }
-  //   }
-  // };
 
   return (
     <>
       {event && (
         <Container fluid w="100%" p={0} m={0} pos="relative" mt={-25}>
-          <Image src={event.imageSrc?.[0]} alt={event.eventName} width="100%" height={400} />
+          <Image src={event.?.[0]} alt={event.eventName} width="100%" height={400} />
 
           <Flex
             justify="space-between"

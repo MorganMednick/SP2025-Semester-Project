@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { EventWithOptions } from '@shared/api/responses';
+import { EventMetaData } from '@shared/api/responses';
 import { Grid, Text, Center, Transition } from '@mantine/core';
 import EventCard from '../events/EventCard';
 import EventCardSkeleton from '../events/EventCardSkeleton';
 import { useAppropriateGridColumnCount } from '../../hooks/hooks';
 
 interface EventCardGridProps {
-  events?: EventWithOptions[];
+  events?: EventMetaData[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
@@ -52,7 +52,7 @@ export default function EventCardGrid({ events, isLoading, isError, error }: Eve
     <Grid gutter="xl" py="md">
       {events && events.length > 0 ? (
         events.map((event, index) => (
-          <Grid.Col key={event.id} span={COL_SPAN}>
+          <Grid.Col key={event.eventName} span={COL_SPAN}>
             <Transition
               mounted={mounted}
               transition="slide-right" // Check this out if you wanna change transition effect: https://mantine.dev/core/transition/

@@ -1,11 +1,11 @@
 // Strict typing as extracted from https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/#anchor_find
+
 export interface TicketMasterSearchParams {
   id?: string;
   keyword?: string;
   attractionId?: string;
   venueId?: string;
   postalCode?: string;
-  latlong?: string; // @Deprecated
   radius?: string;
   unit?: 'miles' | 'km';
   source?: 'ticketmaster' | 'universe' | 'frontgate' | 'tmr';
@@ -76,8 +76,8 @@ export interface EventImage {
 export interface Venue {
   name: string;
   address: {
-    line1?: string;
-    line2?: string;
+    line1: string;
+    line2: string;
   };
   city: {
     name: string;
@@ -89,8 +89,8 @@ export interface Venue {
 
 export interface StartDate {
   localDate: string;
-  localTime?: string;
-  dateTime?: string;
+  localTime: string;
+  dateTime: string;
 }
 
 export interface Seatmap {
@@ -99,37 +99,38 @@ export interface Seatmap {
 
 export interface PriceRange {
   currency: string;
-  min?: number;
-  max?: number;
+  min: number;
+  max: number;
 }
 
 export interface Genre {
   id: string;
   name: string;
 }
+
 export interface Classification {
-  genre?: Genre;
-  subGenre?: Genre;
+  genre: Genre;
+  subGenre: Genre;
 }
 
 export interface RawTMEventData {
   id: string;
   name: string;
   url: string;
-  priceRanges?: PriceRange[];
+  priceRanges: PriceRange[];
   classifications: Classification[];
   images: EventImage[];
-  seatmap?: Seatmap;
-  _embedded?: {
-    venues?: Venue[];
+  seatmap: Seatmap;
+  _embedded: {
+    venues: Venue[];
   };
-  _links?: {
+  _links: {
     self: {
       href: string;
     };
   };
-  dates?: {
-    start?: StartDate;
+  dates: {
+    start: StartDate;
   };
   distance: number;
   sales: {

@@ -19,6 +19,7 @@ const router = createBrowserRouter([
       { path: 'watchlist', element: <Watchlist /> },
       { path: 'search/:q', element: <SearchResults /> },
       { path: '/events/:name', element: <EventDetails /> },
+      { path: '/events/:name/:id', element: <EventDetails /> },
     ],
   },
 ]);

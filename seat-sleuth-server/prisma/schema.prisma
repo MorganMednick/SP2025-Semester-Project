@@ -23,8 +23,8 @@ model User {
 model WatchedEvent {
   userId        Int
   eventOptionId String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  eventOption   EventOption @relation(fields: [eventOptionId], references: [id], onDelete: Cascade) // Not a event. Do not reference Event model when fetching, silly.
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specificEvent   EventInstance @relation(fields: [eventOptionId], references: [ticketMasterId], onDelete: Cascade)
 
   @@id([userId, eventOptionId])
 }
@@ -36,23 +36,22 @@ enum OptionSource {
 }
 
 /// For storing TM, SH, SG prices for a single event option
-/// TODO: If we want to handle different section types, we would add that to this particular schema here.
 model PriceOption {
-  id            String       @id @default(uuid())
+  id            String       @id @default(uuid()) // Let this randomly generate for primary key reference... DO NOT CHANGE ME - Jayce
   eventOptionId String
   priceMin      Float
   priceMax      Float
   source        OptionSource
 
-  eventOption   EventOption  @relation(fields: [eventOptionId], references: [id], onDelete: Cascade)
+  specificEvent   EventInstance  @relation(fields: [eventOptionId], references: [ticketMasterId], onDelete: Cascade)
 
   @@unique([eventOptionId, source])
 }
 
 /// Holds the actual data for the event. I do not know how I'm feelin about the PriceOptions schema yet but it seems intuitive.
-model EventOption {
-  id              String       @id @default(uuid())
-  eventId         String
+model EventInstance {
+  ticketMasterId  String       @id // ABSOLUTELY REQUIRED!!!! MUST REFER TO TM ID. We can add other options like this later.
+  eventName       String
   venueName       String
   address         String
   seatMapSrc      String?
@@ -64,16 +63,15 @@ model EventOption {
   saleStart       DateTime?
   saleEnd         DateTime?
 
-  event           Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event          EventMetaData          @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
   watchers       WatchedEvent[]
   priceOptions   PriceOption[]
 }
 
-/// Event model now doesn't store specific data. It is used primarily for grouping EventOptions.
-model Event {
-  id          String        @id // This actually comes from the Ticketmaster API. Do not auto increment ever you silly goose.
-  eventName   String        @unique
+/// Event model now doesn't store specific data. It is used primarily for grouping EventInstance's.
+model EventMetaData {
+  eventName   String        @id @unique
   genre       String?
-  imageSrc    String[]
-  options     EventOption[]
+  coverImage  String?
+  options     EventInstance[]
 }

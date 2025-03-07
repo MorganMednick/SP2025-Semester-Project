@@ -1,36 +1,29 @@
-import { Text,Card,Group,Anchor,Flex } from '@mantine/core';
+import { Text, Card, Group, Anchor, Flex } from '@mantine/core';
+import { EventDetailsChildProps } from '../../types/eventDetail';
 
-
-
-interface TicketProps {
-  priceMin?: number | null;
-  url?: string | null;
-}
-
-
-export default function EventDetailsTicketCard({priceMin,url}: TicketProps) {
+export default function EventDetailsTicketCard({
+  selectedOption,
+  setSelectedOption,
+}: EventDetailsChildProps) {
   return (
     <div>
       <Flex justify="flex-end" pr={50} gap="xl" mt={-10} mb={10}>
-        {priceMin && url && (
-          <Card
-            withBorder
-            radius="md"
-
-            w={251}
-            h={180}
-            style={{ borderColor: '#49905F', borderWidth: 2 }}
-          >
-            <Text size="xxxx" fw={700} c="green.7" ta="center" mt={-10}>
-              ${priceMin}
-            </Text>
-            <Group justify="center" mt={-10}>
-              <Anchor href={url || undefined} target="_blank" c="green.7" size="xx">
-                TicketMaster
-              </Anchor>
-            </Group>
-          </Card>
-        )}
+        <Card
+          withBorder
+          radius="md"
+          w={251}
+          h={180}
+          style={{ borderColor: '#49905F', borderWidth: 2 }}
+        >
+          <Text size="xxxx" fw={700} c="green.7" ta="center" mt={-10}>
+            ${selectedOption?.priceOptions?.[0]?.price || 0.00}
+          </Text>
+          <Group justify="center" mt={-10}>
+            <Anchor href={url || undefined} target="_blank" c="green.7" size="xx">
+              TicketMaster
+            </Anchor>
+          </Group>
+        </Card>
         <Card
           withBorder
           radius="md"

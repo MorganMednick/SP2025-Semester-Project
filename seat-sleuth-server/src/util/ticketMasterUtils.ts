@@ -6,8 +6,8 @@ import {
 } from '../types/shared/api/external/ticketMaster';
 import { OptionSource, PriceOption } from '@prisma/client';
 import {
-  EventOptionData,
-  EventWithOptions,
+  EventData,
+  SpecificEventData,
   TicketMasterQueryResponse,
 } from '../types/shared/api/responses';
 
@@ -51,22 +51,19 @@ export const handleTicketMasterEventRequest = async (
 };
 
 function mapRawEventsToQueryResponse(rawTmEventData: RawTMEventData[]): TicketMasterQueryResponse {
-  // eslint-disable-next-line @typescript-eslint/consistent-generic-constructors
-  const eventMap: Map<string, EventWithOptions> = new Map();
+  const eventMap: Map<string, EventData> = new Map();
 
   rawTmEventData.forEach((rawEvent) => {
-    const eventOption = mapRawEventToOption(rawEvent); // This for embedded stuffies - J
-    const eventName = eventOption.event.eventName;
+    const eventOption = mapRawEventToOption(rawEvent);
+    const eventName = rawEvent.name || 'Unknown Event';
 
     if (eventMap.has(eventName)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       eventMap.get(eventName)!.options.push(eventOption);
     } else {
       eventMap.set(eventName, {
-        id: rawEvent.id,
         eventName,
-        genre: rawEvent.classifications?.[0]?.genre?.name ?? null,
-        imageSrc: rawEvent.images.map((img) => img.url) || [],
+        genre: rawEvent.classifications?.[0]?.genre?.name || 'Unknown Genre',
+        coverImage: rawEvent.images[0].url || '',
         options: [eventOption],
       });
     }
@@ -75,30 +72,23 @@ function mapRawEventsToQueryResponse(rawTmEventData: RawTMEventData[]): TicketMa
   return Array.from(eventMap.values());
 }
 
-function mapRawEventToOption(rawEvent: RawTMEventData): EventOptionData {
-  const { id, name, url, classifications, priceRanges, seatmap, sales, _embedded, dates, images } =
-    rawEvent;
-
+function mapRawEventToOption(rawEvent: RawTMEventData): SpecificEventData {
+  const ticketMasterId = rawEvent.id;
   return {
-    id,
-    eventId: '',
-    venueName: _embedded?.venues?.[0]?.name ?? 'Unknown Venue',
-    address: _embedded?.venues?.[0]?.address?.line1 ?? '',
-    city: _embedded?.venues?.[0]?.city?.name ?? 'Unknown City',
-    country: _embedded?.venues?.[0]?.country?.name ?? 'Unknown Country',
-    startTime: dates?.start?.dateTime ? new Date(dates.start.dateTime) : new Date(),
-    saleStart: sales?.public?.startDateTime ? new Date(sales.public.startDateTime) : null,
-    saleEnd: sales?.public?.endDateTime ? new Date(sales.public.endDateTime) : null,
-    seatMapSrc: seatmap?.staticUrl ?? null,
-    currency: priceRanges?.[0]?.currency ?? null,
-    url: url ?? null,
-    priceOptions: mapPriceRanges(id, priceRanges), // This for embedded stuffies - J
-    event: {
-      id,
-      eventName: name,
-      genre: classifications?.[0]?.genre?.name ?? null,
-      imageSrc: images.map((img) => img.url) || [],
-    },
+    eventName: rawEvent.name || 'Unknown Event',
+    ticketMasterId,
+    venueName: rawEvent?._embedded?.venues[0].name || 'Unknown Venue',
+    address: rawEvent?._embedded?.venues[0].address?.line1 || 'Unknown Address',
+    city: rawEvent?._embedded?.venues[0].city?.name || 'Unknown City',
+    country: rawEvent?._embedded?.venues[0].country?.name || 'Unknown Country',
+    startTime: safeDate(rawEvent.dates?.start?.dateTime),
+    saleStart: safeDate(rawEvent.sales?.public?.startDateTime),
+    saleEnd: safeDate(rawEvent.sales?.public?.endDateTime),
+    seatMapSrc: rawEvent.seatmap?.staticUrl || '',
+    currency: rawEvent.priceRanges?.[0]?.currency || 'USD',
+    url: rawEvent.url || '',
+    priceOptions: mapPriceRanges(ticketMasterId, rawEvent.priceRanges),
+    watchers: [],
   };
 }
 
@@ -113,6 +103,10 @@ function mapPriceRanges(
       priceMin: priceRange.min !== undefined ? parseFloat(priceRange.min.toString()) : 0,
       priceMax: priceRange.max !== undefined ? parseFloat(priceRange.max.toString()) : 0,
       source: OptionSource.Ticketmaster,
-    })) ?? []
+    })) || []
   );
+}
+
+function safeDate(dateString?: string): Date {
+  return dateString ? new Date(dateString) : new Date();
 }
