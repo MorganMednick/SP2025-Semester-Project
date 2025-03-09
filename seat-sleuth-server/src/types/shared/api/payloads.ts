@@ -1,4 +1,4 @@
-import { TicketMasterSearchParams } from "./external/ticketMaster";
+import { TicketMasterSearchParams } from './external/ticketMaster';
 
 export interface AuthPayload {
   email: string;
@@ -8,7 +8,7 @@ export interface AuthPayload {
 export interface UserPayload {
   email: string;
   name: string;
-  notif: boolean;
+  notification: boolean;
 }
 
 export interface UpdatePasswordPayload {
@@ -17,12 +17,11 @@ export interface UpdatePasswordPayload {
 }
 
 export interface AddToWatchListPayload {
-  eventOptionId: string;
+  eventInstanceId: string;
 }
 
 export interface RemoveFromWatchListPayload {
-  eventOptionId: string;
+  eventInstanceId: string;
 }
-
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;

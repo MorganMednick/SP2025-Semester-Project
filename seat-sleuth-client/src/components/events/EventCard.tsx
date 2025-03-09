@@ -27,7 +27,9 @@ export default function EventCard({ event }: { event: EventMetaData }) {
             gradient="linear-gradient(145deg, rgba(0, 0, 0, 0.95) 10%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 90%)"
             opacity={hovered ? 1.0 : 0.95}
             style={{ cursor: 'pointer' }}
-            onClick={() => navigate(`/events/${event.eventName.replace(/ /g, '-').replace(/\//g, "_")}`)}
+            onClick={() =>
+              navigate(`/events/${event.eventName.replace(/ /g, '-').replace(/\//g, '_')}`)
+            }
           >
             <Center w="100%" h="100%" px={12}>
               <Text c="white" size="xl" fw={600} ta="center" lineClamp={2}>

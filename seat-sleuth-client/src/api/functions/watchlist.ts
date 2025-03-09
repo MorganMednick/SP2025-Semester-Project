@@ -14,6 +14,6 @@ export const removeFromWatchList = async (
   return await handleServerRequest('REMOVE_FROM_WATCHLIST', removeFromWatchListPayload);
 };
 
-export const fetchUserWatchList = async (): Promise<ApiResponse<GetWatchlistForUserResponse[]>> => {
+export const fetchUserWatchList = async (): Promise<ApiResponse<GetWatchlistForUserResponse>> => {
   return await handleServerRequest('GET_WATCHLIST');
 };

@@ -40,14 +40,14 @@ export const updateUserInfo = async (req: Request, res: Response): Promise<void>
   try {
     const userId = req.session.userId;
 
-    const { name, email, notif } = req.body;
+    const { name, email, notification } = req.body;
 
     await prisma.user.update({
       where: { id: userId },
       data: {
         name,
         email,
-        notif,
+        notification,
       },
     });
 

@@ -27,7 +27,7 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
       include: {
         watchlist: {
           include: {
-            specificEvent: {
+            eventInstance: {
               include: {
                 event: true,
                 priceOptions: true,
@@ -49,30 +49,30 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    // Map the data to EventData[]
-    const eventMap: Map<string, EventData> = new Map();
+    const eventMap: Map<string, EventData> = new Map<string, EventData>();
 
-    userWithWatchlist.watchlist.forEach(({ specificEvent }) => {
-      if (!specificEvent) return;
+    userWithWatchlist.watchlist.forEach(({ eventInstance }) => {
+      if (!eventInstance) return;
 
-      const eventId = specificEvent.ticketMasterId;
+      const eventId = eventInstance.ticketMasterId;
 
       // Map to SpecificEventData
       const mappedSpecificEvent: SpecificEventData = {
-        ...specificEvent,
-        watchers: specificEvent.watchers.map((watch) => ({
+        ...eventInstance,
+        watchers: eventInstance.watchers.map((watch) => ({
           ...watch,
           user: watch.user,
         })),
-        priceOptions: specificEvent.priceOptions as PriceOption[],
+        priceOptions: eventInstance.priceOptions as PriceOption[],
       };
 
       if (eventMap.has(eventId)) {
-        eventMap.get(eventId)!.options.push(mappedSpecificEvent);
+        const existingEvent = eventMap.get(eventId);
+        if (existingEvent) existingEvent.instances.push(mappedSpecificEvent);
       } else {
         eventMap.set(eventId, {
-          ...specificEvent.event,
-          options: [mappedSpecificEvent], // Now using SpecificEventData
+          ...eventInstance.event,
+          instances: [mappedSpecificEvent], // Now using SpecificEventData
         });
       }
     });
@@ -107,8 +107,8 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const { eventOptionId }: AddToWatchListPayload = req.body;
-    if (!eventOptionId) {
+    const { eventInstanceId }: AddToWatchListPayload = req.body;
+    if (!eventInstanceId) {
       sendError(res, {
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'Event Option ID is required',
@@ -118,7 +118,7 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
 
     // Check if event option exists
     const eventOption = await prisma.eventInstance.findUnique({
-      where: { ticketMasterId: eventOptionId },
+      where: { ticketMasterId: eventInstanceId },
     });
 
     if (!eventOption) {
@@ -131,10 +131,10 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
 
     await prisma.watchedEvent.upsert({
       where: {
-        userId_eventOptionId: { userId, eventOptionId },
+        userId_eventInstanceId: { userId, eventInstanceId },
       },
       update: {},
-      create: { userId, eventOptionId },
+      create: { userId, eventInstanceId },
     });
 
     sendSuccess(res, {
@@ -162,8 +162,8 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
       return;
     }
 
-    const { eventOptionId }: RemoveFromWatchListPayload = req.body;
-    if (!eventOptionId) {
+    const { eventInstanceId }: RemoveFromWatchListPayload = req.body;
+    if (!eventInstanceId) {
       sendError(res, {
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'Event Option ID is required',
@@ -174,7 +174,7 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
     // Check if entry exists in the watchlist
     const watchlistEntry = await prisma.watchedEvent.findUnique({
       where: {
-        userId_eventOptionId: { userId, eventOptionId },
+        userId_eventInstanceId: { userId, eventInstanceId },
       },
     });
 
@@ -188,7 +188,7 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
 
     await prisma.watchedEvent.delete({
       where: {
-        userId_eventOptionId: { userId, eventOptionId },
+        userId_eventInstanceId: { userId, eventInstanceId },
       },
     });
 

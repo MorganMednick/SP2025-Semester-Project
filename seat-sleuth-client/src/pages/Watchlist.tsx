@@ -1,23 +1,27 @@
 import { useQuery } from 'react-query';
-import { ApiResponse, EventOptionData } from '@shared/api/responses';
 import PageLayout from '../components/layout/PageLayout';
-import { fetchUserWatchList } from '../api/functions/watchlist';
 import { Text } from '@mantine/core';
+import { EventMetaData, GetWatchlistForUserResponse } from '@shared/api/responses';
+import { fetchUserWatchList } from '../api/functions/watchlist';
+import EventCardGrid from '../components/events/EventCardGrid';
+import { stripInstancesFromEventData } from '../util/apiUtils';
 
 export default function Watchlist() {
   const {
-    data: watchlist,
+    data: watchlistData,
     isLoading,
-  } = useQuery<EventOptionData[], Error>(['userWatchlist'], async () => {
-    const res: ApiResponse<EventOptionData[]> = await fetchUserWatchList();
-    return res?.data || [];
+    isError,
+    error,
+  } = useQuery<EventMetaData[], Error>('eventWithOptions', async () => {
+    const res = await fetchUserWatchList();
+    const eventData: GetWatchlistForUserResponse = res?.data || [];
+    return stripInstancesFromEventData(eventData);
   });
 
   return (
     <PageLayout>
-      <Text>WatchList</Text>
-      {/* TODO - Streamline data for watchlist...  */}
-      {!isLoading && JSON.stringify(watchlist)}
+      <Text>{isLoading ? 'Fetching User Watchlist...' : 'Your Watchlist'}</Text>
+      <EventCardGrid events={watchlistData} isError={isError} isLoading={isLoading} error={error} />
     </PageLayout>
   );
 }

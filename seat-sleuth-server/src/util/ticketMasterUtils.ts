@@ -4,12 +4,14 @@ import {
   RawTMEventData,
   TicketMasterSearchParams,
 } from '../types/shared/api/external/ticketMaster';
-import { OptionSource, PriceOption } from '@prisma/client';
+import { PriceOptionSource, PriceOption } from '@prisma/client';
 import {
   EventData,
   SpecificEventData,
   TicketMasterQueryResponse,
 } from '../types/shared/api/responses';
+import prisma from '../config/db';
+import { StatusCodes } from 'http-status-codes';
 
 export const ticketMasterApiClient = axios.create({
   baseURL: TM_BASE_URL,
@@ -40,32 +42,156 @@ function handleErrorResponse(error: any) {
   });
 }
 
+export async function persistEvents(
+  eventData: TicketMasterQueryResponse,
+  params: TicketMasterSearchParams,
+  requestLogData: {
+    endpoint: string;
+    queryParams: string;
+    responseTimeMs: number;
+    statusCode: StatusCodes;
+  },
+): Promise<void> {
+  for (const event of eventData) {
+    // Upsert the EventMetaData
+    await prisma.eventMetaData.upsert({
+      where: { eventName: event.eventName },
+      update: {
+        genre: event.genre,
+        coverImage: event.coverImage,
+      },
+      create: {
+        eventName: event.eventName,
+        genre: event.genre,
+        coverImage: event.coverImage,
+        instanceCount: event.instances.length,
+      },
+    });
+
+    await prisma.requestLog.upsert({
+      where: {
+        eventName: event.eventName,
+      },
+      create: {
+        ...requestLogData,
+        eventName: event.eventName,
+      },
+      update: { ...requestLogData },
+    });
+
+    for (const instance of event.instances) {
+      // Upsert the EventInstance
+      await prisma.eventInstance.upsert({
+        where: { ticketMasterId: instance.ticketMasterId },
+        update: {
+          eventName: instance.eventName,
+          venueName: instance.venueName,
+          address: instance.address,
+          seatMapSrc: instance.seatMapSrc,
+          city: instance.city,
+          country: instance.country,
+          url: instance.url,
+          currency: instance.currency,
+          startTime: instance.startTime,
+          saleStart: instance.saleStart,
+          saleEnd: instance.saleEnd,
+        },
+        create: {
+          ticketMasterId: instance.ticketMasterId,
+          eventName: instance.eventName,
+          venueName: instance.venueName,
+          address: instance.address,
+          seatMapSrc: instance.seatMapSrc,
+          city: instance.city,
+          country: instance.country,
+          url: instance.url,
+          currency: instance.currency,
+          startTime: instance.startTime,
+          saleStart: instance.saleStart,
+          saleEnd: instance.saleEnd,
+        },
+      });
+
+      // Upsert the PriceOptions
+      for (const priceOption of instance.priceOptions) {
+        await prisma.priceOption.upsert({
+          where: {
+            eventInstanceId_source: {
+              eventInstanceId: instance.ticketMasterId,
+              source: priceOption.source,
+            },
+          },
+          update: {
+            priceMin: priceOption.priceMin,
+            priceMax: priceOption.priceMax,
+          },
+          create: {
+            eventInstanceId: instance.ticketMasterId,
+            priceMin: priceOption.priceMin,
+            priceMax: priceOption.priceMax,
+            source: priceOption.source,
+          },
+        });
+      }
+
+      // Handle watchers
+      for (const watcher of instance.watchers) {
+        await prisma.watchedEvent.upsert({
+          where: {
+            userId_eventInstanceId: {
+              userId: watcher.userId,
+              eventInstanceId: instance.ticketMasterId,
+            },
+          },
+          update: {},
+          create: {
+            userId: watcher.userId,
+            eventInstanceId: instance.ticketMasterId,
+          },
+        });
+      }
+    }
+  }
+}
+
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
 ): Promise<TicketMasterQueryResponse> => {
+  const startOfReq = new Date();
   const response = await ticketMasterApiClient.get('events.json', { params });
+  const endOfReq = new Date();
   const eventsRaw: RawTMEventData[] = response.data?._embedded?.events || [];
   const finalResponse: TicketMasterQueryResponse = mapRawEventsToQueryResponse(eventsRaw);
+  const requestLogData = {
+    endpoint: 'events.json',
+    queryParams: new URLSearchParams(params as Record<string, string>).toString(),
+    responseTimeMs: endOfReq.getTime() - startOfReq.getTime(),
+    statusCode: StatusCodes.OK,
+  };
+  persistEvents(finalResponse, params, requestLogData);
   console.info(`[TicketMaster API Response] Fetched ${finalResponse.length} events`);
   return finalResponse;
 };
 
 function mapRawEventsToQueryResponse(rawTmEventData: RawTMEventData[]): TicketMasterQueryResponse {
-  const eventMap: Map<string, EventData> = new Map();
+  const eventMap: Map<string, EventData> = new Map<string, EventData>();
 
   rawTmEventData.forEach((rawEvent) => {
     const eventOption = mapRawEventToOption(rawEvent);
     const eventName = rawEvent.name || 'Unknown Event';
 
     if (eventMap.has(eventName)) {
-      eventMap.get(eventName)!.options.push(eventOption);
+      const existingEvent = eventMap.get(eventName);
+      if (existingEvent && 'options' in existingEvent) existingEvent?.instances.push(eventOption);
     } else {
-      eventMap.set(eventName, {
+      const newEventData: EventData = {
         eventName,
         genre: rawEvent.classifications?.[0]?.genre?.name || 'Unknown Genre',
         coverImage: rawEvent.images[0].url || '',
-        options: [eventOption],
-      });
+        instanceCount: 1,
+        instances: [eventOption],
+      };
+      eventMap.set(eventName, newEventData);
     }
   });
 
@@ -99,10 +225,10 @@ function mapPriceRanges(
   return (
     priceRanges?.map((priceRange) => ({
       id: crypto.randomUUID(),
-      eventOptionId: eventId,
+      eventInstanceId: eventId,
       priceMin: priceRange.min !== undefined ? parseFloat(priceRange.min.toString()) : 0,
       priceMax: priceRange.max !== undefined ? parseFloat(priceRange.max.toString()) : 0,
-      source: OptionSource.Ticketmaster,
+      source: PriceOptionSource.Ticketmaster,
     })) || []
   );
 }

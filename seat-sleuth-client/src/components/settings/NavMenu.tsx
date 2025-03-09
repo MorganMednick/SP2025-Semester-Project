@@ -19,7 +19,7 @@ export default function NavMenu({ opened, onChange, onClose }: NavMenuProps) {
 
   return (
     <>
-      <Menu shadow="md" width={150} opened={opened} onClose={onClose}>
+      <Menu zIndex={999} shadow="md" width={150} opened={opened} onClose={onClose}>
         <Menu.Target>
           <Burger size="md" opened={opened} onClick={onChange} />
         </Menu.Target>
