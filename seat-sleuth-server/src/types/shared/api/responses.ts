@@ -19,7 +19,7 @@ export type AuthResponse = null;
  * @property {SpecificEventData[]} options - The available options for the event. @see SpecificEventData
  * @description Represents an event with multiple options. This is essential to our model because we need to store the event options separately from the event metadata.
  */
-type EventData = EventMetaData & {
+export type EventData = EventMetaData & {
   instances: SpecificEventData[];
 };
 
@@ -39,7 +39,7 @@ type EventData = EventMetaData & {
  * @property {WatchedEventData[]} watchers - List of users watching this event. @see WatchedEventData
  * @property {PriceOption[]} priceOptions - List of pricing options. @see PriceOption
  */
-type SpecificEventData = EventInstance & {
+export type SpecificEventData = EventInstance & {
   watchers: WatchedEventData[];
   priceOptions: PriceOption[];
 };
@@ -49,31 +49,18 @@ type SpecificEventData = EventInstance & {
  * @property {string} eventOptionId - ID of the event option being watched.
  * @property {User} user - User details.
  */
-type WatchedEventData = WatchedEvent & {
+export type WatchedEventData = WatchedEvent & {
   user: User;
 };
 
 /**
  * @description Represents a list of events returned by the Ticketmaster API.
  */
-type TicketMasterQueryResponse = EventData[];
+export type TicketMasterQueryResponse = EventData[];
 
 /**
  * @description Represents a list of events on the user's watchlist.
  */
-type GetWatchlistForUserResponse = EventData[];
+export type GetWatchlistForUserResponse = EventData[];
 
-/**
- * @see EventMetaData
- * @property {string} eventName - Name of the event.
- * @property {string | null} genre - Genre of the event.
- * @property {string | null} coverImage - Cover image for the event.
- */
-export {
-  EventMetaData,
-  GetWatchlistForUserResponse,
-  SpecificEventData,
-  TicketMasterQueryResponse,
-  WatchedEventData,
-  EventData,
-};
+export { EventMetaData, EventInstance };

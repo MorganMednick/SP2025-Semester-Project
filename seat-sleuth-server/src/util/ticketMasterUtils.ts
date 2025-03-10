@@ -4,7 +4,7 @@ import {
   RawTMEventData,
   TicketMasterSearchParams,
 } from '../types/shared/api/external/ticketMaster';
-import { PriceOptionSource, PriceOption } from '@prisma/client';
+import { PriceOptionSource, PriceOption, RequestLogEvent } from '@prisma/client';
 import {
   EventData,
   SpecificEventData,
@@ -29,7 +29,7 @@ function logRequest(config: any) {
   return config;
 }
 
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleErrorResponse(error: any) {
   const status = error?.response?.status || 'UNKNOWN';
   const statusText = error?.response?.statusText || 'No status text';
@@ -44,7 +44,6 @@ function handleErrorResponse(error: any) {
 
 export async function persistEvents(
   eventData: TicketMasterQueryResponse,
-  params: TicketMasterSearchParams,
   requestLogData: {
     endpoint: string;
     queryParams: string;
@@ -52,13 +51,24 @@ export async function persistEvents(
     statusCode: StatusCodes;
   },
 ): Promise<void> {
+  const requestLog = await prisma.requestLog.upsert({
+    where: {
+      queryParams: requestLogData.queryParams,
+    },
+    update: {
+      ...requestLogData,
+    },
+    create: {
+      ...requestLogData,
+    },
+  });
   for (const event of eventData) {
-    // Upsert the EventMetaData
-    await prisma.eventMetaData.upsert({
+    const eventMetaData = await prisma.eventMetaData.upsert({
       where: { eventName: event.eventName },
       update: {
         genre: event.genre,
         coverImage: event.coverImage,
+        instanceCount: event.instances.length,
       },
       create: {
         eventName: event.eventName,
@@ -68,19 +78,30 @@ export async function persistEvents(
       },
     });
 
-    await prisma.requestLog.upsert({
-      where: {
-        eventName: event.eventName,
-      },
-      create: {
-        ...requestLogData,
-        eventName: event.eventName,
-      },
-      update: { ...requestLogData },
+    const existingEventLog: RequestLogEvent | null = await prisma.requestLogEvent.findFirst({
+      where: { eventName: event.eventName },
     });
 
+    if (!existingEventLog) {
+      await prisma.requestLogEvent.upsert({
+        where: {
+          requestLogId_eventName: {
+            requestLogId: requestLog.id,
+            eventName: eventMetaData.eventName,
+          },
+        },
+        update: {
+          requestLogId: requestLog.id,
+          eventName: eventMetaData.eventName,
+        },
+        create: {
+          requestLogId: requestLog.id,
+          eventName: eventMetaData.eventName,
+        },
+      });
+    }
+
     for (const instance of event.instances) {
-      // Upsert the EventInstance
       await prisma.eventInstance.upsert({
         where: { ticketMasterId: instance.ticketMasterId },
         update: {
@@ -112,7 +133,6 @@ export async function persistEvents(
         },
       });
 
-      // Upsert the PriceOptions
       for (const priceOption of instance.priceOptions) {
         await prisma.priceOption.upsert({
           where: {
@@ -134,7 +154,6 @@ export async function persistEvents(
         });
       }
 
-      // Handle watchers
       for (const watcher of instance.watchers) {
         await prisma.watchedEvent.upsert({
           where: {
@@ -157,19 +176,58 @@ export async function persistEvents(
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
 ): Promise<TicketMasterQueryResponse> => {
+  const queryParams: string = new URLSearchParams(params as Record<string, string>).toString();
+  const existingRequestLog = await prisma.requestLog.findUnique({
+    where: { queryParams },
+    include: {
+      events: {
+        include: {
+          event: {
+            include: {
+              instances: {
+                include: {
+                  priceOptions: true,
+                  watchers: {
+                    include: {
+                      user: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (existingRequestLog) {
+    console.info(`[Repeated Query] - Returning stored events for query: ${queryParams}`);
+    const events = existingRequestLog.events.map(
+      (event) => event.event,
+    ) as TicketMasterQueryResponse;
+    return events;
+  }
+
   const startOfReq = new Date();
   const response = await ticketMasterApiClient.get('events.json', { params });
   const endOfReq = new Date();
+
   const eventsRaw: RawTMEventData[] = response.data?._embedded?.events || [];
   const finalResponse: TicketMasterQueryResponse = mapRawEventsToQueryResponse(eventsRaw);
+
   const requestLogData = {
     endpoint: 'events.json',
-    queryParams: new URLSearchParams(params as Record<string, string>).toString(),
+    queryParams,
     responseTimeMs: endOfReq.getTime() - startOfReq.getTime(),
     statusCode: StatusCodes.OK,
   };
-  persistEvents(finalResponse, params, requestLogData);
-  console.info(`[TicketMaster API Response] Fetched ${finalResponse.length} events`);
+
+  await persistEvents(finalResponse, requestLogData);
+
+  console.info(
+    `[TicketMaster API Response] Fetched ${finalResponse.length} events in ${requestLogData.responseTimeMs} ms`,
+  );
   return finalResponse;
 };
 
