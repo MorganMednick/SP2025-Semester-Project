@@ -1,40 +1,52 @@
-import { Text, Container } from '@mantine/core';
-import { Event } from '@shared/api/responses';
-import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
+import { Container } from '@mantine/core';
+import { ApiResponse, EventData, TicketMasterQueryResponse } from '@shared/api/responses';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
-import EventDetailsImageSection from '../components/events/EventDetailsImageSection';
-import EventDetailsTicketCard from '../components/events/EventDetailsTicketCard';
-import EventDetailsInfoSection from '../components/events/EventDetailsInfoSection';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { unsanitizeEventName, sanitizeEventName } from '../util/sanitization';
 
 export default function EventDetails() {
-  const { id } = useParams();
-  const [event, setEvent] = useState<Event>({} as Event);
-  useQuery<Event, Error>(
-    ['ticketMasterEvents', id],
-    async () => {
-      const params: TicketMasterSearchParams = { id };
-      const res = await fetchTicketMasterEvents(params);
-      const event: Event = res.data?.[0] || ({} as Event);
-      setEvent(event);
-      return event;
-    },
-    {
-      enabled: true,
-    },
-  );
+  const { name, id } = useParams();
+  const navigate = useNavigate();
 
-  if (!event) {
-    return <Text ta="center">Event not found.</Text>;
-  }
+  const formattedName: string = name ? unsanitizeEventName(name) : '';
+
+  useEffect(() => {
+    if (name && name !== sanitizeEventName(formattedName)) {
+      const newUrl = `/events/${sanitizeEventName(formattedName)}${id ? `/${id}` : ''}`;
+      navigate(newUrl, { replace: true });
+    }
+  }, [name, id, navigate, formattedName]);
+
+  const { data: event } = useQuery<EventData | null, Error>(
+    ['eventWithOptions', formattedName],
+    async () => {
+      if (id) {
+        const res: ApiResponse<TicketMasterQueryResponse> = await fetchTicketMasterEvents({
+          id,
+        });
+        const eventData: EventData | null = res?.data?.[0] ?? null;
+        if (eventData) {
+          return eventData;
+        }
+      } else if (formattedName) {
+        const res = await fetchTicketMasterEvents({ keyword: formattedName });
+        const eventData: EventData | null = res?.data?.[0] ?? null;
+        if (eventData) {
+          return eventData;
+        }
+      }
+      navigate(`/404`);
+      return null;
+    },
+    { enabled: !!formattedName },
+  );
 
   return (
     <Container fluid w="100%" p={0} m={0}>
-      <EventDetailsImageSection event={event} />
-      <EventDetailsInfoSection event={event} setEvent={setEvent} />
-      <EventDetailsTicketCard priceMin={event.priceMin} url={event.url} />
+      {/* TODO: @Veda Render event details */}
+      {event && JSON.stringify(event)}
     </Container>
   );
 }

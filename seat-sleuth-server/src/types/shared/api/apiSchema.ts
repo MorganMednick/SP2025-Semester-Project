@@ -1,13 +1,13 @@
+import { User } from '@prisma/client';
 import {
   AddToWatchListPayload,
   AuthPayload,
   UpdatePasswordPayload,
   RemoveFromWatchListPayload,
   UserPayload,
+  TicketMasterQueryParams,
 } from './payloads';
-import { AuthResponse, User, UserWatchListEntry } from './responses';
-import { TicketMasterSearchParams } from './external/ticketMaster';
-import { Event } from '@prisma/client';
+import { AuthResponse, GetWatchlistForUserResponse, TicketMasterQueryResponse } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -51,8 +51,8 @@ export const TM_API_SCHEMA = {
   TM_EVENTS: {
     route: '/tm/events',
     method: 'POST',
-    payload: {} as TicketMasterSearchParams,
-    response: {} as Event[],
+    payload: {} as TicketMasterQueryParams,
+    response: {} as TicketMasterQueryResponse,
   },
 } as const;
 
@@ -82,7 +82,7 @@ export const WATCHLIST_API_SCHEMA = {
     route: '/watchlist',
     method: 'GET',
     payload: null,
-    response: {} as UserWatchListEntry[],
+    response: {} as GetWatchlistForUserResponse,
   },
   ADD_TO_WATCHLIST: {
     route: '/watchlist',
@@ -95,14 +95,14 @@ export const WATCHLIST_API_SCHEMA = {
     method: 'DELETE',
     payload: {} as RemoveFromWatchListPayload,
     response: null,
-  }
+  },
 } as const;
 
 export const MERGED_API_SCHEMA = {
   ...AUTH_API_SCHEMA,
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
-  ...WATCHLIST_API_SCHEMA
+  ...WATCHLIST_API_SCHEMA,
 } as const;
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;

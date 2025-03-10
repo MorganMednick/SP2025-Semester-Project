@@ -35,7 +35,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
       oldPassword: '',
       newPassword: '',
       confirmNewPassword: '',
-      notif: '',
+      notification: '',
     },
     validate: {
       email: (value: string) => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Invalid email address'),
@@ -55,7 +55,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
         form.setValues({
           email: data?.email,
           name: data?.name ?? '',
-          notif: data?.notif ? 'EMAIL' : 'OFF',
+          notification: data?.notification ? 'EMAIL' : 'OFF',
           oldPassword: '',
           newPassword: '',
           confirmNewPassword: '',
@@ -68,8 +68,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   );
 
   const updateUserInfoMutation = useMutation(
-    ({ name, email, notif }: { name: string; email: string; notif: boolean }) =>
-      updateUserInfo({ name, email, notif }),
+    ({ name, email, notification }: { name: string; email: string; notification: boolean }) =>
+      updateUserInfo({ name, email, notification }),
     {
       onSuccess: (response: ApiResponse<null>) => {
         if (responseIsOk(response)) {
@@ -117,9 +117,9 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const handleSaveChanges = () => {
     const validationResult = form.validate();
     if (!validationResult.hasErrors) {
-      const { name, email, notif } = form.values;
-      const notifBool = notif === 'EMAIL';
-      updateUserInfoMutation.mutate({ name, email, notif: notifBool });
+      const { name, email, notification } = form.values;
+      const notifBool = notification === 'EMAIL';
+      updateUserInfoMutation.mutate({ name, email, notification: notifBool });
     }
   };
 

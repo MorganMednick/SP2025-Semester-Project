@@ -1,4 +1,4 @@
-import { TicketSites } from "@prisma/client";
+import { TicketMasterSearchParams } from './external/ticketMaster';
 
 export interface AuthPayload {
   email: string;
@@ -8,7 +8,7 @@ export interface AuthPayload {
 export interface UserPayload {
   email: string;
   name: string;
-  notif: boolean;
+  notification: boolean;
 }
 
 export interface UpdatePasswordPayload {
@@ -17,11 +17,11 @@ export interface UpdatePasswordPayload {
 }
 
 export interface AddToWatchListPayload {
-  eventId: string;
-  startingPrice: number;
-  ticketSite: TicketSites;
+  eventInstanceId: string;
 }
 
 export interface RemoveFromWatchListPayload {
-  eventId: string;
+  eventInstanceId: string;
 }
+
+export type TicketMasterQueryParams = TicketMasterSearchParams;

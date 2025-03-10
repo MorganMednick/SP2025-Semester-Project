@@ -2,32 +2,32 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { Text } from '@mantine/core';
 import { useQuery } from 'react-query';
-import { Event } from '@shared/api/responses';
+import { EventData, EventMetaData } from '@shared/api/responses';
 import EventCardGrid from '../events/EventCardGrid';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
 import PageLayout from '../layout/PageLayout';
+import { stripInstancesFromEventData } from '../../util/apiUtils';
 
 export default function PopularNearYou() {
   const { geoPoint, geoPointFetching } = useGeoPoint();
 
   const {
-    data: eventsNearYou,
+    data: eventsNearYouMetaData,
     isLoading,
     isError,
     error,
-  } = useQuery<Event[], Error>(
+  } = useQuery<EventMetaData[] | [], Error>(
     ['ticketMasterEvents', geoPoint],
     async () => {
       const nearMeParams: TicketMasterSearchParams = {
         geoPoint: geoPoint || '',
-        radius: '200',
-        unit: 'miles',
         sort: 'relevance,asc',
         size: '40',
         page: '1',
       };
       const res = await fetchTicketMasterEvents(nearMeParams);
-      return res.data || [];
+      const eventData: EventData[] | [] = res.data ?? [];
+      return stripInstancesFromEventData(eventData);
     },
     { enabled: !geoPointFetching },
   );
@@ -43,7 +43,7 @@ export default function PopularNearYou() {
         error={error}
         isLoading={isFetching}
         isError={isError}
-        events={eventsNearYou}
+        events={eventsNearYouMetaData}
       />
     </PageLayout>
   );

@@ -28,7 +28,7 @@ export default function Header() {
   }
 
   return (
-    <AppShell.Header h="fit-content">
+    <AppShell.Header h="fit-content" zIndex={999}>
       <Flex justify="space-between" align="center" p={10} h={80}>
         {logoOrSearchBar}
         {!isAuthenticated ? (

@@ -7,66 +7,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Design reduction to keep user lightweight. All the user has is the mappings of their id to an event option ID.
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  notif     Boolean  @default(true)
-  password  String
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String?
+  notification Boolean  @default(true)
+  password     String
+  createdAt    DateTime @default(now())
 
-  watchlist UserWatchlist[]
+  watchlist WatchedEvent[]
 }
 
-model Event {
-  id               String    @id
-  priceMin        Float?
-  priceMax        Float?
-  currency        String?
-  name            String
-  seatLocation    String?
-  startTime       String
-  saleStart       String?
-  saleEnd         String?
-  venueName       String?
-  venueAddressOne String?
-  venueAddressTwo String?
-  venueSeatMapSrc String?
-  city            String
-  country         String
-  url             String?
-  genre           String?
-  imageSrc        String[]
+/// For persistent watchlist data. Maps a userId to an event option (NOT AN EVENT LOL).
+model WatchedEvent {
+  userId          Int
+  eventInstanceId String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventInstance   EventInstance @relation(fields: [eventInstanceId], references: [ticketMasterId], onDelete: Cascade)
 
-  users UserWatchlist[]
+  @@id([userId, eventInstanceId])
 }
 
-enum TicketSites {
-  TICKETMASTER
-  STUBHUB
-  SEATGEEK
+enum PriceOptionSource {
+  Ticketmaster
+  Stubhub
+  Seatgeek
 }
 
-model WatchedPrice {
-  id            Int        @id @default(autoincrement())
-  startingPrice Float
-  currentPrice  Float
-  ticketSite    TicketSites
-  watchlist     UserWatchlist @relation(fields: [watchlistId], references: [id])
+/// For storing TM, SH, SG prices for a single event option
+model PriceOption {
+  id              String            @id @default(uuid()) // Let this randomly generate for primary key reference... DO NOT CHANGE ME - Jayce
+  eventInstanceId String
+  priceMin        Float
+  priceMax        Float
+  source          PriceOptionSource
 
-  watchlistId   Int
+  specificEvent EventInstance @relation(fields: [eventInstanceId], references: [ticketMasterId], onDelete: Cascade)
+
+  @@unique([eventInstanceId, source])
 }
 
-model UserWatchlist {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  eventId    String   @map("event_id")
-  watchStart DateTime @default(now())
+/// Holds the actual data for the event. I do not know how I'm feelin about the PriceOptions schema yet but it seems intuitive.
+model EventInstance {
+  ticketMasterId String    @id // ABSOLUTELY REQUIRED!!!! MUST REFER TO TM ID. We can add other options like this later.
+  eventName      String
+  venueName      String
+  address        String
+  seatMapSrc     String?
+  city           String
+  country        String
+  url            String?
+  currency       String?
+  startTime      DateTime
+  saleStart      DateTime?
+  saleEnd        DateTime?
 
-  watchedPrices WatchedPrice[]
+  event        EventMetaData  @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
+  watchers     WatchedEvent[]
+  priceOptions PriceOption[]
+}
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+model EventMetaData {
+  eventName     String          @id @unique
+  genre         String?
+  coverImage    String?
+  instanceCount Int
 
-  @@unique([userId, eventId])
+  requestLogs   RequestLogEvent[]
+  instances     EventInstance[]
+}
+
+model RequestLog {
+  id             String   @id @default(uuid())
+  endpoint       String
+  queryParams    String   @unique
+  statusCode     Int
+  responseTimeMs Int
+  createdAt      DateTime @default(now())
+
+  events         RequestLogEvent[]
+}
+
+model RequestLogEvent {
+  id             String         @id @default(uuid())
+  requestLogId   String
+  eventName      String
+
+  requestLog     RequestLog     @relation(fields: [requestLogId], references: [id], onDelete: Cascade)
+  event          EventMetaData  @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
+
+  @@unique([requestLogId, eventName])
 }
