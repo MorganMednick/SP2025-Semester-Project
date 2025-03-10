@@ -63,4 +63,4 @@ export type TicketMasterQueryResponse = EventData[];
  */
 export type GetWatchlistForUserResponse = EventData[];
 
-export { EventMetaData, EventInstance };
+export type { EventMetaData, EventInstance, User };
