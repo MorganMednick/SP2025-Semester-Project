@@ -55,8 +55,30 @@ CREATE TABLE "EventMetaData" (
     "eventName" TEXT NOT NULL,
     "genre" TEXT,
     "coverImage" TEXT,
+    "instanceCount" INTEGER NOT NULL,
 
     CONSTRAINT "EventMetaData_pkey" PRIMARY KEY ("eventName")
+);
+
+-- CreateTable
+CREATE TABLE "RequestLog" (
+    "id" TEXT NOT NULL,
+    "endpoint" TEXT NOT NULL,
+    "queryParams" TEXT NOT NULL,
+    "statusCode" INTEGER NOT NULL,
+    "responseTimeMs" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RequestLog_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "RequestLogEvent" (
+    "id" TEXT NOT NULL,
+    "requestLogId" TEXT NOT NULL,
+    "eventName" TEXT NOT NULL,
+
+    CONSTRAINT "RequestLogEvent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -67,6 +89,12 @@ CREATE UNIQUE INDEX "PriceOption_eventInstanceId_source_key" ON "PriceOption"("e
 
 -- CreateIndex
 CREATE UNIQUE INDEX "EventMetaData_eventName_key" ON "EventMetaData"("eventName");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RequestLog_queryParams_key" ON "RequestLog"("queryParams");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RequestLogEvent_requestLogId_eventName_key" ON "RequestLogEvent"("requestLogId", "eventName");
 
 -- AddForeignKey
 ALTER TABLE "WatchedEvent" ADD CONSTRAINT "WatchedEvent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -79,3 +107,9 @@ ALTER TABLE "PriceOption" ADD CONSTRAINT "PriceOption_eventInstanceId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "EventInstance" ADD CONSTRAINT "EventInstance_eventName_fkey" FOREIGN KEY ("eventName") REFERENCES "EventMetaData"("eventName") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RequestLogEvent" ADD CONSTRAINT "RequestLogEvent_requestLogId_fkey" FOREIGN KEY ("requestLogId") REFERENCES "RequestLog"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RequestLogEvent" ADD CONSTRAINT "RequestLogEvent_eventName_fkey" FOREIGN KEY ("eventName") REFERENCES "EventMetaData"("eventName") ON DELETE CASCADE ON UPDATE CASCADE;
