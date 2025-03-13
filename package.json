@@ -2,8 +2,11 @@
   "dependencies": {
     "@mantine/core": "^7.16.2",
     "@mantine/hooks": "^7.16.2",
+    "concurrently": "^9.1.2",
     "emailjs-com": "^3.2.0",
-    "concurrently": "^9.1.2"
+    "install": "^0.13.0",
+    "npm": "^11.1.0",
+    "xhr2": "^0.2.1"
   },
   "type": "module",
   "scripts": {

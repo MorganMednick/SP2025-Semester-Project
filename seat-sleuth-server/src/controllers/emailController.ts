@@ -6,6 +6,7 @@ import emailjs from 'emailjs-com';
 const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID!;
 const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID!;
 const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY!;
+const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY!;
 
 export const sendPriceDropEmail = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -23,12 +24,12 @@ export const sendPriceDropEmail = async (req: Request, res: Response): Promise<v
         ticket_price: ticketPrice,
       },
       EMAILJS_PUBLIC_KEY,
+      EMAILJS_PRIVATE_KEY,
     );
 
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
       message: 'Email sent successfully!',
-      
     });
   } catch (error) {
     console.error('Email Send Error:', error);

@@ -11,7 +11,7 @@ export default function EventCard({ event }: { event: Event }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState<string>('');
 
-  const userEmail: string = 'sammyfalvey@gmail.com';
+  const userEmail: string = 'mmednick25@gmail.com';
 
   const emailParams: EmailNotificationPayload = {
     email: userEmail,
@@ -29,7 +29,6 @@ export default function EventCard({ event }: { event: Event }) {
     onError: () => setMessage('❌ Failed to send email.'),
   });
 
-  
   return (
     <Card
       shadow="sm"
