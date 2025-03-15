@@ -69,13 +69,13 @@ model EventInstance {
 }
 
 model EventMetaData {
-  eventName     String          @id @unique
+  eventName     String  @id @unique
   genre         String?
   coverImage    String?
   instanceCount Int
 
-  requestLogs   RequestLogEvent[]
-  instances     EventInstance[]
+  requestLogs RequestLogEvent[]
+  instances   EventInstance[]
 }
 
 model RequestLog {
@@ -85,17 +85,18 @@ model RequestLog {
   statusCode     Int
   responseTimeMs Int
   createdAt      DateTime @default(now())
+  hits           Int      @default(1)
 
-  events         RequestLogEvent[]
+  events RequestLogEvent[]
 }
 
 model RequestLogEvent {
-  id             String         @id @default(uuid())
-  requestLogId   String
-  eventName      String
+  id           String @id @default(uuid())
+  requestLogId String
+  eventName    String
 
-  requestLog     RequestLog     @relation(fields: [requestLogId], references: [id], onDelete: Cascade)
-  event          EventMetaData  @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
+  requestLog RequestLog    @relation(fields: [requestLogId], references: [id], onDelete: Cascade)
+  event      EventMetaData @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
 
   @@unique([requestLogId, eventName])
 }

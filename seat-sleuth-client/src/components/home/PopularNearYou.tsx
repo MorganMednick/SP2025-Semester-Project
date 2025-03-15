@@ -1,7 +1,7 @@
 import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { Text } from '@mantine/core';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { EventData, EventMetaData } from '@shared/api/responses';
 import EventCardGrid from '../events/EventCardGrid';
 import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
@@ -10,7 +10,6 @@ import { stripInstancesFromEventData } from '../../util/apiUtils';
 
 export default function PopularNearYou() {
   const { geoPoint, geoPointFetching } = useGeoPoint();
-  const queryClient = useQueryClient();
 
   const queryKey = ['ticketMasterEvents', geoPoint];
 
@@ -22,8 +21,10 @@ export default function PopularNearYou() {
   } = useQuery<EventMetaData[] | [], Error>(
     queryKey,
     async () => {
-      const nearMeParams: TicketMasterSearchParams = {
-        geoPoint: geoPoint || '',
+      if (!geoPoint) return [];
+
+      const params: TicketMasterSearchParams = {
+        geoPoint,
         sort: 'relevance,asc',
         size: '40',
         page: '2',
@@ -31,12 +32,12 @@ export default function PopularNearYou() {
         unit: 'miles',
       };
 
-      const res = await fetchTicketMasterEvents(nearMeParams);
+      const res = await fetchTicketMasterEvents(params);
       const eventData: EventData[] | [] = res.data ?? [];
       return stripInstancesFromEventData(eventData);
     },
     {
-      enabled: !!geoPoint && !geoPointFetching,
+      enabled: !!geoPoint,
       staleTime: 1000 * 60 * 5,
       cacheTime: 1000 * 60 * 30,
       refetchOnMount: false,
@@ -44,28 +45,6 @@ export default function PopularNearYou() {
       refetchOnReconnect: false,
     },
   );
-
-  const prefetchData = async (radius: string) => {
-    const prefetchParams: TicketMasterSearchParams = {
-      geoPoint: geoPoint || '',
-      sort: 'relevance,asc',
-      size: '40',
-      page: '2',
-      radius,
-      unit: 'miles',
-    };
-
-    await queryClient.prefetchQuery(['ticketMasterEvents', geoPoint, radius], async () => {
-      const res = await fetchTicketMasterEvents(prefetchParams);
-      const eventData: EventData[] | [] = res.data ?? [];
-      return stripInstancesFromEventData(eventData);
-    });
-  };
-
-  if (geoPoint) {
-    prefetchData('10');
-    prefetchData('50');
-  }
 
   const isFetching = geoPointFetching || isLoading;
 

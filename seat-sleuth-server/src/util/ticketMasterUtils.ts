@@ -10,6 +10,8 @@ import {
 } from '../types/shared/api/responses';
 import prisma from '../config/db';
 import { ticketMasterApiClient } from '../config/tmClient';
+import { logTicketMasterRequestInDatabase } from './dbUtils';
+import { StatusCodes } from 'http-status-codes';
 
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
@@ -20,8 +22,13 @@ export const handleTicketMasterEventRequest = async (
 
   const finalResponse = mapRawEventsToQueryResponse(rawEvents);
 
-  console.info(
-    `[TicketMaster API Response] Fetched ${finalResponse.length} events in ${responseTimeMs} ms`,
+  // Intentionally leaving this as async, but it does not need to be updated before res yet.
+  logTicketMasterRequestInDatabase(
+    'events.json',
+    finalResponse.length > 0 ? StatusCodes.OK : StatusCodes.NO_CONTENT,
+    params,
+    responseTimeMs,
+    finalResponse.length,
   );
 
   return finalResponse;
