@@ -23,7 +23,9 @@ export default function PopularNearYou() {
         geoPoint: geoPoint || '',
         sort: 'relevance,asc',
         size: '40',
-        page: '1',
+        page: '2',
+        radius: '20',
+        unit: 'miles',
       };
       const res = await fetchTicketMasterEvents(nearMeParams);
       const eventData: EventData[] | [] = res.data ?? [];
