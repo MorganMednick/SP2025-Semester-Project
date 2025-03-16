@@ -11,25 +11,39 @@ import { stripInstancesFromEventData } from '../../util/apiUtils';
 export default function PopularNearYou() {
   const { geoPoint, geoPointFetching } = useGeoPoint();
 
+  const queryKey = ['ticketMasterEvents', geoPoint];
+
   const {
     data: eventsNearYouMetaData,
     isLoading,
     isError,
     error,
   } = useQuery<EventMetaData[] | [], Error>(
-    ['ticketMasterEvents', geoPoint],
+    queryKey,
     async () => {
-      const nearMeParams: TicketMasterSearchParams = {
-        geoPoint: geoPoint || '',
+      if (!geoPoint) return [];
+
+      const params: TicketMasterSearchParams = {
+        geoPoint,
         sort: 'relevance,asc',
         size: '40',
-        page: '1',
+        page: '2',
+        radius: '20',
+        unit: 'miles',
       };
-      const res = await fetchTicketMasterEvents(nearMeParams);
+
+      const res = await fetchTicketMasterEvents(params);
       const eventData: EventData[] | [] = res.data ?? [];
       return stripInstancesFromEventData(eventData);
     },
-    { enabled: !geoPointFetching },
+    {
+      enabled: !!geoPoint,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 30,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
   );
 
   const isFetching = geoPointFetching || isLoading;
