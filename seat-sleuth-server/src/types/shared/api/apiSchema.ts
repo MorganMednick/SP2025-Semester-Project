@@ -3,6 +3,7 @@ import {
   AddToWatchListPayload,
   AuthPayload,
   UpdatePasswordPayload,
+  EmailNotificationPayload,
   RemoveFromWatchListPayload,
   UserPayload,
   TicketMasterQueryParams,
@@ -98,10 +99,20 @@ export const WATCHLIST_API_SCHEMA = {
   },
 } as const;
 
+export const EMAIL_API_SCHEMA = {
+  EMAIL_NOTIF: {
+    route: '/email/send-price-alert',
+    method: 'POST',
+    payload: {} as EmailNotificationPayload,
+    response: null,
+  },
+} as const;
+
 export const MERGED_API_SCHEMA = {
   ...AUTH_API_SCHEMA,
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
+  ...EMAIL_API_SCHEMA,
   ...WATCHLIST_API_SCHEMA,
 } as const;
 
