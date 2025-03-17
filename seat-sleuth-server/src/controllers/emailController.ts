@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { sendError, sendSuccess } from '../util/responseUtils';
 import { Request, Response } from 'express';
+import { SendPriceDropEmailParams } from '../types/shared/api/external/email';
 
 const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID!;
 const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID!;
@@ -9,10 +10,7 @@ const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY!;
 
 export const sendPriceDropEmail = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userEmail = req.params.userEmail;
-    const ticketName = req.params.ticket_name;
-    const ticketPrice = req.params.ticket_price;
-    console.log('sendPriceDropEmail call'); //TODO delete
+    const { userEmail, ticket_name, ticket_price }: SendPriceDropEmailParams = req.body;
 
     const data = {
       service_id: EMAILJS_SERVICE_ID,
@@ -21,8 +19,8 @@ export const sendPriceDropEmail = async (req: Request, res: Response): Promise<v
       accessToken: EMAILJS_PRIVATE_KEY,
       template_params: {
         email: userEmail,
-        ticket_name: ticketName,
-        ticket_price: ticketPrice,
+        ticket_name,
+        ticket_price,
       },
     };
 
@@ -34,24 +32,22 @@ export const sendPriceDropEmail = async (req: Request, res: Response): Promise<v
       body: JSON.stringify(data),
     });
 
-    if (response.ok) {
-      sendSuccess(res, {
-        statusCode: StatusCodes.OK,
-        message: 'Email sent successfully!',
-      });
-    } else {
+    if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
         `EmailJS API responded with status ${response.status}: ${JSON.stringify(errorData)}`,
       );
     }
-  } catch (error) {
-    console.error('Email Send Error:', error);
 
+    sendSuccess(res, {
+      statusCode: StatusCodes.OK,
+      message: 'Email sent successfully!',
+    });
+  } catch (error) {
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Failed to send email.',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error,
     });
   }
 };
