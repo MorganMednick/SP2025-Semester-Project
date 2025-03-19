@@ -1,4 +1,8 @@
-import { ApiResponse, EventData, TicketMasterQueryResponse } from '@shared/api/responses';
+import {
+  ApiResponse,
+  EventData,
+  TicketMasterQueryResponse,
+} from '../../../seat-sleuth-server/src/types/shared/responses';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';

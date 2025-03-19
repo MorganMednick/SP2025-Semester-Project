@@ -1,6 +1,12 @@
-import { ApiResponse, GetWatchlistForUserResponse } from '@shared/api/responses';
+import {
+  ApiResponse,
+  GetWatchlistForUserResponse,
+} from '../../../../seat-sleuth-server/src/types/shared/responses';
 import { handleServerRequest } from '../apiClient';
-import { AddToWatchListPayload, RemoveFromWatchListPayload } from '@shared/api/payloads';
+import {
+  AddToWatchListPayload,
+  RemoveFromWatchListPayload,
+} from '../../../../seat-sleuth-server/src/types/shared/payloads';
 
 export const addToWatchList = async (
   addToWatchListPayload: AddToWatchListPayload,

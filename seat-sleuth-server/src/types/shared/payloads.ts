@@ -1,4 +1,4 @@
-import { TicketMasterSearchParams } from './external/ticketMaster';
+import { TicketMasterSearchParams } from './ticketMaster';
 
 export interface AuthPayload {
   email: string;

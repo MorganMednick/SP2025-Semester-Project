@@ -1,6 +1,9 @@
 import { handleServerRequest } from '../apiClient';
-import { ApiResponse, TicketMasterQueryResponse } from '@shared/api/responses';
-import { TicketMasterQueryParams } from '@shared/api/payloads';
+import {
+  ApiResponse,
+  TicketMasterQueryResponse,
+} from '../../../../seat-sleuth-server/src/types/shared/responses';
+import { TicketMasterQueryParams } from '../../../../seat-sleuth-server/src/types/shared/payloads';
 
 export const fetchTicketMasterEvents = (
   params?: TicketMasterQueryParams,

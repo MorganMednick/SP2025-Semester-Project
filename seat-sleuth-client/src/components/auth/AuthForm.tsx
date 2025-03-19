@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import { AuthState } from '../../types/clitentAuth';
 import { slothLogoWithText } from '../../util/assetReconcileUtil';
 import { useAuth } from '../../context/authContext';
-import { AuthPayload } from '@shared/api/payloads';
+import { AuthPayload } from '../../../../seat-sleuth-server/src/types/shared/payloads';
 import { modals } from '@mantine/modals';
 import { useMutation } from 'react-query';
 import { showMantineNotification } from '../../util/uiUtils';

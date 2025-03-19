@@ -1,4 +1,8 @@
-import { ApiResponse, EventData, EventMetaData } from '@shared/api/responses';
+import {
+  ApiResponse,
+  EventData,
+  EventMetaData,
+} from '../../../seat-sleuth-server/src/types/shared/responses';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const responseIsOk = (response: ApiResponse<any>) => {

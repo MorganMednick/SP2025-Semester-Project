@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { TicketMasterQueryParams } from '../types/shared/api/payloads';
+import { TicketMasterQueryParams } from '../types/shared/payloads';
 import prisma from '../config/db';
 
 export async function logTicketMasterRequestInDatabase(

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { EventMetaData } from '@shared/api/responses';
+import { EventMetaData } from '../../../../seat-sleuth-server/src/types/shared/responses';
 import { Grid, Text, Center, Transition } from '@mantine/core';
 import EventCard from '../events/EventCard';
 import EventCardSkeleton from '../events/EventCardSkeleton';

@@ -1,6 +1,9 @@
-import { ApiResponse, User } from '@shared/api/responses';
+import { ApiResponse, User } from '../../../../seat-sleuth-server/src/types/shared/responses';
 import { handleServerRequest } from '../apiClient';
-import { UpdatePasswordPayload, UserPayload } from '@shared/api/payloads';
+import {
+  UpdatePasswordPayload,
+  UserPayload,
+} from '../../../../seat-sleuth-server/src/types/shared/payloads';
 
 export const getUserInfo = async (): Promise<ApiResponse<User>> => {
   return await handleServerRequest('GET_USER_INFO');

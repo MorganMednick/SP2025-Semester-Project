@@ -1,7 +1,14 @@
-import { API_ENDPOINTS } from '@shared/api/api';
+import { API_ENDPOINTS } from '../../../seat-sleuth-server/src/types/shared/api';
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { ApiErrorResponse, ApiResponse } from '@shared/api/responses';
-import { ValidServerEndpoints, EndpointPayload, EndpointResponse } from '@shared/api/apiSchema';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+} from '../../../seat-sleuth-server/src/types/shared/responses';
+import {
+  ValidServerEndpoints,
+  EndpointPayload,
+  EndpointResponse,
+} from '../../../seat-sleuth-server/src/types/shared/apiSchema';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/',

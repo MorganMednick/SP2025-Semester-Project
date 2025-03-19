@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState, ReactNode } from 'react';
 import { loginUser, checkLogin, registerUser, logoutUser } from '../api/functions/auth';
-import { AuthPayload } from '@shared/api/payloads';
+import { AuthPayload } from '../../../seat-sleuth-server/src/types/shared/payloads';
 import axios from 'axios';
 import { AuthContext } from '../types/clitentAuth';
 import { showMantineNotification } from '../util/uiUtils';
-import { ApiResponse, AuthResponse } from '@shared/api/responses';
+import { ApiResponse, AuthResponse } from '../../../seat-sleuth-server/src/types/shared/responses';
 import { responseIsOk } from '../util/apiUtils';
 
 axios.defaults.withCredentials = true;

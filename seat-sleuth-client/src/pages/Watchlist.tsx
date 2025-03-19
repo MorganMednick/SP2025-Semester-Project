@@ -1,7 +1,10 @@
 import { useQuery } from 'react-query';
 import PageLayout from '../components/layout/PageLayout';
 import { Text } from '@mantine/core';
-import { EventMetaData, GetWatchlistForUserResponse } from '@shared/api/responses';
+import {
+  EventMetaData,
+  GetWatchlistForUserResponse,
+} from '../../../seat-sleuth-server/src/types/shared/responses';
 import { fetchUserWatchList } from '../api/functions/watchlist';
 import EventCardGrid from '../components/events/EventCardGrid';
 import { stripInstancesFromEventData } from '../util/apiUtils';

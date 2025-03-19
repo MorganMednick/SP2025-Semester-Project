@@ -1,0 +1,72 @@
+# Node dependencies
+**/node_modules
+**/package-lock.json
+**/yarn.lock
+
+# Build artifacts
+**/dist
+**/build
+**/.next
+**/.turbo
+**/coverage
+**/out
+**/.parcel-cache
+
+# Environment files 
+**/.env*
+**/.DS_Store
+
+# Logs and runtime files
+**/npm-debug.log
+**/yarn-debug.log
+**/yarn-error.log
+**/pnpm-debug.log
+**/debug.log
+**/logs
+**/pids
+**/tmp
+**/*.log
+**/*.pid
+
+# TypeScript cache
+**/*.tsbuildinfo
+**/.tsbuildinfo
+
+# IDE and editor config files
+**/.vscode
+**/.idea
+**/*.swp
+
+# Git files
+**/.git
+**/.gitignore
+
+# Docker files
+**/.dockerignore
+**/Dockerfile
+**/docker-compose.yml
+
+# Prisma (exclude schema files, but keep generated client)
+**/prisma/*.db
+**/prisma/migrations
+**/prisma/schema.prisma
+
+# Frontend cache
+**/.eslintcache
+**/node_modules
+**/public/**/*.map
+**/.parcel-cache
+**/vite.config.ts
+
+# Backend cache
+**/.cache
+**/.output
+**/.jest
+**/jest.config.js
+
+# MacOS files
+**/.DS_Store
+**/Thumbs.db
+
+# Local development overrides
+**/*.local

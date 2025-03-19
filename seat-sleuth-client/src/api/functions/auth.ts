@@ -1,6 +1,9 @@
-import { AuthPayload } from '@shared/api/payloads';
+import { AuthPayload } from '../../../../seat-sleuth-server/src/types/shared/payloads';
 import { handleServerRequest } from '../apiClient';
-import { ApiResponse, AuthResponse } from '@shared/api/responses';
+import {
+  ApiResponse,
+  AuthResponse,
+} from '../../../../seat-sleuth-server/src/types/shared/responses';
 
 export const registerUser = async (user: AuthPayload): Promise<ApiResponse<AuthResponse>> => {
   return await handleServerRequest('AUTH_REGISTER', user);

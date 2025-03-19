@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
-import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
+import { TicketMasterSearchParams } from '../../../seat-sleuth-server/src/types/shared/ticketMaster';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useParams } from 'react-router-dom';
-import { TicketMasterQueryResponse } from '@shared/api/responses';
+import { TicketMasterQueryResponse } from '../../../seat-sleuth-server/src/types/shared/responses';
 import EventCardGrid from '../components/events/EventCardGrid';
 import { useGeoPoint } from '../hooks/hooks';
 import PageLayout from '../components/layout/PageLayout';

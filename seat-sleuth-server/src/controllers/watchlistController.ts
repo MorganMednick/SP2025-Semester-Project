@@ -2,12 +2,12 @@ import prisma from '../config/db';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
-import { AddToWatchListPayload, RemoveFromWatchListPayload } from '../types/shared/api/payloads';
+import { AddToWatchListPayload, RemoveFromWatchListPayload } from '../types/shared/payloads';
 import {
   EventData,
   SpecificEventData,
   GetWatchlistForUserResponse,
-} from '../types/shared/api/responses';
+} from '../types/shared/responses';
 import { PriceOption } from '@prisma/client';
 
 export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {

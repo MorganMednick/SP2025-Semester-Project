@@ -1,13 +1,6 @@
-import {
-  RawTMEventData,
-  TicketMasterSearchParams,
-} from '../types/shared/api/external/ticketMaster';
+import { RawTMEventData, TicketMasterSearchParams } from '../types/shared/ticketMaster';
 import { PriceOptionSource, PriceOption } from '@prisma/client';
-import {
-  EventData,
-  SpecificEventData,
-  TicketMasterQueryResponse,
-} from '../types/shared/api/responses';
+import { EventData, SpecificEventData, TicketMasterQueryResponse } from '../types/shared/responses';
 import prisma from '../config/db';
 import { ticketMasterApiClient } from '../config/tmClient';
 import { logTicketMasterRequestInDatabase } from './dbUtils';
@@ -87,7 +80,14 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
     const eventOption = mapRawEventToOption(rawEvent);
 
     if (eventMap.has(eventName)) {
-      eventMap.get(eventName)?.instances.push(eventOption);
+      const existingEvent = eventMap.get(eventName);
+      if (existingEvent) {
+        existingEvent.instances.push(eventOption);
+        existingEvent.instanceCount += 1;
+        if (!existingEvent?.coverImage) {
+          existingEvent.coverImage = rawEvent.images?.[0]?.url || '';
+        }
+      }
     } else {
       eventMap.set(eventName, {
         eventName,

@@ -2,9 +2,12 @@ import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
 import { Text } from '@mantine/core';
 import { useQuery } from 'react-query';
-import { EventData, EventMetaData } from '@shared/api/responses';
+import {
+  EventData,
+  EventMetaData,
+} from '../../../../seat-sleuth-server/src/types/shared/responses';
 import EventCardGrid from '../events/EventCardGrid';
-import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
+import { TicketMasterSearchParams } from '../../../../seat-sleuth-server/src/types/shared/ticketMaster';
 import PageLayout from '../layout/PageLayout';
 import { stripInstancesFromEventData } from '../../util/apiUtils';
 
