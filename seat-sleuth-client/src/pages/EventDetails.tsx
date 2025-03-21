@@ -7,6 +7,7 @@ import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
 import { Button } from '@mantine/core';
 import { sendPriceAlertEmail } from '../api/functions/email';
+import { SendPriceDropEmailParams } from '@shared/api/external/email';
 
 export default function EventDetails() {
   const { name, id } = useParams();
@@ -64,12 +65,14 @@ export default function EventDetails() {
       return;
     }
 
+    const params: SendPriceDropEmailParams = {
+      userEmail: 'mgmednick@gmail.com',
+      ticket_name: firstInstance.eventName,
+      ticket_price: `${firstPrice.priceMin} - ${firstPrice.priceMax}`,
+    };
+
     try {
-      const res = await sendPriceAlertEmail({
-        userEmail: 'mgmednick@gmail.com',
-        ticket_name: firstInstance.eventName,
-        ticket_price: `${firstPrice.priceMin} - ${firstPrice.priceMax}`,
-      });
+      const res = await sendPriceAlertEmail(params);
       console.log('API Response:', res);
       alert('Email sent!');
     } catch (err) {

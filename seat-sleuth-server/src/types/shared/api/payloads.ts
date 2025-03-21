@@ -25,9 +25,9 @@ export interface RemoveFromWatchListPayload {
 }
 
 export interface EmailNotificationPayload {
-  userEmail: string;
   ticket_name: string;
   ticket_price: string | null;
+  userEmail: string;
 }
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;
