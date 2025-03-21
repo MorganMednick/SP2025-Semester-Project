@@ -1,12 +1,7 @@
 import { EMAIL_API_SCHEMA } from '@shared/api/apiSchema';
-import axios from 'axios';
+import { handleServerRequest } from '../apiClient';
+import { EmailNotificationPayload } from '@shared/api/payloads';
 
-interface SendPriceAlertEmailPayload {
-  userEmail: string;
-  ticket_name: string;
-  ticket_price: string;
-}
-
-export async function sendPriceAlertEmail(payload: SendPriceAlertEmailPayload) {
-  return axios.post(EMAIL_API_SCHEMA.EMAIL_NOTIF.route, payload);
+export async function sendPriceAlertEmail(payload: EmailNotificationPayload) {
+  return handleServerRequest('EMAIL_NOTIF', payload);
 }

@@ -65,6 +65,7 @@ export default function EventDetails() {
     }
 
     try {
+      console.log(firstInstance.eventName, firstPrice.priceMin, firstPrice.priceMax); //TODO: Remove - works as expected
       const res = await sendPriceAlertEmail({
         userEmail: 'mgmednick@gmail.com',
         ticket_name: firstInstance.eventName,
