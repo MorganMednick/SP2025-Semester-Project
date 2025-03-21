@@ -1,9 +1,12 @@
-import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
-import { handleServerRequest } from '../apiClient';
-import { ApiResponse, EventInstance } from '@shared/api/responses';
+import { EMAIL_API_SCHEMA } from '@shared/api/apiSchema';
+import axios from 'axios';
 
-export const fetchTicketMasterEvents = (
-  params?: TicketMasterSearchParams,
-): Promise<ApiResponse<Event[]>> => {
-  return handleServerRequest('TM_EVENTS', params);
-};
+interface SendPriceAlertEmailPayload {
+  userEmail: string;
+  ticket_name: string;
+  ticket_price: string;
+}
+
+export async function sendPriceAlertEmail(payload: SendPriceAlertEmailPayload) {
+  return axios.post(EMAIL_API_SCHEMA.EMAIL_NOTIF.route, payload);
+}

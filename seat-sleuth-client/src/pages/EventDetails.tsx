@@ -5,6 +5,8 @@ import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
+import { Button } from '@mantine/core';
+import { sendPriceAlertEmail } from '../api/functions/email';
 
 export default function EventDetails() {
   const { name, id } = useParams();
@@ -51,6 +53,43 @@ export default function EventDetails() {
       },
     },
   );
-  // TODO: Actually render the page
-  return <PageLayout>{event ? JSON.stringify(event) : 'No Event Found'}</PageLayout>;
+
+  const handleSendEmail = async () => {
+    if (!event) return;
+    const firstInstance = event.instances[0];
+    const firstPrice = firstInstance?.priceOptions?.[0];
+
+    if (!firstInstance || !firstPrice) {
+      alert('Missing event or price information');
+      return;
+    }
+
+    try {
+      const res = await sendPriceAlertEmail({
+        userEmail: 'mgmednick@gmail.com',
+        ticket_name: firstInstance.eventName,
+        ticket_price: `${firstPrice.priceMin} - ${firstPrice.priceMax}`,
+      });
+      console.log('API Response:', res);
+      alert('Email sent!');
+    } catch (err) {
+      console.error('Error sending email:', err);
+      alert('Failed to send email');
+    }
+  };
+
+  return (
+    <PageLayout>
+      {event ? (
+        <>
+          {JSON.stringify(event)}
+          <Button onClick={handleSendEmail} mt="md">
+            Send Price Alert Email
+          </Button>
+        </>
+      ) : (
+        'No Event Found'
+      )}
+    </PageLayout>
+  );
 }
