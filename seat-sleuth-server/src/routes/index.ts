@@ -6,6 +6,7 @@ import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
 import watchlistRoutes from './watchlistRoutes';
 import { protectRoutes } from '../middleware/protectRoutes';
+import seatGeekRoutes from './seatGeekRoutes';
 
 const router = Router();
 
@@ -22,5 +23,7 @@ router.use('/tm', ticketMasterRoutes);
 router.use('/user', protectRoutes, userRoutes);
 
 router.use('/watchlist', protectRoutes, watchlistRoutes);
+
+router.use('/sg', seatGeekRoutes);
 
 export default router;
