@@ -5,6 +5,7 @@ import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
+import { fetchSeatGeekEventUrl } from '../api/functions/seatGeek';
 
 export default function EventDetails() {
   const { name, id } = useParams();
@@ -51,6 +52,23 @@ export default function EventDetails() {
       },
     },
   );
+
+  const {data: seatGeekUrl} = useQuery<string | null, Error>(
+    ['seatGeekEvent', name],
+    async () => {
+      if(event?.instanceCount?? 0 > 0){
+        const res = await fetchSeatGeekEventUrl({ q: sanitizedName, "venue.city": event?.instances[0].city});
+        return res?.data || "NOT FOUND";
+      }
+      else{
+        return null;
+      }
+      
+    },
+  );
+
+  console.log("fetched seat geek url: ", seatGeekUrl);
+
   // TODO: Actually render the page
   return <PageLayout>{event ? JSON.stringify(event) : 'No Event Found'}</PageLayout>;
 }

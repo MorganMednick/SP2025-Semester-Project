@@ -8,6 +8,7 @@ import {
   TicketMasterQueryParams,
 } from './payloads';
 import { AuthResponse, GetWatchlistForUserResponse, TicketMasterQueryResponse } from './responses';
+import { SeatGeekSearchParams } from './external/seatGeek';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -53,6 +54,15 @@ export const TM_API_SCHEMA = {
     method: 'POST',
     payload: {} as TicketMasterQueryParams,
     response: {} as TicketMasterQueryResponse,
+  },
+} as const;
+
+export const SG_API_SCHEMA = {
+  SG_EVENT: {
+    route: '/sg/event',
+    method: 'POST',
+    payload: {} as SeatGeekSearchParams,
+    response: {} as string,
   },
 } as const;
 
@@ -103,6 +113,7 @@ export const MERGED_API_SCHEMA = {
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
   ...WATCHLIST_API_SCHEMA,
+  ...SG_API_SCHEMA
 } as const;
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;

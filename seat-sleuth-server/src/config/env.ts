@@ -1,6 +1,6 @@
 import { RUN_ENVIRONMENTS } from '../data/constants';
 
-export const { DATABASE_URL, CLIENT_URL, NODE_ENV, SESSION_SECRET, TM_BASE_URL, TM_API_KEY } =
+export const { DATABASE_URL, CLIENT_URL, NODE_ENV, SESSION_SECRET, TM_BASE_URL, TM_API_KEY, SG_BASE_URL, SG_CLIENT_ID } =
   process.env;
 
 if (!DATABASE_URL) {
