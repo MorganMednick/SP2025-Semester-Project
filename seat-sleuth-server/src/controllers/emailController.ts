@@ -9,9 +9,9 @@ const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY!;
 const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY!;
 
 export const sendPriceDropEmail = async (req: Request, res: Response): Promise<void> => {
+  console.log('sendPriceDropEmail called');
   try {
     const { userEmail, ticket_name, ticket_price }: SendPriceDropEmailParams = req.body;
-
     const data = {
       service_id: EMAILJS_SERVICE_ID,
       template_id: EMAILJS_TEMPLATE_ID,
