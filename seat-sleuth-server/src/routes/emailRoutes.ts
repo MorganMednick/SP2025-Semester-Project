@@ -4,6 +4,6 @@ import { sendPriceDropEmail } from '../controllers/emailController';
 
 const router = Router();
 
-router.get('/send-price-alert', sendPriceDropEmail);
+router.post('/send-price-alert', sendPriceDropEmail);
 
 export default router;
