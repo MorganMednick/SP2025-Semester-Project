@@ -1,17 +1,7 @@
-import {
-  Flex,
-  NativeSelect,
-  Stack,
-  Anchor,
-  Divider,
-  Text,
-  Group,
-  Card,
-  Grid,
-} from '@mantine/core';
+import { Flex, NativeSelect, Stack, Anchor, Divider, Text, Group, Card, Grid } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { EventData } from '@shared/api/responses';
-import { useMemo, useState } from 'react';
+import {  useState } from 'react';
 
 interface EventDetailsInfoSectionProps {
   event?: EventData | null;
@@ -40,23 +30,21 @@ export default function EventDetailsInfoSection({
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading event details</div>;
 
-  const formattedDate = useMemo(() => {
-    return selectedOption
+
+  const formattedDate =
+     selectedOption
       ? new Date(selectedOption.startTime).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         })
       : '';
-  }, [selectedOption?.startTime]);
 
-  const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
-  
-
+  const isSmallScreen = useMediaQuery('(max-width: 1350px)');
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading event details</div>;
   return (
     <Stack justify="center" gap="xxs">
       <Flex
@@ -65,46 +53,27 @@ export default function EventDetailsInfoSection({
         align="flex-start"
         gap="xxs"
       >
-        <Stack justify="center" gap={0} style={{ width: isSmallScreen ? '100%' : '50%' }}>
-          <Group align="center" pt={120}>
+        <Stack justify="center" gap={0} w={isSmallScreen ? '100%' : '50%'} pt={5}>
+          <Group align="center">
             <Text size="x" tt="uppercase" ta="left">
               {formattedDate}
             </Text>
             <Divider size="lg" color="black" orientation="vertical" h={100} />
             <Stack align="flex-start" gap={0}>
-              <Text
-                size="xxl"
-                ta="left"
-                fw={700}
-                style={{
-                  wordWrap: 'break-word',
-                  whiteSpace: 'normal',
-                  maxWidth: 400,
-                  lineHeight: 1.3,
-                }}
-              >
+              <Text size="xxl" ta="left" fw={700} maw={400}>
                 {selectedOption?.city || 'Unknown City'}
               </Text>
               <Flex align="center" gap={0}>
-                <Text
-                  size="xl"
-                  tt="uppercase"
-                  ta="left"
-                  style={{
-                    wordWrap: 'break-word',
-                    whiteSpace: 'normal',
-                    maxWidth: 400,
-                    lineHeight: 1.3,
-                  }}
-                >
+                <Text size="xl" tt="uppercase" ta="left" maw={400}>
                   {selectedOption?.venueName || 'Unknown Venue'}
                 </Text>
                 {selectedOption && selectedOption.seatMapSrc ? (
                   <Anchor
                     href={selectedOption?.seatMapSrc}
                     target="_blank"
-                    size="xl"
+                    size="md"
                     td="underline"
+                    pl={5}
                   >
                     See map
                   </Anchor>
@@ -127,14 +96,9 @@ export default function EventDetailsInfoSection({
           />
         </Stack>
 
-        <Grid
-          justify="space-between"
-          pt={120}
-          gutter="lg"
-          style={{ width: isSmallScreen ? '100%' : '50%' }}
-        >
+        <Grid justify="space-between" pt={5} gutter="lg" w={isSmallScreen ? '100%' : '55%'}>
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <Card withBorder radius="md" style={{ borderColor: '#49905F', borderWidth: 2 }}>
+            <Card withBorder bd="2px solid #49905F" radius="md">
               <Text size="xxxx" fw={700} c="green.7" ta="center">
                 {selectedOption?.priceOptions?.[0]?.priceMin
                   ? `$${selectedOption.priceOptions[0].priceMin}`
@@ -154,7 +118,7 @@ export default function EventDetailsInfoSection({
           </Grid.Col>
 
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <Card withBorder radius="md" style={{ borderColor: '#E49648', borderWidth: 2 }}>
+            <Card withBorder bd="2px solid #E49648" radius="md">
               <Text size="xxxx" fw={700} c="#E49648" ta="center">
                 $49.99
               </Text>
@@ -172,7 +136,11 @@ export default function EventDetailsInfoSection({
           </Grid.Col>
 
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <Card withBorder radius="md" style={{ borderColor: '#BD3133', borderWidth: 2 }}>
+            <Card
+              withBorder
+              bd="2px solid #BD3133"
+              radius="md"
+            >
               <Text size="xxxx" fw={700} c="#BD3133" ta="center">
                 ${69.69}
               </Text>

@@ -3,7 +3,7 @@ import { Image, Flex, Title, Checkbox, Box } from '@mantine/core';
 import { EventData } from '@shared/api/responses';
 
 interface EventDetailsImageSectionProps {
-  event?:EventData | null;
+  event?: EventData | null;
   isLoading: boolean;
   isError: boolean;
 }
@@ -25,19 +25,16 @@ export default function EventDetailsImageSection({
     <>
       {event && (
         <Box
-          style={{
-            width: '100vw',
-            position: 'relative',
-            left: '50%',
-            right: '50%',
-            marginLeft: '-50vw',
-            marginRight: '-50vw',
-            paddingTop: '0px',
-            paddingBottom: '0px',
-            marginTop: '-40px',
-            marginBottom: '-40px',
-            justifyContent: 'center',
-          }}
+          w="100vw"
+          pos="relative"
+          left="50%"
+          right="50%"
+          ml="-50vw"
+          mr="-50vw"
+          pt={0}
+          pb={55}
+          mt="-40px"
+          justify-content="center"
         >
           <Image
             src={event?.coverImage}
@@ -54,7 +51,7 @@ export default function EventDetailsImageSection({
             top={460}
             left={30}
             right={30}
-
+            bottom={10}
           >
             <Box>
               <Title order={1} c="green.7">
