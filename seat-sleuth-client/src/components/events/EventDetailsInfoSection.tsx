@@ -43,17 +43,19 @@ export default function EventDetailsInfoSection({
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading event details</div>;
 
-  const formattedDate = useMemo(
-    () =>
-      new Date(selectedOption?.startTime).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }),
-    [selectedOption?.startTime],
-  );
+  const formattedDate = useMemo(() => {
+    return selectedOption
+      ? new Date(selectedOption.startTime).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : '';
+  }, [selectedOption?.startTime]);
 
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+
+  
 
   return (
     <Stack justify="center" gap="xxs">
@@ -134,7 +136,9 @@ export default function EventDetailsInfoSection({
           <Grid.Col span={isSmallScreen ? 12 : 4}>
             <Card withBorder radius="md" style={{ borderColor: '#49905F', borderWidth: 2 }}>
               <Text size="xxxx" fw={700} c="green.7" ta="center">
-                ${selectedOption?.priceOptions?.[0]?.priceMin || 0.0}
+                {selectedOption?.priceOptions?.[0]?.priceMin
+                  ? `$${selectedOption.priceOptions[0].priceMin}`
+                  : 'N/A'}{' '}
               </Text>
               <Group justify="center">
                 <Anchor
