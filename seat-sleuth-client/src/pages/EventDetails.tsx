@@ -62,18 +62,16 @@ export default function EventDetails() {
   const {data: seatGeekUrl} = useQuery<string | null, Error>(
     ['seatGeekEvent', name],
     async () => {
-      if(event?.instanceCount?? 0 > 0){
+      if((event?.instanceCount?? 0 > 0) && !seatGeekUrl){
         const res = await fetchSeatGeekEventUrl({ q: sanitizedName, "venue.city": event?.instances[0].city});
         return res?.data || "NOT FOUND";
       }
       else{
-        return null;
+        return seatGeekUrl;
       }
       
     },
   );
-
-  console.log("fetched seat geek url: ", seatGeekUrl);
 
   // TODO: Actually render the page
   return <PageLayout>
