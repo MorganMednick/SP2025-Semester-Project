@@ -5,6 +5,8 @@ import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
+import EventDetailsImageSection from '../components/events/EventDetailsImageSection';
+import EventDetailsInfoSection from '../components/events/EventDetailsInfoSection';
 
 export default function EventDetails() {
   const { name, id } = useParams();
@@ -22,7 +24,11 @@ export default function EventDetails() {
     }
   }, [name]);
 
-  const { data: event } = useQuery<EventData | null, Error>(
+  const {
+    data: event,
+    isLoading,
+    isError,
+  } = useQuery<EventData | null, Error>(
     ['eventWithOptions', name, id],
     async () => {
       if (id) {
@@ -52,5 +58,8 @@ export default function EventDetails() {
     },
   );
   // TODO: Actually render the page
-  return <PageLayout>{event ? JSON.stringify(event) : 'No Event Found'}</PageLayout>;
+  return <PageLayout>
+    < EventDetailsImageSection  event={event} isLoading={isLoading} isError={isError} />
+    <EventDetailsInfoSection event={event} isLoading={isLoading} isError={isError} />
+  </PageLayout>;
 }
