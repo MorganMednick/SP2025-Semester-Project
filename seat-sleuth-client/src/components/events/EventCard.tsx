@@ -9,13 +9,7 @@ export default function EventCard({ event }: { event: EventMetaData }) {
 
   return (
     <Card ref={ref} shadow="sm" padding="lg" radius="md" withBorder w="100%" miw={175}>
-      <Tooltip
-        label={event.eventName}
-        position="top"
-        color="green"
-        withArrow
-        transitionProps={{ duration: 200, transition: 'pop' }}
-      >
+
         <Card.Section>
           <Image
             src={event?.coverImage || 'https://picsum.photos/400'}
@@ -24,8 +18,8 @@ export default function EventCard({ event }: { event: EventMetaData }) {
           />
 
           <Overlay
-            gradient="linear-gradient(145deg, rgba(0, 0, 0, 0.95) 10%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 90%)"
-            opacity={hovered ? 1.0 : 0.95}
+            opacity={hovered ? 1 : 0.0}
+
             style={{ cursor: 'pointer' }}
             onClick={() =>
               navigate(`/events/${event.eventName.replace(/ /g, '-').replace(/\//g, '_')}`)
@@ -38,7 +32,6 @@ export default function EventCard({ event }: { event: EventMetaData }) {
             </Center>
           </Overlay>
         </Card.Section>
-      </Tooltip>
     </Card>
   );
 }
