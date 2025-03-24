@@ -24,6 +24,8 @@ const theme = createTheme({
   },
   fontFamily: "'Source Sans 3'",
   fontSizes: {
+    xxxs: '10px',
+    xxs: '12px',
     xs: '16px',
     sm: '18px',
     md: '20px',

@@ -1,56 +1,102 @@
-/* TODO - @Veda Fix Me with new props! */
+import { useState } from 'react';
+import { Image, Flex, Title, Checkbox, Box } from '@mantine/core';
+import { EventData } from '@shared/api/responses';
 
-export default function EventDetailsImageSection() {
-  // const [isChecked, setIsChecked] = useState<boolean>(false);
-  // const [disabled, setDisabled] = useState<boolean>(false);
-  // return (
-  //   <>
-  //     {event && (
-  //       <Container fluid w="100%" p={0} m={0} pos="relative" mt={-25}>
-  //         <Image src={event.?.[0]} alt={event.eventName} width="100%" height={400} />
-  //         <Flex
-  //           justify="space-between"
-  //           align="center"
-  //           pos="absolute"
-  //           top={310}
-  //           left={20}
-  //           right={20}
-  //           p="md"
-  //         >
-  //           <Title
-  //             order={1}
-  //             style={{
-  //               color: 'white',
-  //               backdropFilter: 'blur(10px)',
-  //             }}
-  //           >
-  //             {event.eventName}
-  //           </Title>
-  //           {!isLoading && !isError ? (
-  //             <Checkbox
-  //               color="green"
-  //               iconColor="white"
-  //               label="Watch price"
-  //               labelPosition="left"
-  //               c="white"
-  //               checked={isChecked}
-  //               disabled={disabled}
-  //               // onChange={(event) => handleCheckboxChange(event.currentTarget.checked)}
-  //             />
-  //           ) : (
-  //             <Checkbox
-  //               color="green"
-  //               iconColor="white"
-  //               label="Login to watch price"
-  //               labelPosition="left"
-  //               c="white"
-  //               checked={false}
-  //               disabled={true}
-  //             />
-  //           )}
-  //         </Flex>
-  //       </Container>
-  //     )}
-  //   </>
-  // );
+interface EventDetailsImageSectionProps {
+  event?:EventData | null;
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export default function EventDetailsImageSection({
+  event,
+  isLoading,
+  isError,
+}: EventDetailsImageSectionProps) {
+  const [isChecked, setIsChecked] = useState(false);
+  const [disabled] = useState(false);
+
+  const handleCheckboxChange = (checked: boolean | ((prevState: boolean) => boolean)) => {
+    setIsChecked(checked);
+    // TODO
+  };
+
+  return (
+    <>
+      {event && (
+        <Box
+          style={{
+            width: '100vw',
+            position: 'relative',
+            left: '50%',
+            right: '50%',
+            marginLeft: '-50vw',
+            marginRight: '-50vw',
+            paddingTop: '0px',
+            paddingBottom: '0px',
+            marginTop: '-40px',
+            marginBottom: '-40px',
+            justifyContent: 'center',
+          }}
+        >
+          <Image
+            src={event?.coverImage}
+            height={450}
+            width="auto"
+            alt={event.eventName}
+            fit="cover"
+            fallbackSrc="https://placehold.co/600x400?text=Not Found"
+          />
+          <Flex
+            justify="space-between"
+            align="center"
+            pos="absolute"
+            top={460}
+            left={30}
+            right={30}
+
+          >
+            <Box>
+              <Title order={1} c="green.7">
+                {event.eventName}
+              </Title>
+            </Box>
+            {!isLoading && !isError ? (
+              <Checkbox
+                color="green.7"
+                iconColor="black"
+                label="Watch price"
+                labelPosition="left"
+                styles={(theme) => ({
+                  label: {
+                    color: theme.colors.green[7],
+                    fontSize: theme.fontSizes.md,
+                    fontWeight: 600,
+                  },
+                })}
+                checked={isChecked}
+                disabled={disabled}
+                onChange={(event) => handleCheckboxChange(event.currentTarget.checked)}
+              />
+            ) : (
+              <Checkbox
+                color="green"
+                iconColor="white"
+                label="Login to watch price"
+                labelPosition="left"
+                styles={(theme) => ({
+                  label: {
+                    color: 'white',
+                    fontSize: theme.fontSizes.sm,
+                  },
+                })}
+                checked={false}
+                disabled={true}
+              />
+            )}
+          </Flex>
+        </Box>
+      )}
+    </>
+  );
 }
