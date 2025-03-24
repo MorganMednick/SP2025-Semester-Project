@@ -52,10 +52,6 @@ describe('TicketMaster Utils', () => {
     jest.clearAllMocks();
   });
 
-  // ==============================
-  // handleTicketMasterEventRequest
-  // ==============================
-
   it('should handle a successful request and return mapped events', async () => {
     (ticketMasterApiClient.get as jest.Mock).mockResolvedValue({
       data: { _embedded: { events: [mockRawEvent] } },
@@ -108,10 +104,6 @@ describe('TicketMaster Utils', () => {
     );
   });
 
-  // ==============================
-  // mapRawEventToOption
-  // ==============================
-
   it('should map raw event to a valid option', async () => {
     (ticketMasterApiClient.get as jest.Mock).mockResolvedValue({
       data: { _embedded: { events: [mockRawEvent] } },
@@ -151,10 +143,6 @@ describe('TicketMaster Utils', () => {
     expect(result[0].instances[0].priceOptions).toEqual([]);
   });
 
-  // ==============================
-  // mapPriceRanges
-  // ==============================
-
   it('should map valid price ranges', async () => {
     (ticketMasterApiClient.get as jest.Mock).mockResolvedValue({
       data: { _embedded: { events: [mockRawEvent] } },
@@ -185,10 +173,6 @@ describe('TicketMaster Utils', () => {
 
     expect(result[0].instances[0].priceOptions).toEqual([]);
   });
-
-  // ==============================
-  // mapRawEventsToQueryResponse
-  // ==============================
 
   it('should correctly group events by name and increase instance count', async () => {
     (ticketMasterApiClient.get as jest.Mock).mockResolvedValue({
