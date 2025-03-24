@@ -17,6 +17,7 @@ module.exports = {
     '!src/__tests__/**',
     '!src/types/**',
   ],
+  silent: true,
   coveragePathIgnorePatterns: ['/node_modules/'],
   coverageDirectory: 'coverage',
   coverageReporters: ['json-summary', 'text'],
