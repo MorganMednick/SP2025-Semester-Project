@@ -20,4 +20,9 @@ module.exports = {
   coveragePathIgnorePatterns: ['/node_modules/'],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
+  coverageThreshold: {
+    global: {
+      lines: 50,
+    },
+  },
 };

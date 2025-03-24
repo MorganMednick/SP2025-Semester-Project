@@ -57,9 +57,10 @@ export default function EventDetails() {
       },
     },
   );
-  // TODO: Actually render the page
-  return <PageLayout>
-    < EventDetailsImageSection  event={event} isLoading={isLoading} isError={isError} />
-    <EventDetailsInfoSection event={event} isLoading={isLoading} isError={isError} />
-  </PageLayout>;
+  return (
+    <PageLayout>
+      <EventDetailsImageSection event={event} isLoading={isLoading} isError={isError} />
+      <EventDetailsInfoSection event={event} isLoading={isLoading} isError={isError} />
+    </PageLayout>
+  );
 }

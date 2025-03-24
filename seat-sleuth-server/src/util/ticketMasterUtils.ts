@@ -8,21 +8,25 @@ import {
   SpecificEventData,
   TicketMasterQueryResponse,
 } from '../types/shared/api/responses';
-import prisma from '../config/db';
 import { ticketMasterApiClient } from '../config/tmClient';
 import { logTicketMasterRequestInDatabase } from './dbUtils';
 import { StatusCodes } from 'http-status-codes';
+import crypto from 'crypto';
 
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
 ): Promise<TicketMasterQueryResponse> => {
   const startOfReq = Date.now();
+
+  // TODO: Revisit this - Likely a session cache tho
+  // const cachedEvents = await getCachedEvents(hashQueryParams(params));
+  // if (cachedEvents) return cachedEvents;
+
   const rawEvents = await fetchEventsFromTicketMaster(params);
   const responseTimeMs = Date.now() - startOfReq;
 
   const finalResponse = mapRawEventsToQueryResponse(rawEvents);
 
-  // Intentionally leaving this as async, but it does not need to be updated before res yet.
   logTicketMasterRequestInDatabase(
     'events.json',
     finalResponse.length > 0 ? StatusCodes.OK : StatusCodes.NO_CONTENT,
@@ -30,42 +34,8 @@ export const handleTicketMasterEventRequest = async (
     responseTimeMs,
     finalResponse.length,
   );
-
   return finalResponse;
 };
-
-// TODO: Decide when and how to approach db persistent events.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getCachedEvents(queryParams: string): Promise<TicketMasterQueryResponse | null> {
-  const existingRequestLog = await prisma.requestLog.findUnique({
-    where: { queryParams },
-    include: {
-      events: {
-        include: {
-          event: {
-            include: {
-              instances: {
-                include: {
-                  priceOptions: true,
-                  watchers: {
-                    include: { user: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
-  if (existingRequestLog) {
-    console.info(`[Repeated Query] - Returning stored events for query: ${queryParams}`);
-    return existingRequestLog.events.map((event) => event.event) as TicketMasterQueryResponse;
-  }
-
-  return null;
-}
 
 async function fetchEventsFromTicketMaster(
   params: TicketMasterSearchParams,
@@ -80,26 +50,31 @@ async function fetchEventsFromTicketMaster(
 }
 
 function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQueryResponse {
-  const eventMap = new Map<string, EventData>();
+  return Array.from(
+    rawEvents
+      .reduce<Map<string, EventData>>((eventMap, rawEvent) => {
+        const eventName = rawEvent.name || 'Unknown Event';
+        const eventOption = mapRawEventToOption(rawEvent);
+        if (eventMap.has(eventName)) {
+          const existingEventInstance = eventMap.get(eventName);
+          existingEventInstance?.instances.push(eventOption);
+          if (existingEventInstance?.instanceCount) {
+            existingEventInstance.instanceCount += 1;
+          }
+        } else {
+          eventMap.set(eventName, {
+            eventName,
+            genre: rawEvent.classifications?.[0]?.genre?.name || 'Unknown Genre',
+            coverImage: rawEvent.images?.[0]?.url || '',
+            instanceCount: 1,
+            instances: [eventOption],
+          });
+        }
 
-  rawEvents.forEach((rawEvent) => {
-    const eventName = rawEvent.name || 'Unknown Event';
-    const eventOption = mapRawEventToOption(rawEvent);
-
-    if (eventMap.has(eventName)) {
-      eventMap.get(eventName)?.instances.push(eventOption);
-    } else {
-      eventMap.set(eventName, {
-        eventName,
-        genre: rawEvent.classifications?.[0]?.genre?.name || 'Unknown Genre',
-        coverImage: rawEvent.images?.[0]?.url || '',
-        instanceCount: 1,
-        instances: [eventOption],
-      });
-    }
-  });
-
-  return Array.from(eventMap.values());
+        return eventMap;
+      }, new Map<string, EventData>())
+      .values(),
+  );
 }
 
 function mapRawEventToOption(rawEvent: RawTMEventData): SpecificEventData {
@@ -132,8 +107,8 @@ function mapPriceRanges(
   return priceRanges.map((priceRange) => ({
     id: crypto.randomUUID(),
     eventInstanceId: eventId,
-    priceMin: priceRange.min !== undefined ? parseFloat(priceRange.min.toString()) : 0,
-    priceMax: priceRange.max !== undefined ? parseFloat(priceRange.max.toString()) : 0,
+    priceMin: priceRange.min ?? 0,
+    priceMax: priceRange.max ?? 0,
     source: PriceOptionSource.Ticketmaster,
   }));
 }

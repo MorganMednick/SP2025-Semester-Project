@@ -1,7 +1,8 @@
-import { Flex, NativeSelect, Stack, Anchor, Divider, Text, Group, Card, Grid } from '@mantine/core';
+import { Flex, NativeSelect, Stack, Anchor, Divider, Text, Group, Grid } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { EventData } from '@shared/api/responses';
-import {  useState } from 'react';
+import { useEffect, useState } from 'react';
+import EventPriceOption from './EventPriceOption';
 
 interface EventDetailsInfoSectionProps {
   event?: EventData | null;
@@ -14,147 +15,104 @@ export default function EventDetailsInfoSection({
   isLoading,
   isError,
 }: EventDetailsInfoSectionProps) {
-  const options = event?.instances || [];
-  const otherLocationsForEvent: { label: string; value: string }[] = options.map((instance) => ({
-    label: `${instance.venueName} - ${instance.city}, ${instance.country}`,
+  const isSmallScreen = useMediaQuery('(max-width: 1350px)');
+
+  const [selectedOption, setSelectedOption] = useState(event?.instances?.[0] || null);
+
+  useEffect(() => {
+    if (event?.instances?.length) {
+      setSelectedOption(event.instances[0]);
+    }
+  }, [event]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading event details</div>;
+  if (!event) return null;
+
+  const options = event.instances || [];
+  const otherLocationsForEvent = options.map((instance) => ({
+    label: `${instance.venueName || 'Unknown Venue'} - ${instance.city || 'Unknown City'}, ${instance.country || 'Unknown Country'}`,
     value: instance.ticketMasterId,
   }));
 
-  const [selectedOption, setSelectedOption] = useState(options[0] || null);
-
   const handleLocationChange = (selectedEventId: string) => {
     const selectedEvent = options.find((evt) => evt.ticketMasterId === selectedEventId);
-
-    if (selectedEvent) {
-      setSelectedOption(selectedEvent);
-    }
+    if (selectedEvent) setSelectedOption(selectedEvent);
   };
 
+  const formattedDate = selectedOption
+    ? new Date(selectedOption.startTime).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : '';
 
-
-  const formattedDate =
-     selectedOption
-      ? new Date(selectedOption.startTime).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })
-      : '';
-
-
-  const isSmallScreen = useMediaQuery('(max-width: 1350px)');
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading event details</div>;
   return (
-    <Stack justify="center" gap="xxs">
+    <Stack justify="center" gap="xs">
       <Flex
         direction={isSmallScreen ? 'column' : 'row'}
         justify="space-between"
         align="flex-start"
-        gap="xxs"
+        gap="xs"
       >
-        <Stack justify="center" gap={0} w={isSmallScreen ? '100%' : '50%'} pt={5}>
+        <Stack w={isSmallScreen ? '100%' : '50%'} pt={5}>
           <Group align="center">
-            <Text size="x" tt="uppercase" ta="left">
-              {formattedDate}
+            <Text size="xl" tt="uppercase">
+              {formattedDate || 'Unknown Date'}
             </Text>
             <Divider size="lg" color="black" orientation="vertical" h={100} />
-            <Stack align="flex-start" gap={0}>
-              <Text size="xxl" ta="left" fw={700} maw={400}>
+            <Stack gap={2}>
+              <Text size="xxl" fw={700}>
                 {selectedOption?.city || 'Unknown City'}
               </Text>
-              <Flex align="center" gap={0}>
-                <Text size="xl" tt="uppercase" ta="left" maw={400}>
+              <Flex align="center">
+                <Text size="xl" tt="uppercase">
                   {selectedOption?.venueName || 'Unknown Venue'}
                 </Text>
-                {selectedOption && selectedOption.seatMapSrc ? (
-                  <Anchor
-                    href={selectedOption?.seatMapSrc}
-                    target="_blank"
-                    size="md"
-                    td="underline"
-                    pl={5}
-                  >
+                {selectedOption?.seatMapSrc && (
+                  <Anchor href={selectedOption.seatMapSrc} target="_blank" size="md" pl={5}>
                     See map
                   </Anchor>
-                ) : (
-                  <Text size="xl"></Text>
                 )}
               </Flex>
             </Stack>
           </Group>
 
-          <NativeSelect
-            label="Location"
-            size="md"
-            c="black"
-            data={otherLocationsForEvent}
-            w="75%" // Makes it responsive on small screens
-            h={60}
-            labelProps={{ style: { fontWeight: 'bold' } }}
-            onChange={(e) => handleLocationChange(e.target.value)}
-          />
+          {/* Location Selector */}
+          {otherLocationsForEvent.length > 0 && (
+            <NativeSelect
+              label="Location"
+              size="md"
+              data={otherLocationsForEvent}
+              value={selectedOption?.ticketMasterId || ''}
+              onChange={(e) => handleLocationChange(e.target.value)}
+              w="100%"
+              h={50}
+              labelProps={{ style: { fontWeight: 'bold' } }}
+            />
+          )}
         </Stack>
 
-        <Grid justify="space-between" pt={5} gutter="lg" w={isSmallScreen ? '100%' : '55%'}>
+        <Grid gutter="lg" w={isSmallScreen ? '100%' : '55%'}>
+          {/* TicketMaster */}
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <Card withBorder bd="2px solid #49905F" radius="md">
-              <Text size="xxxx" fw={700} c="green.7" ta="center">
-                {selectedOption?.priceOptions?.[0]?.priceMin
-                  ? `$${selectedOption.priceOptions[0].priceMin}`
-                  : 'N/A'}{' '}
-              </Text>
-              <Group justify="center">
-                <Anchor
-                  href={selectedOption?.url || undefined}
-                  target="_blank"
-                  c="green.7"
-                  size="xx"
-                >
-                  TicketMaster
-                </Anchor>
-              </Group>
-            </Card>
+            <EventPriceOption
+              price={selectedOption?.priceOptions?.[0]?.priceMin}
+              color="green"
+              source={'TicketMaster'}
+              url={selectedOption?.url}
+            />
           </Grid.Col>
 
+          {/* TODO: SeatGeek Handle price & Url integration props */}
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <Card withBorder bd="2px solid #E49648" radius="md">
-              <Text size="xxxx" fw={700} c="#E49648" ta="center">
-                $49.99
-              </Text>
-              <Group justify="center">
-                <Anchor
-                  href={selectedOption?.url || undefined}
-                  target="_blank"
-                  c="#E49648"
-                  size="xx"
-                >
-                  SeatGeek
-                </Anchor>
-              </Group>
-            </Card>
+            <EventPriceOption color="#E49648" source={'SeatGeek'} />
           </Grid.Col>
 
+          {/* TODO: StubHub Handle price integration props  */}
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <Card
-              withBorder
-              bd="2px solid #BD3133"
-              radius="md"
-            >
-              <Text size="xxxx" fw={700} c="#BD3133" ta="center">
-                ${69.69}
-              </Text>
-              <Group justify="center">
-                <Anchor
-                  href={selectedOption?.url || undefined}
-                  target="_blank"
-                  c="#BD3133"
-                  size="xx"
-                >
-                  StubHub
-                </Anchor>
-              </Group>
-            </Card>
+            <EventPriceOption color="#BD3133" source={'StubHub'} />
           </Grid.Col>
         </Grid>
       </Flex>

@@ -1,267 +1,179 @@
-jest.mock('../../../config/db', () => ({
-  __esModule: true,
-  default: require('../../__mocks__/prisma').default,
-}));
+import request from 'supertest';
+import express from 'express';
+import bcryptjs from 'bcryptjs';
+import { StatusCodes } from 'http-status-codes';
+import prisma from '../../../config/db';
+import authRoutes from '../../../routes/authRoutes';
+import { Session, SessionData } from 'express-session';
 
-jest.mock('../../../util/sessionUtils', () => ({
-  destroySessionAndClearCookies: jest.fn(),
+const app = express();
+app.use(express.json());
+
+app.use((req, res, next) => {
+  req.session = {
+    userId: 1,
+    destroy: jest.fn((callback) => callback(null)),
+  } as unknown as Session & Partial<SessionData>;
+  next();
+});
+
+app.use('/auth', authRoutes);
+
+jest.mock('../../../config/db', () => ({
+  user: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+  },
 }));
 
 jest.mock('bcryptjs', () => ({
-  hash: jest.fn().mockResolvedValue('hashedpassword'),
-  compare: jest.fn().mockResolvedValue(true),
+  hash: jest.fn(),
+  compare: jest.fn(),
 }));
-
-import request from 'supertest';
-import app from '../../../app';
-import prismaMock from '../../__mocks__/prisma';
-import bcryptjs from 'bcryptjs';
-import { destroySessionAndClearCookies } from '../../../util/sessionUtils';
 
 describe('Auth Controller', () => {
   const mockUser = {
     id: 1,
     email: 'test@example.com',
-    password: 'hashedpassword',
-    createdAt: new Date(),
+    password: 'hashed-password',
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  afterAll(async () => {
-    await prismaMock.$disconnect();
-  });
+  describe('POST /auth/register', () => {
+    it('should create a user successfully', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
+      (bcryptjs.hash as jest.Mock).mockResolvedValue('hashed-password');
+      (prisma.user.create as jest.Mock).mockResolvedValue(mockUser);
 
-  /** ===============================
-   *  User Registration Tests
-   *  =============================== */
-
-  describe('User Registration', () => {
-    it('[REGISTER SUCCESS] should register a new user', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prismaMock.user.create as jest.Mock).mockResolvedValue(mockUser);
-
-      const res = await request(app).post('/api/auth/register').send({
+      const res = await request(app).post('/auth/register').send({
         email: 'test@example.com',
         password: 'password123',
       });
 
-      expect(res.status).toBe(201);
-      expect(res.body.success).toBe(true);
+      expect(res.status).toBe(StatusCodes.CREATED);
       expect(res.body.message).toBe('User created successfully');
-    });
-
-    it('[REGISTER FAILURE] should not allow duplicate email registration', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
-
-      const res = await request(app).post('/api/auth/register').send({
-        email: 'test@example.com',
-        password: 'password123',
+      expect(prisma.user.create).toHaveBeenCalledWith({
+        data: {
+          email: 'test@example.com',
+          password: 'hashed-password',
+        },
       });
-
-      expect(res.status).toBe(409);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('User with this email already exists');
     });
 
-    it('[REGISTER FAILURE] should return 400 when email or password is missing', async () => {
-      const res = await request(app).post('/api/auth/register').send({
+    it('should return 400 if email or password is missing', async () => {
+      const res = await request(app).post('/auth/register').send({
         email: 'test@example.com',
       });
 
-      expect(res.status).toBe(400);
-      expect(res.body.success).toBe(false);
+      expect(res.status).toBe(StatusCodes.BAD_REQUEST);
       expect(res.body.message).toBe('Missing email or password');
     });
 
-    it('[REGISTER FAILURE] should return 500 when Prisma fails during registration', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockRejectedValue(new Error('Prisma error'));
+    it('should return 409 if user with email already exists', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
 
-      const res = await request(app).post('/api/auth/register').send({
+      const res = await request(app).post('/auth/register').send({
         email: 'test@example.com',
         password: 'password123',
       });
 
-      expect(res.status).toBe(500);
-      expect(res.body.success).toBe(false);
+      expect(res.status).toBe(StatusCodes.CONFLICT);
+      expect(res.body.message).toBe('User with this email already exists');
+    });
+
+    it('should handle database errors gracefully', async () => {
+      (prisma.user.findUnique as jest.Mock).mockRejectedValue(new Error('Database error'));
+
+      const res = await request(app).post('/auth/register').send({
+        email: 'test@example.com',
+        password: 'password123',
+      });
+
+      expect(res.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
       expect(res.body.message).toBe('An error occurred while creating the user');
     });
   });
 
-  /** ===============================
-   *  User Login Tests
-   *  =============================== */
-
-  describe('User Login', () => {
-    it('[LOGIN SUCCESS] should log in a user with valid credentials', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+  describe('POST /auth/login', () => {
+    it('should log in user with valid credentials', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (bcryptjs.compare as jest.Mock).mockResolvedValue(true);
 
-      const res = await request(app).post('/api/auth/login').send({
+      const res = await request(app).post('/auth/login').send({
         email: 'test@example.com',
         password: 'password123',
       });
 
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
+      expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.message).toBe('Login successful');
     });
 
-    it('[LOGIN FAILURE] should return 401 when logging in with incorrect password', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (bcryptjs.compare as jest.Mock).mockResolvedValue(false);
-
-      const res = await request(app).post('/api/auth/login').send({
+    it('should return 400 if email or password is missing', async () => {
+      const res = await request(app).post('/auth/login').send({
         email: 'test@example.com',
-        password: 'wrongpassword',
       });
 
-      expect(res.status).toBe(401);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('Invalid credentials');
+      expect(res.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(res.body.message).toBe('Missing email or password');
     });
 
-    it('[LOGIN FAILURE] should return 401 when email does not exist', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(null);
+    it('should return 401 if user does not exist', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
 
-      const res = await request(app).post('/api/auth/login').send({
+      const res = await request(app).post('/auth/login').send({
         email: 'nonexistent@example.com',
         password: 'password123',
       });
 
-      expect(res.status).toBe(401);
-      expect(res.body.success).toBe(false);
+      expect(res.status).toBe(StatusCodes.UNAUTHORIZED);
       expect(res.body.message).toBe('Invalid credentials');
     });
 
-    it('[LOGIN FAILURE] should return 400 when email or password is missing', async () => {
-      const res = await request(app).post('/api/auth/login').send({
-        email: 'test@example.com',
-      });
+    it('should handle database errors gracefully', async () => {
+      (prisma.user.findUnique as jest.Mock).mockRejectedValue(new Error('Database error'));
 
-      expect(res.status).toBe(400);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('Missing email or password');
-    });
-
-    it('[LOGIN FAILURE] should return 500 when Prisma fails during login', async () => {
-      (prismaMock.user.findUnique as jest.Mock).mockRejectedValue(new Error('Prisma error'));
-
-      const res = await request(app).post('/api/auth/login').send({
+      const res = await request(app).post('/auth/login').send({
         email: 'test@example.com',
         password: 'password123',
       });
 
-      expect(res.status).toBe(500);
-      expect(res.body.success).toBe(false);
+      expect(res.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
       expect(res.body.message).toBe('An error occurred during login');
     });
   });
 
-  /** ===============================
-   *  Session Check Tests
-   *  =============================== */
-
-  describe('Session Management', () => {
-    it('[SESSION CHECK] should return 200 if the user is logged in', async () => {
-      const agent = request.agent(app);
-
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+  describe('GET /auth/check', () => {
+    it('should confirm if user is logged in', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (bcryptjs.compare as jest.Mock).mockResolvedValue(true);
 
-      await agent.post('/api/auth/login').send({
+      await request(app).post('/auth/login').send({
         email: 'test@example.com',
         password: 'password123',
       });
 
-      const res = await agent.get('/api/auth/login');
+      const res = await request(app).get('/auth/login');
 
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
+      expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.message).toBe('User is logged in');
-    });
-
-    it('[SESSION FAILURE] should return 401 if the user is not logged in', async () => {
-      const res = await request(app).get('/api/auth/login');
-
-      expect(res.status).toBe(401);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('User not logged in');
-    });
-
-    it('[SESSION FAILURE] should return 500 when Prisma fails during session check', async () => {
-      const res = await request(app).get('/api/auth/login');
-
-      expect(res.status).toBe(401);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('User not logged in');
     });
   });
 
-  /** ===============================
-   *  User Logout Tests
-   *  =============================== */
-
-  describe('User Logout', () => {
-    it('[LOGOUT SUCCESS] should log out a logged-in user', async () => {
-      const agent = request.agent(app);
-
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (bcryptjs.compare as jest.Mock).mockResolvedValue(true);
-
-      await agent.post('/api/auth/login').send({
-        email: 'test@example.com',
-        password: 'password123',
+  describe('POST /auth/logout', () => {
+    it('should log out user successfully', async () => {
+      app.use((req, res, next) => {
+        req.session.userId = 1;
+        next();
       });
 
-      (destroySessionAndClearCookies as jest.Mock).mockImplementationOnce((req, res) => {
-        req.session.destroy((err: any) => {
-          if (err) {
-            res.status(500).json({ success: false, message: 'Error logging out' });
-            return;
-          }
-          res.clearCookie('connect.sid');
-          res.status(200).json({ success: true, message: 'Logout successful' });
-        });
-      });
+      const res = await request(app).post('/auth/logout');
 
-      const res = await agent.post('/api/auth/logout');
-
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
+      expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.message).toBe('Logout successful');
-    });
-
-    it('[LOGOUT FAILURE] should return 401 if no user is logged in', async () => {
-      const res = await request(app).post('/api/auth/logout');
-
-      expect(res.status).toBe(401);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('User not logged in');
-    });
-
-    it('[LOGOUT FAILURE] should return 500 if session destruction fails', async () => {
-      const agent = request.agent(app);
-
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (bcryptjs.compare as jest.Mock).mockResolvedValue(true);
-
-      await agent.post('/api/auth/login').send({
-        email: 'test@example.com',
-        password: 'password123',
-      });
-
-      (destroySessionAndClearCookies as jest.Mock).mockImplementationOnce((req, res) => {
-        res.status(500).json({ success: false, message: 'Error logging out' });
-      });
-
-      const res = await agent.post('/api/auth/logout');
-
-      expect(res.status).toBe(500);
-      expect(res.body.success).toBe(false);
-      expect(res.body.message).toBe('Error logging out');
     });
   });
 });

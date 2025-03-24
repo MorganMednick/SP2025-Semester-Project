@@ -38,11 +38,14 @@ export default function EventDetailsImageSection({
         >
           <Image
             src={event?.coverImage}
-            height={450}
+            mah={450}
             width="auto"
             alt={event.eventName}
             fit="cover"
             fallbackSrc="https://placehold.co/600x400?text=Not Found"
+            style={{
+              objectPosition: 'center top', // Not in mantine style props
+            }}
           />
           <Flex
             justify="space-between"

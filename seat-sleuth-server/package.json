@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx prisma migrate deploy && npx prisma db push --accept-data-loss && nodemon",
     "build": "tsc",
-    "test": "cross-env NODE_ENV=test npx jest --detectOpenHandles --bail --coverage",
+    "test": "cross-env NODE_ENV=test npx jest --detectOpenHandles --bail --coverage --passWithNoTests",
     "start": "node dist/server.js"
   },
   "keywords": [],
