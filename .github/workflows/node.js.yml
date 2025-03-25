@@ -84,3 +84,21 @@ jobs:
         working-directory: ./seat-sleuth-server
         env:
           DATABASE_URL: 'postgresql://seat-sleuth-user:seat-sleuth-password@localhost:5433/seat-sleuth-test'
+
+      - name: Check test coverage
+        run: |
+          COVERAGE=$(node -e "const summary = require('./coverage/coverage-summary.json'); console.log(summary.total.lines.pct)")
+          echo "Test coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+            echo "Test coverage is below threshold: $COVERAGE% < 50%"
+            exit 1
+          else
+            echo "Test coverage is sufficient: $COVERAGE% >= 50%"
+          fi
+        working-directory: ./seat-sleuth-server
+
+      - name: Ensure All Tests Passed
+        if: ${{ failure() }}
+        run: |
+          echo "Tests did not pass. Aborting!"
+          exit 1

@@ -10,7 +10,6 @@ services:
       POSTGRES_DB: seat-sleuth
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
     healthcheck:
@@ -19,7 +18,7 @@ services:
       retries: 10
   client:
     container_name: client
-    image: jaycebordelon/seat-sleuth-client # TODO: Jayce -- tag with mvp and build before demo tmrw
+    image: jaycebordelon/seat-sleuth-client:prod
     build:
       context: ./seat-sleuth-client
       dockerfile: Dockerfile
@@ -32,10 +31,8 @@ services:
     env_file:
       - ./seat-sleuth-client/.env
     environment:
-      - CHOKIDAR_USEPOLLING=true
       - VITE_HOST=0.0.0.0
       - VITE_API_BASE_URL=http://localhost:4000/api/
-    command: sh -c "npm run dev"
     depends_on:
       server:
         condition: service_healthy
@@ -47,7 +44,7 @@ services:
       retries: 10
   server:
     container_name: server
-    image: jaycebordelon/seat-sleuth-server # TODO: Jayce -- tag with mvp and build before demo tmrw
+    image: jaycebordelon/seat-sleuth-server:prod
     build:
       context: ./seat-sleuth-server
       dockerfile: Dockerfile
@@ -60,7 +57,6 @@ services:
     volumes:
       - ./seat-sleuth-server:/app
       - node_modules_server:/app/node_modules
-    command: sh -c "npm run dev"
     depends_on:
       database:
         condition: service_healthy

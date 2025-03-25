@@ -8,7 +8,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js'],
   testMatch: ['**/tests/**/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/tests/setupTests.ts'],
-  reporters: ['default', 'jest-summary-reporter'],
+  reporters: ['default'],
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.ts',
@@ -17,7 +17,13 @@ module.exports = {
     '!src/__tests__/**',
     '!src/types/**',
   ],
+  silent: true,
   coveragePathIgnorePatterns: ['/node_modules/'],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'],
+  coverageReporters: ['json-summary', 'text'],
+  coverageThreshold: {
+    global: {
+      lines: 50,
+    },
+  },
 };

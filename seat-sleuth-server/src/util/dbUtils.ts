@@ -9,7 +9,10 @@ export async function logTicketMasterRequestInDatabase(
   responseTimeMs: number,
   eventCount: number,
 ) {
-  const queryParams: string = new URLSearchParams(params as Record<string, string>).toString();
+  const queryParams: string = new URLSearchParams(params as Record<string, string>)
+    .toString()
+    .replace(/\+/g, '%20');
+
   const newRequestLog = await prisma.requestLog.upsert({
     where: {
       queryParams,
