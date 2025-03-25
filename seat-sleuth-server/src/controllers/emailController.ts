@@ -4,17 +4,17 @@ import { Request, Response } from 'express';
 import { SendPriceDropEmailParams } from '../types/shared/api/external/email';
 
 const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID!;
-const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID!;
+const EMAILJS_UPDATE_TEMPLATE_ID = process.env.EMAILJS_UPDATE_TEMPLATE_ID!;
 const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY!;
 const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY!;
+const EMAILJS_WATCHLIST_TEMPLATE_ID = process.env.EMAILJS_WATCHLIST_TEMPLATE_ID!;
 
 export const sendPriceDropEmail = async (req: Request, res: Response): Promise<void> => {
-  console.log('sendPriceDropEmail called');
   try {
     const { userEmail, ticket_name, ticket_price }: SendPriceDropEmailParams = req.body;
     const data = {
       service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
+      template_id: EMAILJS_UPDATE_TEMPLATE_ID,
       user_id: EMAILJS_PUBLIC_KEY,
       accessToken: EMAILJS_PRIVATE_KEY,
       template_params: {

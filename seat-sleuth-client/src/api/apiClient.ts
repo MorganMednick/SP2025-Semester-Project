@@ -30,8 +30,6 @@ export const handleServerRequest = async <E extends ValidServerEndpoints>(
     })
     .then((res) => res?.data)
     .catch((err) => {
-      console.log(method, route, payload); //TODO: Morgan Remove this
-      console.log('handleServerRequest error');
       const error = err as AxiosError;
       return Promise.reject(error.response?.data as ApiErrorResponse<null>);
     });

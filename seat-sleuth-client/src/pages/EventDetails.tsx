@@ -5,8 +5,8 @@ import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
 import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
-import { Button } from '@mantine/core';
-import { sendPriceAlertEmail } from '../api/functions/email';
+import { Button, Stack } from '@mantine/core';
+import { sendAddToWatchlistEmail, sendPriceAlertEmail } from '../api/functions/email';
 import { SendPriceDropEmailParams } from '@shared/api/external/email';
 
 export default function EventDetails() {
@@ -55,7 +55,7 @@ export default function EventDetails() {
     },
   );
 
-  const handleSendEmail = async () => {
+  const handleSendEmail = async (type: 'price' | 'watchlist') => {
     if (!event) return;
     const firstInstance = event.instances[0];
     const firstPrice = firstInstance?.priceOptions?.[0];
@@ -66,15 +66,16 @@ export default function EventDetails() {
     }
 
     const params: SendPriceDropEmailParams = {
+      emailType: type,
       userEmail: 'mgmednick@gmail.com',
       ticket_name: firstInstance.eventName,
-      ticket_price: `${firstPrice.priceMin} - ${firstPrice.priceMax}`,
+      ticket_price: `${firstPrice.priceMin}`,
     };
 
     try {
       const res = await sendPriceAlertEmail(params);
-      console.log('API Response:', res);
-      alert('Email sent!');
+      console.log('API Response (Price Drop):', res);
+      alert('Price Alert Email sent!');
     } catch (err) {
       console.error('Error sending email:', err);
       alert('Failed to send email');
@@ -86,9 +87,9 @@ export default function EventDetails() {
       {event ? (
         <>
           {JSON.stringify(event)}
-          <Button onClick={handleSendEmail} mt="md">
-            Send Price Alert Email
-          </Button>
+          <Stack mt="md">
+            <Button onClick={() => handleSendEmail('price')}>Send Price Alert Email</Button>
+          </Stack>
         </>
       ) : (
         'No Event Found'
