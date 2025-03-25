@@ -7,12 +7,14 @@ interface EventDetailsInfoSectionProps {
   event?: EventData | null;
   isLoading: boolean;
   isError: boolean;
+  seatGeekUrl: string | undefined;
 }
 
 export default function EventDetailsInfoSection({
   event,
   isLoading,
   isError,
+  seatGeekUrl
 }: EventDetailsInfoSectionProps) {
   const options = event?.instances || [];
   const otherLocationsForEvent: { label: string; value: string }[] = options.map((instance) => ({
@@ -120,11 +122,11 @@ export default function EventDetailsInfoSection({
           <Grid.Col span={isSmallScreen ? 12 : 4}>
             <Card withBorder bd="2px solid #E49648" radius="md">
               <Text size="xxxx" fw={700} c="#E49648" ta="center">
-                $49.99
+              { seatGeekUrl ? "$49.99" : "N/A"}
               </Text>
               <Group justify="center">
                 <Anchor
-                  href={selectedOption?.url || undefined}
+                  href={seatGeekUrl || undefined}
                   target="_blank"
                   c="#E49648"
                   size="xx"

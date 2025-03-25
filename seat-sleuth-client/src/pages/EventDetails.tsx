@@ -59,12 +59,12 @@ export default function EventDetails() {
     },
   );
 
-  const {data: seatGeekUrl} = useQuery<string | null, Error>(
+  const {data: seatGeekUrl} = useQuery<string | undefined, Error>(
     ['seatGeekEvent', name],
     async () => {
       if((event?.instanceCount?? 0 > 0) && !seatGeekUrl){
         const res = await fetchSeatGeekEventUrl({ q: sanitizedName, "venue.city": event?.instances[0].city});
-        return res?.data || "NOT FOUND";
+        return res?.data || undefined;
       }
       else{
         return seatGeekUrl;
@@ -73,9 +73,8 @@ export default function EventDetails() {
     },
   );
 
-  // TODO: Actually render the page
   return <PageLayout>
     < EventDetailsImageSection  event={event} isLoading={isLoading} isError={isError} />
-    <EventDetailsInfoSection event={event} isLoading={isLoading} isError={isError} />
+    <EventDetailsInfoSection event={event} isLoading={isLoading} isError={isError} seatGeekUrl={seatGeekUrl}/>
   </PageLayout>;
 }
