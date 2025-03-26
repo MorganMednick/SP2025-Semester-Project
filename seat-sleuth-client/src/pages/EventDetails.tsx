@@ -2,7 +2,7 @@ import { ApiResponse, EventData, TicketMasterQueryResponse } from '@shared/api/r
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
 import EventDetailsImageSection from '../components/events/EventDetailsImageSection';
@@ -12,6 +12,7 @@ export default function EventDetails() {
   const { name, id } = useParams();
   const sanitizedName = sanitizeEventName(name || '');
   const navigate = useNavigate();
+  const [selectedEventId, setSelectedEventId] = useState<string>(id || '');
 
   useEffect(() => {
     if (name) {
@@ -35,11 +36,13 @@ export default function EventDetails() {
         const res: ApiResponse<TicketMasterQueryResponse> = await fetchTicketMasterEvents({
           id,
         });
+        setSelectedEventId(id);
         return res?.data?.[0] ?? null;
       }
 
       if (name) {
         const res = await fetchTicketMasterEvents({ keyword: unsanitizeEventName(name) });
+        setSelectedEventId(res?.data?.[0]?.instances?.[0]?.ticketMasterId || ''); // Arbitrarily assign first ID up front -- This state is required for refetch
         return res?.data?.[0] ?? null;
       }
 
@@ -53,14 +56,20 @@ export default function EventDetails() {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       onError: () => {
-        navigate('/404');
+        navigate('/404'); // Failed fetch treadted as event not found error
       },
     },
   );
   return (
     <PageLayout>
-      <EventDetailsImageSection event={event} isLoading={isLoading} isError={isError} />
-      <EventDetailsInfoSection event={event} isLoading={isLoading} isError={isError} />
+      <EventDetailsImageSection selectedEventId={selectedEventId} event={event} />
+      <EventDetailsInfoSection
+        selectedEventId={selectedEventId}
+        setSelectedEventId={setSelectedEventId}
+        event={event}
+        isLoading={isLoading}
+        isError={isError}
+      />
     </PageLayout>
   );
 }

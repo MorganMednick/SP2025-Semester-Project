@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.4.1",
+    "@prisma/client": "^6.5.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "connect-pg-simple": "^10.0.0",

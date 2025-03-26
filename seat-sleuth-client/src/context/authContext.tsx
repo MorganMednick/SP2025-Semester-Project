@@ -1,16 +1,14 @@
 import { useContext, useEffect, useState, ReactNode } from 'react';
 import { loginUser, checkLogin, registerUser, logoutUser } from '../api/functions/auth';
 import { AuthPayload } from '@shared/api/payloads';
-import axios from 'axios';
 import { AuthContext } from '../types/clitentAuth';
 import { showMantineNotification } from '../util/uiUtils';
 import { ApiResponse, AuthResponse } from '@shared/api/responses';
 import { responseIsOk } from '../util/apiUtils';
 
-axios.defaults.withCredentials = true;
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [userId, setUserId] = useState<number>(-1);
 
   useEffect(() => {
     const verifyLogin = async () => {
@@ -35,8 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response: ApiResponse<AuthResponse> = await loginUser(credentials);
       if (responseIsOk(response)) {
         setIsAuthenticated(true);
+        setUserId(response?.data?.userId || -1);
         showMantineNotification({ message: `Welcome Back ${credentials.email}`, type: 'SUCCESS' });
-        window.location.reload();
       } else {
         throw new Error(response.message);
       }
@@ -54,8 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response: ApiResponse<AuthResponse> = await logoutUser();
       if (responseIsOk(response)) {
         setIsAuthenticated(false);
+        setUserId(-1);
         showMantineNotification({ message: 'You have been logged out.', type: 'INFO' });
-        window.location.reload();
       } else {
         throw new Error(response.message);
       }
@@ -73,9 +71,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response: ApiResponse<AuthResponse> = await registerUser(credentials);
       if (responseIsOk(response)) {
         setIsAuthenticated(true);
+        setUserId(response?.data?.userId || -1);
         showMantineNotification({ message: `Welcome, ${credentials.email}!`, type: 'SUCCESS' });
-        window.location.reload();
       } else {
+        setIsAuthenticated(false);
         throw new Error(response.message);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>
+    <AuthContext.Provider value={{ isAuthenticated, userId, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

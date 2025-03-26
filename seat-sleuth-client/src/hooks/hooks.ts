@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import geohash from 'ngeohash';
 import { useMediaQuery } from '@mantine/hooks';
+import { useAuth } from '../context/authContext';
 
 export const useGeoPoint = () => {
   const [geoPoint, setGeoPoint] = useState<string | null>(null);
@@ -46,4 +47,15 @@ export const useAppropriateGridColumnCount = (): number => {
   if (isXl) return 12 / 4;
 
   return 12 / 4;
+};
+
+export const useAuthDisabled = (): boolean => {
+  const { isAuthenticated } = useAuth();
+  const [disabled, setDisabled] = useState(!isAuthenticated);
+
+  useEffect(() => {
+    setDisabled(!isAuthenticated);
+  }, [isAuthenticated]);
+
+  return disabled;
 };

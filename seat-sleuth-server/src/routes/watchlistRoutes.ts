@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   addToWatchList,
   getUserWatchList,
+  isUserWatching,
   removeFromWatchList,
 } from '../controllers/watchlistController';
 
@@ -12,5 +13,7 @@ router.get('/', getUserWatchList);
 router.post('/', addToWatchList);
 
 router.delete('/', removeFromWatchList);
+
+router.post('/check', isUserWatching);
 
 export default router;

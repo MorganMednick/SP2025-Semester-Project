@@ -10,7 +10,7 @@ export interface ApiResponse<T> {
 
 export type ApiSuccessResponse<T> = Omit<ApiResponse<T>, 'error'>;
 export type ApiErrorResponse<T> = Omit<ApiResponse<T>, 'data'>;
-export type AuthResponse = null;
+export type AuthResponse = { userId: number } | null;
 
 /**
  * @property {string} eventName - The name of the event.

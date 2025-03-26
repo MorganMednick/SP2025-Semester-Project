@@ -43,6 +43,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     sendSuccess<AuthResponse>(res, {
       statusCode: StatusCodes.CREATED,
       message: 'User created successfully',
+      data: { userId: newUser.id },
     });
   } catch (error) {
     console.error(error);
@@ -94,6 +95,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     sendSuccess<AuthResponse>(res, {
       statusCode: StatusCodes.OK,
       message: 'Login successful',
+      data: { userId: user.id },
     });
   } catch (error) {
     sendError(res, {
