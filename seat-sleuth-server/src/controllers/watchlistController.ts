@@ -9,6 +9,7 @@ import {
   GetWatchlistForUserResponse,
 } from '../types/shared/api/responses';
 import { PriceOption } from '@prisma/client';
+import { upsertWatchlistDataForEvent } from '../util/dbUtils';
 
 export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -79,7 +80,7 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
 
     const userWatchlist: GetWatchlistForUserResponse = Array.from(eventMap.values());
 
-    console.info('User watchlist:', userWatchlist);
+    console.info(`Fetched ${userWatchlist.length} watchlist for user:`, userWatchlist);
 
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
@@ -99,6 +100,7 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
 export const addToWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.session.userId;
+
     if (!userId) {
       sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
@@ -107,45 +109,25 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const { eventInstanceId }: AddToWatchListPayload = req.body;
-    if (!eventInstanceId) {
+    const initialRequestData: AddToWatchListPayload = req.body;
+
+    const upsertOk = await upsertWatchlistDataForEvent(initialRequestData, userId);
+
+    if (upsertOk) {
+      sendSuccess(res, {
+        statusCode: StatusCodes.OK,
+        message: 'Event created and added to watchlist',
+      });
+    } else {
       sendError(res, {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: 'Event Option ID is required',
+        message: 'Event failed to add to watchlist',
       });
-      return;
     }
-
-    // Check if event option exists
-    const eventOption = await prisma.eventInstance.findUnique({
-      where: { ticketMasterId: eventInstanceId },
-    });
-
-    if (!eventOption) {
-      sendError(res, {
-        statusCode: StatusCodes.NOT_FOUND,
-        message: 'Event Option not found',
-      });
-      return;
-    }
-
-    await prisma.watchedEvent.upsert({
-      where: {
-        userId_eventInstanceId: { userId, eventInstanceId },
-      },
-      update: {},
-      create: { userId, eventInstanceId },
-    });
-
-    sendSuccess(res, {
-      statusCode: StatusCodes.OK,
-      message: 'Event option added to watchlist',
-    });
   } catch (error) {
-    console.error('Error adding event option to watchlist:', error);
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Error adding event option to watchlist.',
+      message: 'Failed to add event to watchlist.',
       error,
     });
   }

@@ -1,24 +1,65 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, Flex, Title, Checkbox, Box } from '@mantine/core';
-import { EventData } from '@shared/api/responses';
+import { EventData, SpecificEventData } from '@shared/api/responses';
+import { addToWatchList } from '../../api/functions/watchlist';
+import { useAuth } from '../../context/authContext';
+import { responseIsOk } from '../../util/apiUtils';
+import { showMantineNotification } from '../../util/uiUtils';
 
 interface EventDetailsImageSectionProps {
   event?: EventData | null;
   isLoading: boolean;
   isError: boolean;
+  selectedEventId: string;
 }
 
 export default function EventDetailsImageSection({
   event,
   isLoading,
   isError,
+  selectedEventId,
 }: EventDetailsImageSectionProps) {
+  const { isAuthenticated, userId } = useAuth();
   const [isChecked, setIsChecked] = useState(false);
-  const [disabled] = useState(false);
 
-  const handleCheckboxChange = (checked: boolean | ((prevState: boolean) => boolean)) => {
-    setIsChecked(checked);
-    // TODO
+  const specificEvent: SpecificEventData | undefined =
+    event?.instances?.find((eventInstance) => eventInstance.ticketMasterId === selectedEventId) ||
+    ({} as SpecificEventData);
+
+  const isWatcher = !!specificEvent.watchers?.find((watcher) => watcher.userId === userId);
+
+  const userIsWatchingAndLoggedIn = isWatcher && userId !== -1;
+
+  const [disabled, setDisabled] = useState(!isAuthenticated && userIsWatchingAndLoggedIn);
+
+  useEffect(() => {
+    setDisabled(!isAuthenticated && !userIsWatchingAndLoggedIn); // Mirror disabled state via auth state. No need to refresh to refetch! -Jayce
+    console.info(userId);
+  }, [isAuthenticated, selectedEventId, userId]);
+
+  const handleCheckboxChange = async (checked: boolean | ((prevState: boolean) => boolean)) => {
+    if (isAuthenticated && selectedEventId) {
+      setIsChecked(checked);
+      setDisabled(true);
+      const res = await addToWatchList({
+        eventInstanceId: selectedEventId,
+        event: event || ({} as EventData),
+      });
+      if (responseIsOk(res)) {
+        showMantineNotification({
+          message: `Event with id of ${selectedEventId} has been added to your watchlist`,
+          type: 'INFO',
+        });
+      } else {
+        showMantineNotification({
+          message: `Failed to add event with id of ${selectedEventId} to your watchlist`,
+          type: 'ERROR',
+        });
+      }
+      setDisabled(false);
+    } else {
+      console.error('You should not be able to add to watchlist if not logged in. Fix me.');
+    }
   };
 
   return (

@@ -1,52 +1,39 @@
 import { Flex, NativeSelect, Stack, Anchor, Divider, Text, Group, Grid } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { EventData } from '@shared/api/responses';
-import { useEffect, useState } from 'react';
+import { EventData, SpecificEventData } from '@shared/api/responses';
+import { SetStateAction } from 'react';
 import EventPriceOption from './EventPriceOption';
+import { formatDateToMonthDayYearString } from '../../util/uiUtils';
 
 interface EventDetailsInfoSectionProps {
   event?: EventData | null;
   isLoading: boolean;
   isError: boolean;
+  selectedEventId: string;
+  setSelectedEventId: React.Dispatch<SetStateAction<string>>;
 }
 
 export default function EventDetailsInfoSection({
   event,
   isLoading,
   isError,
+  selectedEventId,
+  setSelectedEventId,
 }: EventDetailsInfoSectionProps) {
   const isSmallScreen = useMediaQuery('(max-width: 1350px)');
-
-  const [selectedOption, setSelectedOption] = useState(event?.instances?.[0] || null);
-
-  useEffect(() => {
-    if (event?.instances?.length) {
-      setSelectedOption(event.instances[0]);
-    }
-  }, [event]);
+  const eventFromIdProps: SpecificEventData =
+    event?.instances.find((eventInstance) => eventInstance.ticketMasterId === selectedEventId) ||
+    ({} as SpecificEventData);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading event details</div>;
   if (!event) return null;
 
   const options = event.instances || [];
-  const otherLocationsForEvent = options.map((instance) => ({
+  const locationsForEvent = options.map((instance) => ({
     label: `${instance.venueName || 'Unknown Venue'} - ${instance.city || 'Unknown City'}, ${instance.country || 'Unknown Country'}`,
     value: instance.ticketMasterId,
   }));
-
-  const handleLocationChange = (selectedEventId: string) => {
-    const selectedEvent = options.find((evt) => evt.ticketMasterId === selectedEventId);
-    if (selectedEvent) setSelectedOption(selectedEvent);
-  };
-
-  const formattedDate = selectedOption
-    ? new Date(selectedOption.startTime).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : '';
 
   return (
     <Stack justify="center" gap="xs">
@@ -59,19 +46,19 @@ export default function EventDetailsInfoSection({
         <Stack w={isSmallScreen ? '100%' : '50%'} pt={5}>
           <Group align="center">
             <Text size="xl" tt="uppercase">
-              {formattedDate || 'Unknown Date'}
+              {formatDateToMonthDayYearString(eventFromIdProps.startTime) || 'Unknown Date'}
             </Text>
             <Divider size="lg" color="black" orientation="vertical" h={100} />
             <Stack gap={2}>
               <Text size="xxl" fw={700}>
-                {selectedOption?.city || 'Unknown City'}
+                {eventFromIdProps?.city || 'Unknown City'}
               </Text>
               <Flex align="center">
                 <Text size="xl" tt="uppercase">
-                  {selectedOption?.venueName || 'Unknown Venue'}
+                  {eventFromIdProps?.venueName || 'Unknown Venue'}
                 </Text>
-                {selectedOption?.seatMapSrc && (
-                  <Anchor href={selectedOption.seatMapSrc} target="_blank" size="md" pl={5}>
+                {eventFromIdProps?.seatMapSrc && (
+                  <Anchor href={eventFromIdProps.seatMapSrc} target="_blank" size="md" pl={5}>
                     See map
                   </Anchor>
                 )}
@@ -80,13 +67,18 @@ export default function EventDetailsInfoSection({
           </Group>
 
           {/* Location Selector */}
-          {otherLocationsForEvent.length > 0 && (
+          {locationsForEvent.length > 0 && (
             <NativeSelect
               label="Location"
               size="md"
-              data={otherLocationsForEvent}
-              value={selectedOption?.ticketMasterId || ''}
-              onChange={(e) => handleLocationChange(e.target.value)}
+              data={locationsForEvent}
+              value={selectedEventId || ''}
+              onChange={
+                (e) =>
+                  setSelectedEventId(
+                    e.target.value,
+                  ) /* Should force re-render... this is needed for parent state refresh!!! */
+              }
               w="100%"
               h={50}
               labelProps={{ style: { fontWeight: 'bold' } }}
@@ -98,10 +90,10 @@ export default function EventDetailsInfoSection({
           {/* TicketMaster */}
           <Grid.Col span={isSmallScreen ? 12 : 4}>
             <EventPriceOption
-              price={selectedOption?.priceOptions?.[0]?.priceMin}
+              price={eventFromIdProps?.priceOptions?.[0]?.priceMin}
               color="green"
               source={'TicketMaster'}
-              url={selectedOption?.url}
+              url={eventFromIdProps?.url}
             />
           </Grid.Col>
 

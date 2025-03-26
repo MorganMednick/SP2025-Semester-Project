@@ -21,3 +21,11 @@ export const showMantineNotification = ({
 
   notifications.show({ title, message, color, position });
 };
+
+export const formatDateToMonthDayYearString = (date: Date): string => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};

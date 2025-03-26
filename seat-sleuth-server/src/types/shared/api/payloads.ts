@@ -1,4 +1,5 @@
 import { TicketMasterSearchParams } from './external/ticketMaster';
+import { EventData } from './responses';
 
 export interface AuthPayload {
   email: string;
@@ -18,6 +19,7 @@ export interface UpdatePasswordPayload {
 
 export interface AddToWatchListPayload {
   eventInstanceId: string;
+  event: EventData;
 }
 
 export interface RemoveFromWatchListPayload {
