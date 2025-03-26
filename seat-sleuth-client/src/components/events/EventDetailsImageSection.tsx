@@ -13,8 +13,6 @@ import { useAuthDisabled } from '../../hooks/hooks';
 
 interface EventDetailsImageSectionProps {
   event?: EventData | null;
-  isLoading: boolean;
-  isError: boolean;
   selectedEventId: string;
 }
 

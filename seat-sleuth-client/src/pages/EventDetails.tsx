@@ -62,12 +62,7 @@ export default function EventDetails() {
   );
   return (
     <PageLayout>
-      <EventDetailsImageSection
-        selectedEventId={selectedEventId}
-        event={event}
-        isLoading={isLoading}
-        isError={isError}
-      />
+      <EventDetailsImageSection selectedEventId={selectedEventId} event={event} />
       <EventDetailsInfoSection
         selectedEventId={selectedEventId}
         setSelectedEventId={setSelectedEventId}
