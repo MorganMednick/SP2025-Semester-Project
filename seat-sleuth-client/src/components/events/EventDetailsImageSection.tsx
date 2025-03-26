@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Image, Flex, Title, Checkbox, Box } from '@mantine/core';
 import { EventData } from '@shared/api/responses';
 import {

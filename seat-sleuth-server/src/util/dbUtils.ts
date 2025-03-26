@@ -71,6 +71,7 @@ export const upsertWatchlistDataForEvent = async (
 
   // CREATE INSTANCES
   const eventInstances: EventInstance[] = instances.map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ({ priceOptions, watchers, ...instanceData }) => ({
       ...instanceData,
     }),
