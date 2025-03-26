@@ -6,6 +6,7 @@ import {
   RemoveFromWatchListPayload,
   UserPayload,
   TicketMasterQueryParams,
+  IsUserWatchingPayload,
 } from './payloads';
 import { AuthResponse, GetWatchlistForUserResponse, TicketMasterQueryResponse } from './responses';
 
@@ -94,6 +95,12 @@ export const WATCHLIST_API_SCHEMA = {
     route: '/watchlist',
     method: 'DELETE',
     payload: {} as RemoveFromWatchListPayload,
+    response: null,
+  },
+  CHECK_IF_USER_WATCHING: {
+    route: '/watchlist/check',
+    method: 'POST',
+    payload: {} as IsUserWatchingPayload,
     response: null,
   },
 } as const;

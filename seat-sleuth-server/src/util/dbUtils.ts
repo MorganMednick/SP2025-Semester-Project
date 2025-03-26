@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { AddToWatchListPayload, TicketMasterQueryParams } from '../types/shared/api/payloads';
 import prisma from '../config/db';
-import { EventInstance, EventMetaData, PriceOption } from '@prisma/client';
+import { EventInstance, PriceOption } from '@prisma/client';
 import { EventData, SpecificEventData } from '../types/shared/api/responses';
 
 export async function logTicketMasterRequestInDatabase(
@@ -84,10 +84,16 @@ export const upsertWatchlistDataForEvent = async (
   for (let i = 0; i < createdInstances.length; i++) {
     const instance: EventInstance = createdInstances[i];
     const { priceOptions } = instances[i];
-
     for (const priceRange of priceOptions) {
-      await prisma.priceOption.create({
-        data: {
+      await prisma.priceOption.upsert({
+        where: {
+          eventInstanceId_source: {
+            eventInstanceId: instance.ticketMasterId,
+            source: priceRange.source,
+          },
+        },
+        update: {},
+        create: {
           ...priceRange,
           eventInstanceId: instance.ticketMasterId,
         },
@@ -106,4 +112,55 @@ export const upsertWatchlistDataForEvent = async (
     return true;
   }
   return false;
+};
+
+export const getUserWithWatchlist = async (userId: number): Promise<EventData[]> => {
+  const userWithWatchlist = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      watchlist: {
+        include: {
+          eventInstance: {
+            include: {
+              event: true,
+              priceOptions: true,
+              watchers: {
+                include: { user: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const eventMap: Map<string, EventData> = new Map<string, EventData>();
+
+  userWithWatchlist?.watchlist.forEach(({ eventInstance }) => {
+    if (!eventInstance) return;
+
+    const eventId = eventInstance.ticketMasterId;
+
+    // Map to SpecificEventData
+    const mappedSpecificEvent: SpecificEventData = {
+      ...eventInstance,
+      watchers: eventInstance.watchers.map((watch) => ({
+        ...watch,
+        user: watch.user,
+      })),
+      priceOptions: eventInstance.priceOptions as PriceOption[],
+    };
+
+    if (eventMap.has(eventId)) {
+      const existingEvent = eventMap.get(eventId);
+      if (existingEvent) existingEvent.instances.push(mappedSpecificEvent);
+    } else {
+      eventMap.set(eventId, {
+        ...eventInstance.event,
+        instances: [mappedSpecificEvent], // Now using SpecificEventData
+      });
+    }
+  });
+
+  return Array.from(eventMap.values()) || [];
 };

@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Image, Flex, Title, Checkbox, Box } from '@mantine/core';
-import { EventData, SpecificEventData } from '@shared/api/responses';
-import { addToWatchList } from '../../api/functions/watchlist';
-import { useAuth } from '../../context/authContext';
+import { EventData } from '@shared/api/responses';
+import {
+  addToWatchList,
+  checkIfUserIsWatchingParticularEventInstance,
+  removeFromWatchList,
+} from '../../api/functions/watchlist';
 import { responseIsOk } from '../../util/apiUtils';
 import { showMantineNotification } from '../../util/uiUtils';
+import { useQuery } from 'react-query';
+import { useAuthDisabled } from '../../hooks/hooks';
 
 interface EventDetailsImageSectionProps {
   event?: EventData | null;
@@ -15,51 +20,83 @@ interface EventDetailsImageSectionProps {
 
 export default function EventDetailsImageSection({
   event,
-  isLoading,
-  isError,
   selectedEventId,
 }: EventDetailsImageSectionProps) {
-  const { isAuthenticated, userId } = useAuth();
+  const baseDisabled = useAuthDisabled();
   const [isChecked, setIsChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const specificEvent: SpecificEventData | undefined =
-    event?.instances?.find((eventInstance) => eventInstance.ticketMasterId === selectedEventId) ||
-    ({} as SpecificEventData);
+  const checkboxDisabled = baseDisabled || loading;
 
-  const isWatcher = !!specificEvent.watchers?.find((watcher) => watcher.userId === userId);
-
-  const userIsWatchingAndLoggedIn = isWatcher && userId !== -1;
-
-  const [disabled, setDisabled] = useState(!isAuthenticated && userIsWatchingAndLoggedIn);
-
-  useEffect(() => {
-    setDisabled(!isAuthenticated && !userIsWatchingAndLoggedIn); // Mirror disabled state via auth state. No need to refresh to refetch! -Jayce
-    console.info(userId);
-  }, [isAuthenticated, selectedEventId, userId]);
-
-  const handleCheckboxChange = async (checked: boolean | ((prevState: boolean) => boolean)) => {
-    if (isAuthenticated && selectedEventId) {
-      setIsChecked(checked);
-      setDisabled(true);
-      const res = await addToWatchList({
+  useQuery(
+    ['checkIfUserIsWatchingParticularEventInstance', selectedEventId],
+    async () => {
+      return await checkIfUserIsWatchingParticularEventInstance({
         eventInstanceId: selectedEventId,
-        event: event || ({} as EventData),
       });
+    },
+    {
+      enabled: !!selectedEventId && !baseDisabled,
+      onSuccess: (res) => {
+        setIsChecked(responseIsOk(res));
+      },
+      onError: () => {
+        setIsChecked(false);
+      },
+      retry: false, // <= Need this to trigger only once. should be refetched on auth change so this is so fine!
+      cacheTime: 0, // NO CACHING FOR THIS SIMPLE REQ
+      staleTime: 0,
+      refetchOnMount: true, // Basically useEffect()
+      refetchOnWindowFocus: true,
+    },
+  );
+
+  const handleCheckboxChange = async (checked: boolean) => {
+    if (baseDisabled || !selectedEventId) {
+      console.error('You must be logged in to update your watchlist.');
+      return;
+    }
+
+    setLoading(true);
+    setIsChecked(checked);
+
+    try {
+      const res = checked
+        ? await addToWatchList({
+            eventInstanceId: selectedEventId,
+            event: event || ({} as EventData),
+          })
+        : await removeFromWatchList({
+            eventInstanceId: selectedEventId,
+          });
+
       if (responseIsOk(res)) {
         showMantineNotification({
-          message: `Event with id of ${selectedEventId} has been added to your watchlist`,
+          message: `Event ${checked ? 'added to' : 'removed from'} your watchlist.`,
           type: 'INFO',
         });
       } else {
         showMantineNotification({
-          message: `Failed to add event with id of ${selectedEventId} to your watchlist`,
+          message: `Failed to ${checked ? 'add' : 'remove'} the event.`,
           type: 'ERROR',
         });
+        setIsChecked(!checked);
       }
-      setDisabled(false);
-    } else {
-      console.error('You should not be able to add to watchlist if not logged in. Fix me.');
+    } catch (err) {
+      console.error(err);
+      showMantineNotification({
+        message: `An error occurred.`,
+        type: 'ERROR',
+      });
+      setIsChecked(!checked);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const getLabelForWatchlistCheckbox = (): string => {
+    if (baseDisabled) return 'Login to add to watchlist';
+    return isChecked ? 'Remove this event from watchlist' : 'Watch this event';
   };
 
   return (
@@ -85,7 +122,7 @@ export default function EventDetailsImageSection({
             fit="cover"
             fallbackSrc="https://placehold.co/600x400?text=Not Found"
             style={{
-              objectPosition: 'center top', // Not in mantine style props
+              objectPosition: 'center top',
             }}
           />
           <Flex
@@ -102,39 +139,22 @@ export default function EventDetailsImageSection({
                 {event.eventName}
               </Title>
             </Box>
-            {!isLoading && !isError ? (
-              <Checkbox
-                color="green.7"
-                iconColor="black"
-                label="Watch price"
-                labelPosition="left"
-                styles={(theme) => ({
-                  label: {
-                    color: theme.colors.green[7],
-                    fontSize: theme.fontSizes.md,
-                    fontWeight: 600,
-                  },
-                })}
-                checked={isChecked}
-                disabled={disabled}
-                onChange={(event) => handleCheckboxChange(event.currentTarget.checked)}
-              />
-            ) : (
-              <Checkbox
-                color="green"
-                iconColor="white"
-                label="Login to watch price"
-                labelPosition="left"
-                styles={(theme) => ({
-                  label: {
-                    color: 'white',
-                    fontSize: theme.fontSizes.sm,
-                  },
-                })}
-                checked={false}
-                disabled={true}
-              />
-            )}
+            <Checkbox
+              color="green.7"
+              iconColor="black"
+              label={getLabelForWatchlistCheckbox()}
+              labelPosition="left"
+              styles={(theme) => ({
+                label: {
+                  color: theme.colors.green[7],
+                  fontSize: theme.fontSizes.md,
+                  fontWeight: 600,
+                },
+              })}
+              checked={isChecked}
+              disabled={checkboxDisabled}
+              onChange={(event) => handleCheckboxChange(event.currentTarget.checked)}
+            />
           </Flex>
         </Box>
       )}

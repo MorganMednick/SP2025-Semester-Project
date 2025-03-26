@@ -3,13 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { AddToWatchListPayload, RemoveFromWatchListPayload } from '../types/shared/api/payloads';
-import {
-  EventData,
-  SpecificEventData,
-  GetWatchlistForUserResponse,
-} from '../types/shared/api/responses';
-import { PriceOption } from '@prisma/client';
-import { upsertWatchlistDataForEvent } from '../util/dbUtils';
+import { EventData, GetWatchlistForUserResponse } from '../types/shared/api/responses';
+import { getUserWithWatchlist, upsertWatchlistDataForEvent } from '../util/dbUtils';
 
 export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -23,64 +18,11 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
     }
 
     // Fetch user watchlist with necessary relations
-    const userWithWatchlist = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        watchlist: {
-          include: {
-            eventInstance: {
-              include: {
-                event: true,
-                priceOptions: true,
-                watchers: {
-                  include: { user: true },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+    const userWithWatchlist: EventData[] = await getUserWithWatchlist(userId);
 
-    if (!userWithWatchlist) {
-      sendError(res, {
-        statusCode: StatusCodes.NOT_FOUND,
-        message: 'User not found',
-      });
-      return;
-    }
+    const userWatchlist: GetWatchlistForUserResponse = userWithWatchlist;
 
-    const eventMap: Map<string, EventData> = new Map<string, EventData>();
-
-    userWithWatchlist.watchlist.forEach(({ eventInstance }) => {
-      if (!eventInstance) return;
-
-      const eventId = eventInstance.ticketMasterId;
-
-      // Map to SpecificEventData
-      const mappedSpecificEvent: SpecificEventData = {
-        ...eventInstance,
-        watchers: eventInstance.watchers.map((watch) => ({
-          ...watch,
-          user: watch.user,
-        })),
-        priceOptions: eventInstance.priceOptions as PriceOption[],
-      };
-
-      if (eventMap.has(eventId)) {
-        const existingEvent = eventMap.get(eventId);
-        if (existingEvent) existingEvent.instances.push(mappedSpecificEvent);
-      } else {
-        eventMap.set(eventId, {
-          ...eventInstance.event,
-          instances: [mappedSpecificEvent], // Now using SpecificEventData
-        });
-      }
-    });
-
-    const userWatchlist: GetWatchlistForUserResponse = Array.from(eventMap.values());
-
-    console.info(`Fetched ${userWatchlist.length} watchlist for user:`, userWatchlist);
+    console.info(`Fetched ${userWatchlist.length} watchlist for user`);
 
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
@@ -100,6 +42,7 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
 export const addToWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.session.userId;
+    const payload: AddToWatchListPayload = req.body;
 
     if (!userId) {
       sendError(res, {
@@ -109,11 +52,16 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const initialRequestData: AddToWatchListPayload = req.body;
+    console.info(
+      `[WATCHLIST][ADD] Attempting to add event (${payload.eventInstanceId}) to watchlist for user (${userId})`,
+    );
 
-    const upsertOk = await upsertWatchlistDataForEvent(initialRequestData, userId);
+    const upsertOk = await upsertWatchlistDataForEvent(payload, userId);
 
     if (upsertOk) {
+      console.info(
+        `[WATCHLIST][ADD] Successfully added event (${payload.eventInstanceId}) to watchlist for user (${userId})`,
+      );
       sendSuccess(res, {
         statusCode: StatusCodes.OK,
         message: 'Event created and added to watchlist',
@@ -125,6 +73,7 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
       });
     }
   } catch (error) {
+    console.error('[WATCHLIST][ADD] Internal server error:', error);
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Failed to add event to watchlist.',
@@ -136,6 +85,8 @@ export const addToWatchList = async (req: Request, res: Response): Promise<void>
 export const removeFromWatchList = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.session.userId;
+    const { eventInstanceId }: RemoveFromWatchListPayload = req.body;
+
     if (!userId) {
       sendError(res, {
         statusCode: StatusCodes.UNAUTHORIZED,
@@ -144,7 +95,6 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
       return;
     }
 
-    const { eventInstanceId }: RemoveFromWatchListPayload = req.body;
     if (!eventInstanceId) {
       sendError(res, {
         statusCode: StatusCodes.BAD_REQUEST,
@@ -153,7 +103,10 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
       return;
     }
 
-    // Check if entry exists in the watchlist
+    console.info(
+      `[WATCHLIST][REMOVE] Attempting to remove event (${eventInstanceId}) from watchlist for user (${userId})`,
+    );
+
     const watchlistEntry = await prisma.watchedEvent.findUnique({
       where: {
         userId_eventInstanceId: { userId, eventInstanceId },
@@ -161,6 +114,9 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
     });
 
     if (!watchlistEntry) {
+      console.warn(
+        `[WATCHLIST][REMOVE] No watchlist entry found for user (${userId}) and event (${eventInstanceId})`,
+      );
       sendError(res, {
         statusCode: StatusCodes.NOT_FOUND,
         message: 'Watchlist entry not found',
@@ -174,15 +130,70 @@ export const removeFromWatchList = async (req: Request, res: Response): Promise<
       },
     });
 
+    console.info(
+      `[WATCHLIST][REMOVE] Successfully removed event (${eventInstanceId}) from watchlist for user (${userId})`,
+    );
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
       message: 'Event option removed from watchlist',
     });
   } catch (error) {
-    console.error('Error removing event option from watchlist:', error);
+    console.error('[WATCHLIST][REMOVE] Internal server error:', error);
     sendError(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Error removing event option from watchlist.',
+      error,
+    });
+  }
+};
+
+export const isUserWatching = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.session.userId;
+    const { eventInstanceId } = req.body;
+
+    if (!userId) {
+      console.warn('[WATCHLIST][CHECK] Unauthorized request - no userId in session');
+      sendError(res, {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: 'User not logged in',
+      });
+      return;
+    }
+
+    if (!eventInstanceId) {
+      console.warn('[WATCHLIST][CHECK] Missing eventInstanceId in request body');
+      sendError(res, {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'No included event to check is user is watching event.',
+      });
+      return;
+    }
+
+    const existingWatchlistRecord = await prisma.watchedEvent.findUnique({
+      where: {
+        userId_eventInstanceId: { userId, eventInstanceId },
+      },
+    });
+
+    if (!existingWatchlistRecord) {
+      sendError(res, {
+        message: 'No existing watchlist record for user',
+        statusCode: StatusCodes.NOT_ACCEPTABLE,
+      });
+      return;
+    }
+
+    console.info(`[WATCHLIST][CHECK] User (${userId}) is watching event (${eventInstanceId})`);
+    sendSuccess(res, {
+      message: `User watchlist relation exists for event with id: ${eventInstanceId}`,
+      statusCode: StatusCodes.OK,
+    });
+  } catch (error) {
+    console.error('[WATCHLIST][CHECK] Internal server error:', error);
+    sendError(res, {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Error checking if user is watching event.',
       error,
     });
   }

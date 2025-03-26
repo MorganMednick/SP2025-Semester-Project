@@ -26,4 +26,8 @@ export interface RemoveFromWatchListPayload {
   eventInstanceId: string;
 }
 
+export interface IsUserWatchingPayload {
+  eventInstanceId: string;
+}
+
 export type TicketMasterQueryParams = TicketMasterSearchParams;
