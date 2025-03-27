@@ -26,7 +26,7 @@ export const handleServerRequest = async <E extends ValidServerEndpoints>(
     .request<ApiResponse<EndpointResponse<E>>>({
       method,
       url: route,
-      data: payload ?? undefined,
+      data: payload ?? {},
     })
     .then((res) => res?.data)
     .catch((err) => {
