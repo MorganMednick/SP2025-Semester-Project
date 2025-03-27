@@ -106,12 +106,6 @@ export const EMAIL_API_SCHEMA = {
     payload: {} as EmailNotificationPayload,
     response: null,
   },
-  WATCHLIST_NOTIF: {
-    route: '/email/add-to-watchlist',
-    method: 'POST',
-    payload: {} as EmailNotificationPayload,
-    response: null,
-  },
 } as const;
 
 export const MERGED_API_SCHEMA = {

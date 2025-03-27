@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
 import { Button, Stack } from '@mantine/core';
-import { sendAddToWatchlistEmail, sendPriceAlertEmail } from '../api/functions/email';
+import { sendPriceAlertEmail } from '../api/functions/email';
 import { SendPriceDropEmailParams } from '@shared/api/external/email';
 
 export default function EventDetails() {
