@@ -4,12 +4,13 @@ services:
     image: postgres:15
     container_name: database
     restart: always
-    # environment:
-    #   POSTGRES_USER: seat-sleuth-user
-    #   POSTGRES_PASSWORD: seat-sleuth-password-12345
-    #   POSTGRES_DB: seat-sleuth
+    environment:
+      POSTGRES_USER: seat-sleuth-user
+      POSTGRES_PASSWORD: seat-sleuth-password-12345
+      POSTGRES_DB: seat-sleuth
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
     healthcheck:
