@@ -56,7 +56,7 @@ jobs:
           echo "TM_BASE_URL=https://app.ticketmaster.com/discovery/v2/" >> .env.test
           echo "TM_API_KEY=cmtAt6aY2NgARV2FksRnE42AY2Hy3mmA" >> .env.test
           echo "GMAIL_EMAIL=seatsleuthauth@gmail.com" >> .env.test
-          echo "GMAIL_PASSWORD="ogsbzkzmafitcuun" >> .env.test
+          echo "GMAIL_PASSWORD=ogsbzkzmafitcuun" >> .env.test
         working-directory: ./seat-sleuth-server
 
       - name: Install dependencies
