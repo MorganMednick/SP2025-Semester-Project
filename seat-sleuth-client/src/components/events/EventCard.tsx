@@ -17,7 +17,7 @@ export default function EventCard({ event }: { event: EventMetaData }) {
         />
 
         <Overlay
-          opacity={hovered ? 1 : 0.0}
+          opacity={hovered ? 1 : 0.8}
           style={{ cursor: 'pointer' }}
           onClick={() =>
             navigate(`/events/${event.eventName.replace(/ /g, '-').replace(/\//g, '_')}`)
