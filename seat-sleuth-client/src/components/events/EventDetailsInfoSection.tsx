@@ -38,30 +38,6 @@ export default function EventDetailsInfoSection({
     value: instance.ticketMasterId,
   }));
 
-  const sortedPriceOptions = (eventFromIdProps?.priceOptions || [])
-    .filter((option) => option.priceMin != null && option.priceMin != undefined) // Filter out undefined or null price options
-    .sort((a, b) => (a.priceMin || 0) - (b.priceMin || 0));
-
-  const priceColors = ['green', '#E49648', '#BD3133'];
-
-  const priceOptionData = sortedPriceOptions.map((priceOption, index) => {
-    const color = priceOption.priceMin != null ? priceColors[index % priceColors.length] : 'gray'; // Color logic for available prices
-    return {
-      ...priceOption,
-      color, // Assign the appropriate color based on sorted order
-    };
-  });
-
-  const priceOptionDataWithNACategory = [
-    ...priceOptionData,
-    ...(eventFromIdProps?.priceOptions
-      ?.filter((option) => option.priceMin == null)
-      .map((option) => ({
-        ...option,
-        priceMin: null,
-        color: 'gray', // Gray for N/A
-      })) || []),
-  ];
 
   return (
     <Stack justify="center" gap="xs">
@@ -100,25 +76,17 @@ export default function EventDetailsInfoSection({
             align="flex-start"
             pt={0}
           >
-            {priceOptionDataWithNACategory.map((priceOption) => (
-              <EventPriceOption
-                key={priceOption.source} // Ensure the key is unique (use source)
-                price={priceOption.priceMin ?? undefined}// Pass the price
-                color={priceOption.color} // Pass the color based on sorted order
-                source={priceOption.source} // Vendor name (TicketMaster, SeatGeek, etc.)
-              />
-            ))}
-
+            
 
             {/* TicketMaster */}
-            {/* <EventPriceOption
+             <EventPriceOption
               price={eventFromIdProps?.priceOptions?.[0]?.priceMin}
               color="green"
               source={'TicketMaster'}
               url={eventFromIdProps?.url}
             />
             <EventPriceOption color="#E49648" source={'SeatGeek'} />
-            <EventPriceOption color="#BD3133" source={'StubHub'} /> */}
+            <EventPriceOption color="#BD3133" source={'StubHub'} />
 
             {/* TODO: SeatGeek Handle price & Url integration props
 
