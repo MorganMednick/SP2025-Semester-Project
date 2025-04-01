@@ -5,7 +5,7 @@ import { WATCHLIST_EMAIL_CRON } from '../config/env';
 const taskDefinitions: TaskDefinition[] = [
   {
     name: 'WATCHLIST_EMAIL',
-    schedule: WATCHLIST_EMAIL_CRON || CronMap.EVERY_MINUTE, // Defaults to 8AM every day
+    schedule: WATCHLIST_EMAIL_CRON || CronMap.EVERY_DAY_8AM, // Defaults to 8AM every day
     handler: sendwatchlistUpdateEmail,
   },
 ];
