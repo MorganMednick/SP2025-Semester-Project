@@ -127,24 +127,26 @@ export default function EventDetailsImageSection({
             justify="space-between"
             align="center"
             pos="absolute"
-            top={460}
+            top={480}
             left={30}
             right={30}
             bottom={10}
           >
             <Box>
-              <Title order={1} c="green.7">
+              <Title order={1} c="black" pl={60}>
                 {event.eventName}
               </Title>
             </Box>
             <Checkbox
-              color="green.7"
+              color="black"
               iconColor="black"
               label={getLabelForWatchlistCheckbox()}
+              pt={450}
+              pr={100}
               labelPosition="left"
               styles={(theme) => ({
                 label: {
-                  color: theme.colors.green[7],
+                  color: "black",
                   fontSize: theme.fontSizes.md,
                   fontWeight: 600,
                 },
