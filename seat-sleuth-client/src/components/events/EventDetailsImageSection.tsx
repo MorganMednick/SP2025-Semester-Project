@@ -138,8 +138,8 @@ export default function EventDetailsImageSection({
               </Title>
             </Box>
             <Checkbox
-              color="black"
-              iconColor="black"
+              color="green.7"
+              iconColor="white"
               label={getLabelForWatchlistCheckbox()}
               pt={450}
               pr={85}
