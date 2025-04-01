@@ -1,11 +1,7 @@
-import { sanitizeEventName } from '../emailUtils';
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
-export const priceUpdateTemplate = (
-  eventName: string,
-  ticketPrice: string,
-  startTime: string,
-): string => {
-  return `
+exports[`getHtmlBodyForWatchlistPriceUpdate matches snapshot 1`] = `
+"
   <html>
     <head>
       <style>
@@ -66,11 +62,11 @@ export const priceUpdateTemplate = (
       <div class="container">
         <div class="header">Price Update from <span class="highlight">Seat Sleuth</span></div>
         <div class="content">
-          <p>Great news! The ticket price for <strong>${eventName}</strong> has lowered!</p>
-          <p class="price">It is now listed at $${ticketPrice}</p>
-          <p>Event Date: ${startTime || 'Unknown'}</p>
+          <p>Great news! The ticket price for <strong>Taylor Swift Live</strong> has lowered!</p>
+          <p class="price">It is now listed at $129.99</p>
+          <p>Event Date: April 10, 2025</p>
           <p>Act fast before prices go up again!</p>
-          <a href="http://localhost:5173/events/${sanitizeEventName(eventName)}/" class="button">View Tickets</a>
+          <a href="http://localhost:5173/events/sanitized-name/" class="button">View Tickets</a>
         </div>
         <div class="footer">
           <p>Sent with ❤️ from <span class="highlight">Seat Sleuth</span></p>
@@ -79,5 +75,5 @@ export const priceUpdateTemplate = (
       </div>
     </body>
   </html>
+"
 `;
-};
