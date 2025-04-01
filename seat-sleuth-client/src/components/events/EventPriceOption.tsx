@@ -9,8 +9,8 @@ interface EventPriceOption {
 
 export default function EventPriceOption({ price, color, source, url }: EventPriceOption) {
   return (
-    <Card withBorder style={{ borderColor: color }} radius="md">
-      <Text size="lg" fw={700} style={{ color }} ta="center">
+    <Card withBorder style={{ borderColor: color }} radius="md" w="auto" miw={220}>
+      <Text size="xl" fw={700} style={{ color }} ta="center">
         {price ? `$${price.toFixed(2)}` : 'N/A'}
       </Text>
       <Group justify="center">

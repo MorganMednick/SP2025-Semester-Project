@@ -1,4 +1,4 @@
-import { Flex, NativeSelect, Stack, Anchor, Text, Grid } from '@mantine/core';
+import { Flex, NativeSelect, Stack, Anchor, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { EventData, SpecificEventData } from '@shared/api/responses';
 import { SetStateAction } from 'react';
@@ -13,6 +13,8 @@ interface EventDetailsInfoSectionProps {
   setSelectedEventId: React.Dispatch<SetStateAction<string>>;
 }
 
+
+
 export default function EventDetailsInfoSection({
   event,
   isLoading,
@@ -25,6 +27,7 @@ export default function EventDetailsInfoSection({
     event?.instances.find((eventInstance) => eventInstance.ticketMasterId === selectedEventId) ||
     ({} as SpecificEventData);
 
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading event details</div>;
   if (!event) return null;
@@ -34,6 +37,31 @@ export default function EventDetailsInfoSection({
     label: `${instance.venueName || 'Unknown Venue'} - ${instance.city || 'Unknown City'}, ${instance.country || 'Unknown Country'}`,
     value: instance.ticketMasterId,
   }));
+
+  const sortedPriceOptions = (eventFromIdProps?.priceOptions || [])
+    .filter((option) => option.priceMin != null && option.priceMin != undefined) // Filter out undefined or null price options
+    .sort((a, b) => (a.priceMin || 0) - (b.priceMin || 0));
+
+  const priceColors = ['green', '#E49648', '#BD3133'];
+
+  const priceOptionData = sortedPriceOptions.map((priceOption, index) => {
+    const color = priceOption.priceMin != null ? priceColors[index % priceColors.length] : 'gray'; // Color logic for available prices
+    return {
+      ...priceOption,
+      color, // Assign the appropriate color based on sorted order
+    };
+  });
+
+  const priceOptionDataWithNACategory = [
+    ...priceOptionData,
+    ...(eventFromIdProps?.priceOptions
+      ?.filter((option) => option.priceMin == null)
+      .map((option) => ({
+        ...option,
+        priceMin: null,
+        color: 'gray', // Gray for N/A
+      })) || []),
+  ];
 
   return (
     <Stack justify="center" gap="xs">
@@ -64,28 +92,39 @@ export default function EventDetailsInfoSection({
           </Stack>
         </Stack>
 
-        <Stack pr={100}>
-          <Grid gutter="lg" w={isSmallScreen ? '100%' : '55%'}>
-            {/* TicketMaster */}
-            <Grid.Col span={isSmallScreen ? 12 : 4}>
+        <Stack pr={50} pl={20} w={isSmallScreen ? '100%' : '50%'}>
+          <Flex
+            gap="lg"
+            w={isSmallScreen ? '100%' : '55%'}
+            justify={'flex-start'}
+            align="flex-start"
+            pt={0}
+          >
+            {priceOptionDataWithNACategory.map((priceOption) => (
               <EventPriceOption
-                price={eventFromIdProps?.priceOptions?.[0]?.priceMin}
-                color="green"
-                source={'TicketMaster'}
-                url={eventFromIdProps?.url}
+                key={priceOption.source} // Ensure the key is unique (use source)
+                price={priceOption.priceMin ?? undefined}// Pass the price
+                color={priceOption.color} // Pass the color based on sorted order
+                source={priceOption.source} // Vendor name (TicketMaster, SeatGeek, etc.)
               />
-            </Grid.Col>
+            ))}
 
-            {/* TODO: SeatGeek Handle price & Url integration props */}
-            <Grid.Col span={isSmallScreen ? 12 : 4}>
-              <EventPriceOption color="#E49648" source={'SeatGeek'} />
-            </Grid.Col>
+
+            {/* TicketMaster */}
+            {/* <EventPriceOption
+              price={eventFromIdProps?.priceOptions?.[0]?.priceMin}
+              color="green"
+              source={'TicketMaster'}
+              url={eventFromIdProps?.url}
+            />
+            <EventPriceOption color="#E49648" source={'SeatGeek'} />
+            <EventPriceOption color="#BD3133" source={'StubHub'} /> */}
+
+            {/* TODO: SeatGeek Handle price & Url integration props
 
             {/* TODO: StubHub Handle price integration props  */}
-            <Grid.Col span={isSmallScreen ? 12 : 4}>
-              <EventPriceOption color="#BD3133" source={'StubHub'} />
-            </Grid.Col>
-          </Grid>
+            {/* <EventPriceOption color="#BD3133" source={'StubHub'} /> */}
+          </Flex>
           {/* Location Selector */}
           {locationsForEvent.length > 0 && (
             <NativeSelect

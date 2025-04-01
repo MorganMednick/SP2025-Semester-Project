@@ -108,7 +108,7 @@ export default function EventDetailsImageSection({
           ml="-50vw"
           mr="-50vw"
           pt={0}
-          pb={55}
+          pb={30}
           mt="-40px"
           justify-content="center"
         >
@@ -129,8 +129,8 @@ export default function EventDetailsImageSection({
             pos="absolute"
             top={480}
             left={30}
-            right={30}
-            bottom={10}
+            right={0}
+            bottom={0}
           >
             <Box>
               <Title order={1} c="black" pl={60}>
@@ -142,7 +142,7 @@ export default function EventDetailsImageSection({
               iconColor="black"
               label={getLabelForWatchlistCheckbox()}
               pt={450}
-              pr={100}
+              pr={85}
               labelPosition="left"
               styles={(theme) => ({
                 label: {
