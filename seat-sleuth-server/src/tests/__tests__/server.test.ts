@@ -1,9 +1,10 @@
 import request from 'supertest';
-
 import { server } from '../../server';
+import { stopScheduledTasks } from '../../jobs/scheduler';
 
 describe('Server Tests', () => {
   afterAll(async () => {
+    stopScheduledTasks();
     server.close();
   });
 

@@ -9,6 +9,7 @@ export const {
   TM_API_KEY,
   GMAIL_EMAIL,
   GMAIL_PASSWORD,
+  WATCHLIST_EMAIL_CRON, // Not fatal. Defaults to 24 hours -Jayce
 } = process.env;
 
 if (!DATABASE_URL) {
