@@ -78,7 +78,6 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
 
 function mapRawEventToOption(rawEvent: RawTMEventData): SpecificEventData {
   const venue = rawEvent._embedded?.venues?.[0];
-  console.log(rawEvent?.priceRanges);
   return {
     eventName: rawEvent.name || 'Unknown Event',
     ticketMasterId: rawEvent.id,
