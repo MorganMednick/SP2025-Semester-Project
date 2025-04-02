@@ -5,6 +5,7 @@ import authRoutes from './authRoutes';
 import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
 import watchlistRoutes from './watchlistRoutes';
+import stubHubRoutes from './stubHubRoutes';
 import { protectRoutes } from '../middleware/protectRoutes';
 
 const router = Router();
@@ -22,5 +23,7 @@ router.use('/tm', ticketMasterRoutes);
 router.use('/user', protectRoutes, userRoutes);
 
 router.use('/watchlist', protectRoutes, watchlistRoutes);
+
+router.use('/sh', stubHubRoutes);
 
 export default router;
