@@ -78,9 +78,7 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
 
 function findLargestImage(images?: { url: string; width: number }[]): string {
   if (!images || images.length === 0) return '';
-
   let maxWidthImage = images[0];
-
   for (const image of images) {
     if (image.width > maxWidthImage.width) {
       maxWidthImage = image;
