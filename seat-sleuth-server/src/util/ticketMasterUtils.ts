@@ -64,7 +64,7 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
           eventMap.set(eventName, {
             eventName,
             genre: rawEvent.classifications?.[0]?.genre?.name || 'Unknown Genre',
-            coverImage: rawEvent.images?.[0]?.url || '',
+            coverImage: findLargestImage(rawEvent.images),
             instanceCount: 1,
             instances: [eventOption],
           });
@@ -74,6 +74,20 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
       }, new Map<string, EventData>())
       .values(),
   );
+}
+
+function findLargestImage(images?: { url: string; width: number }[]): string {
+  if (!images || images.length === 0) return '';
+
+  let maxWidthImage = images[0];
+
+  for (const image of images) {
+    if (image.width > maxWidthImage.width) {
+      maxWidthImage = image;
+    }
+  }
+
+  return maxWidthImage.url;
 }
 
 function mapRawEventToOption(rawEvent: RawTMEventData): SpecificEventData {
