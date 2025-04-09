@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { EventMetaData } from '@shared/api/responses';
 import { Grid, Text, Center, Transition } from '@mantine/core';
 import EventCard from '../events/EventCard';
 import EventCardSkeleton from '../events/EventCardSkeleton';
 import { useAppropriateGridColumnCount } from '../../hooks/hooks';
+import { EventMetaData } from '@client/types/shared/responses';
 
 interface EventCardGridProps {
   events?: EventMetaData[];

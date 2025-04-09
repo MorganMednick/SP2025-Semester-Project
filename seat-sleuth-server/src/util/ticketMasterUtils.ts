@@ -1,13 +1,5 @@
-import {
-  RawTMEventData,
-  TicketMasterSearchParams,
-} from '../types/shared/api/external/ticketMaster';
-import { PriceOptionSource, PriceOption } from '@prisma/client';
-import {
-  EventData,
-  SpecificEventData,
-  TicketMasterQueryResponse,
-} from '../types/shared/api/responses';
+import { RawTMEventData, TicketMasterSearchParams } from '../types/shared/ticketMaster';
+import { EventData, PriceOption, SpecificEventData } from '../types/shared/responses';
 import { ticketMasterApiClient } from '../config/tmClient';
 import { logTicketMasterRequestInDatabase } from './dbUtils';
 import { StatusCodes } from 'http-status-codes';
@@ -15,7 +7,7 @@ import crypto from 'crypto';
 
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
-): Promise<TicketMasterQueryResponse> => {
+): Promise<EventData[]> => {
   const startOfReq = Date.now();
 
   // TODO: Revisit this - Likely a session cache tho
@@ -48,7 +40,7 @@ async function fetchEventsFromTicketMaster(
   }
 }
 
-function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQueryResponse {
+function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): EventData[] {
   return Array.from(
     rawEvents
       .reduce<Map<string, EventData>>((eventMap, rawEvent) => {
@@ -119,7 +111,7 @@ function mapPriceRanges(
     eventInstanceId: eventId,
     priceMin: priceRange.min ?? 0,
     priceMax: priceRange.max ?? 0,
-    source: PriceOptionSource.Ticketmaster,
+    source: 'Ticketmaster',
   }));
 }
 

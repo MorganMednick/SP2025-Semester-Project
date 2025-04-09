@@ -1,6 +1,6 @@
-import { AuthPayload } from '@shared/api/payloads';
+import { AuthPayload } from '@client/types/shared/payloads';
+import { ApiResponse, AuthResponse } from '@client/types/shared/responses';
 import { handleServerRequest } from '../apiClient';
-import { ApiResponse, AuthResponse } from '@shared/api/responses';
 
 export const registerUser = async (user: AuthPayload): Promise<ApiResponse<AuthResponse>> => {
   return await handleServerRequest('AUTH_REGISTER', user);

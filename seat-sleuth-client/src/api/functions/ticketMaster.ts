@@ -1,9 +1,9 @@
+import { TicketMasterQueryParams } from '@client/types/shared/payloads';
 import { handleServerRequest } from '../apiClient';
-import { ApiResponse, TicketMasterQueryResponse } from '@shared/api/responses';
-import { TicketMasterQueryParams } from '@shared/api/payloads';
+import { ApiResponse, EventData } from '@client/types/shared/responses';
 
 export const fetchTicketMasterEvents = (
   params?: TicketMasterQueryParams,
-): Promise<ApiResponse<TicketMasterQueryResponse>> => {
+): Promise<ApiResponse<EventData[]>> => {
   return handleServerRequest('TM_EVENTS', params);
 };

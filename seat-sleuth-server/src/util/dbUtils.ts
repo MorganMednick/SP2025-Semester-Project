@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
-import { AddToWatchListPayload, TicketMasterQueryParams } from '../types/shared/api/payloads';
 import prisma from '../config/db';
 import { EventInstance, PriceOption } from '@prisma/client';
-import { EventData, SpecificEventData } from '../types/shared/api/responses';
+import { EventData, SpecificEventData } from '../types/shared/responses';
+import { TicketMasterQueryParams, AddToWatchListPayload } from '../types/shared/payloads';
 
 export async function logTicketMasterRequestInDatabase(
   endpoint: string,

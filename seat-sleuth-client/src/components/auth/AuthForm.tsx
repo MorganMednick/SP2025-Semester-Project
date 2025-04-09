@@ -1,12 +1,12 @@
 import { TextInput, PasswordInput, Button, Stack, Image } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { AuthState } from '../../types/clitentAuth';
 import { slothLogoWithText } from '../../util/assetReconcileUtil';
 import { useAuth } from '../../context/authContext';
-import { AuthPayload } from '@shared/api/payloads';
 import { modals } from '@mantine/modals';
 import { useMutation } from 'react-query';
 import { showMantineNotification } from '../../util/uiUtils';
+import { AuthPayload } from '@client/types/shared/payloads';
+import { AuthState } from '@client/types/clitentAuth';
 
 interface AuthFormProps {
   authState: AuthState;

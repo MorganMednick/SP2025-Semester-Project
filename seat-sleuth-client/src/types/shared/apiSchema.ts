@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 import {
   AddToWatchListPayload,
   AuthPayload,
@@ -8,7 +7,7 @@ import {
   TicketMasterQueryParams,
   IsUserWatchingPayload,
 } from './payloads';
-import { AuthResponse, GetWatchlistForUserResponse, TicketMasterQueryResponse } from './responses';
+import { AuthResponse, EventData, User } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -53,7 +52,7 @@ export const TM_API_SCHEMA = {
     route: '/tm/events',
     method: 'POST',
     payload: {} as TicketMasterQueryParams,
-    response: {} as TicketMasterQueryResponse,
+    response: {} as EventData[],
   },
 } as const;
 
@@ -83,7 +82,7 @@ export const WATCHLIST_API_SCHEMA = {
     route: '/watchlist',
     method: 'GET',
     payload: null,
-    response: {} as GetWatchlistForUserResponse,
+    response: {} as EventData[],
   },
   ADD_TO_WATCHLIST: {
     route: '/watchlist',
