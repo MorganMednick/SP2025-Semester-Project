@@ -1,7 +1,7 @@
 import { Card, Image, Text, Overlay, Center } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { EventMetaData } from '@shared/api/responses';
 import { useHover } from '@mantine/hooks';
+import { EventMetaData } from '@client/types/shared/responses';
 
 export default function EventCard({ event }: { event: EventMetaData }) {
   const navigate = useNavigate();

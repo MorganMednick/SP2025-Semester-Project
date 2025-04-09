@@ -1,5 +1,5 @@
 import cron, { ScheduledTask } from 'node-cron';
-import { Task, TaskName } from '../../types/server/tasks';
+import { Task, TaskName } from '../../types/shared/tasks';
 
 interface TaskDefinition {
   name: TaskName;

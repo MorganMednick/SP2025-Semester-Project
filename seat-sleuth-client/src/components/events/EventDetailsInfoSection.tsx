@@ -1,6 +1,6 @@
 import { Flex, NativeSelect, Stack, Anchor, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { EventData, SpecificEventData } from '@shared/api/responses';
+import { EventData, SpecificEventData } from '@client/types/shared/responses';
 import { SetStateAction } from 'react';
 import EventPriceOption from './EventPriceOption';
 import { formatDateToMonthDayYearString } from '../../util/uiUtils';
@@ -12,8 +12,6 @@ interface EventDetailsInfoSectionProps {
   selectedEventId: string;
   setSelectedEventId: React.Dispatch<SetStateAction<string>>;
 }
-
-
 
 export default function EventDetailsInfoSection({
   event,
@@ -27,7 +25,6 @@ export default function EventDetailsInfoSection({
     event?.instances.find((eventInstance) => eventInstance.ticketMasterId === selectedEventId) ||
     ({} as SpecificEventData);
 
-
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading event details</div>;
   if (!event) return null;
@@ -37,7 +34,6 @@ export default function EventDetailsInfoSection({
     label: `${instance.venueName || 'Unknown Venue'} - ${instance.city || 'Unknown City'}, ${instance.country || 'Unknown Country'}`,
     value: instance.ticketMasterId,
   }));
-
 
   return (
     <Stack justify="center" gap="xs">
@@ -76,10 +72,8 @@ export default function EventDetailsInfoSection({
             align="flex-start"
             pt={0}
           >
-            
-
             {/* TicketMaster */}
-             <EventPriceOption
+            <EventPriceOption
               price={eventFromIdProps?.priceOptions?.[0]?.priceMin}
               color="green"
               source={'TicketMaster'}

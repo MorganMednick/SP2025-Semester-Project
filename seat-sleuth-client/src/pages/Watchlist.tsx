@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import PageLayout from '../components/layout/PageLayout';
 import { Text } from '@mantine/core';
-import { EventMetaData, GetWatchlistForUserResponse } from '@shared/api/responses';
+import { EventData, EventMetaData } from '@client/types/shared/responses';
 import { fetchUserWatchList } from '../api/functions/watchlist';
 import EventCardGrid from '../components/events/EventCardGrid';
 import { stripInstancesFromEventData } from '../util/apiUtils';
@@ -14,7 +14,7 @@ export default function Watchlist() {
     error,
   } = useQuery<EventMetaData[], Error>('eventWithOptions', async () => {
     const res = await fetchUserWatchList();
-    const eventData: GetWatchlistForUserResponse = res?.data || [];
+    const eventData: EventData[] = res?.data || [];
     return stripInstancesFromEventData(eventData);
   });
 

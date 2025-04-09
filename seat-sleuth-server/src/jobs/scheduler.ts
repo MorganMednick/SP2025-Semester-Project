@@ -1,5 +1,5 @@
 import { createTask, TaskDefinition } from './tasks/taskFactory';
-import { CronMap, Task, TaskName } from '../types/server/tasks';
+import { CronMap, Task, TaskName } from '../types/shared/tasks';
 import { sendwatchlistUpdateEmail } from './tasks/emailTasks';
 import { WATCHLIST_EMAIL_CRON } from '../config/env';
 const taskDefinitions: TaskDefinition[] = [

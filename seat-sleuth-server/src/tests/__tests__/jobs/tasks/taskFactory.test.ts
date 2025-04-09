@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { TaskDefinition, createTask } from '../../../../jobs/tasks/taskFactory';
-import { TaskName } from '../../../../types/server/tasks';
+import { TaskName } from '../../../../types/shared/tasks';
 
 jest.mock('node-cron', () => ({
   schedule: jest.fn(),

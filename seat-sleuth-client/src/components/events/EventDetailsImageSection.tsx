@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Image, Flex, Title, Checkbox, Box } from '@mantine/core';
-import { EventData } from '@shared/api/responses';
+import { EventData } from '@client/types/shared/responses';
 import {
   addToWatchList,
   checkIfUserIsWatchingParticularEventInstance,
@@ -146,7 +146,7 @@ export default function EventDetailsImageSection({
               labelPosition="left"
               styles={(theme) => ({
                 label: {
-                  color: "black",
+                  color: 'black',
                   fontSize: theme.fontSizes.md,
                   fontWeight: 600,
                 },

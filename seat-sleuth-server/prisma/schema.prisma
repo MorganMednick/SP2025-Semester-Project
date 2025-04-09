@@ -29,11 +29,6 @@ model WatchedEvent {
   @@id([userId, eventInstanceId])
 }
 
-enum PriceOptionSource {
-  Ticketmaster
-  Stubhub
-  Seatgeek
-}
 
 /// For storing TM, SH, SG prices for a single event option
 model PriceOption {
@@ -41,7 +36,7 @@ model PriceOption {
   eventInstanceId String
   priceMin        Float
   priceMax        Float
-  source          PriceOptionSource
+  source          String
 
   specificEvent EventInstance @relation(fields: [eventInstanceId], references: [ticketMasterId], onDelete: Cascade)
 

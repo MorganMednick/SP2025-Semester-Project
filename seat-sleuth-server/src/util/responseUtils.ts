@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ApiErrorResponse, ApiSuccessResponse } from '../types/shared/api/responses';
+import { ApiErrorResponse, ApiSuccessResponse } from '../types/shared/responses';
 
 /**
  * Sends a structured success response back to the client.

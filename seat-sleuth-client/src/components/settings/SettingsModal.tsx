@@ -15,7 +15,7 @@ import { getUserInfo, updatePassword, updateUserInfo } from '../../api/functions
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import { showMantineNotification } from '../../util/uiUtils';
-import { ApiResponse } from '@shared/api/responses';
+import { ApiResponse } from '@client/types/shared/responses';
 import { responseIsOk } from '../../util/apiUtils';
 import { useQuery, useMutation } from 'react-query';
 
