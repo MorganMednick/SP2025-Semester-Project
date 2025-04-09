@@ -1,5 +1,5 @@
 import { handleTicketMasterEventRequest } from '../../../util/ticketMasterUtils';
-import { ticketMasterApiClient } from '../../../config/tmClient';
+import { ticketMasterApiClient } from '../../../clients/tmClient';
 import { logTicketMasterRequestInDatabase } from '../../../util/dbUtils';
 import { StatusCodes } from 'http-status-codes';
 

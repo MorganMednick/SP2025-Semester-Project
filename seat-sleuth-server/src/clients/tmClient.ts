@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TM_BASE_URL, TM_API_KEY } from './env';
+import { TM_BASE_URL, TM_API_KEY } from '../config/env';
 
 export const ticketMasterApiClient = axios.create({
   baseURL: TM_BASE_URL,

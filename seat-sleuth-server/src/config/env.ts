@@ -9,7 +9,8 @@ export const {
   TM_API_KEY,
   GMAIL_EMAIL,
   GMAIL_PASSWORD,
-
+  GPT_API_KEY,
+  GPT_MAX_RESPONSE_SIZE,
   WATCHLIST_EMAIL_CRON, // Not fatal. Defaults to 24 hours -Jayce
 } = process.env;
 
@@ -45,4 +46,14 @@ if (!GMAIL_EMAIL) {
 
 if (!GMAIL_EMAIL) {
   throw new Error(`\n\nGMAIL_PASSWORD must be set in your .env to run this application. \n\n\n`);
+}
+
+if (!GPT_API_KEY) {
+  throw new Error(`\n\nGPT_API_KEY must be set in your .env to run this application. \n\n\n`);
+}
+
+if (!GPT_MAX_RESPONSE_SIZE) {
+  throw new Error(
+    `\n\nGPT_MAX_RESPONSE_SIZE must be set in your .env to run this application. \n\n\n`,
+  );
 }

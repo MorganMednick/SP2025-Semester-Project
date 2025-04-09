@@ -1,5 +1,5 @@
 import { TicketMasterSearchParams } from './ticketMaster';
-import { EventData } from './responses';
+import { EventData, SpecificEventData } from './responses';
 
 export interface AuthPayload {
   email: string;
@@ -29,5 +29,7 @@ export interface RemoveFromWatchListPayload {
 export interface IsUserWatchingPayload {
   eventInstanceId: string;
 }
+
+export type EventPricesPayload = Omit<SpecificEventData, 'watchers' | 'priceOptions'>;
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;

@@ -1,6 +1,6 @@
 import { RawTMEventData, TicketMasterSearchParams } from '../types/shared/ticketMaster';
 import { EventData, PriceOption, SpecificEventData } from '../types/shared/responses';
-import { ticketMasterApiClient } from '../config/tmClient';
+import { ticketMasterApiClient } from '../clients/tmClient';
 import { logTicketMasterRequestInDatabase } from './dbUtils';
 import { StatusCodes } from 'http-status-codes';
 import crypto from 'crypto';

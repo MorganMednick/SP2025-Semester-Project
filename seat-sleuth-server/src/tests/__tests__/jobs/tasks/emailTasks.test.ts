@@ -1,5 +1,5 @@
 import prisma from '../../../../config/db';
-import { sendEmail } from '../../../../config/emailClient';
+import { sendEmail } from '../../../../clients/emailClient';
 import { getHtmlBodyForWatchlistPriceUpdate } from '../../../../jobs/emailTemplates/emailTemplate';
 import { sendwatchlistUpdateEmail } from '../../../../jobs/tasks/emailTasks';
 

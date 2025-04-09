@@ -1,6 +1,6 @@
 import { WatchedEvent } from '@prisma/client';
 import prisma from '../../config/db';
-import { sendEmail } from '../../config/emailClient';
+import { sendEmail } from '../../clients/emailClient';
 import { getHtmlBodyForWatchlistPriceUpdate } from '../emailTemplates/emailTemplate';
 
 export const sendwatchlistUpdateEmail = async () => {
