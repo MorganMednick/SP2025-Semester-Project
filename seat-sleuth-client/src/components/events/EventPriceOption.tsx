@@ -1,19 +1,16 @@
-import { Card, Group, Anchor, Text, Loader, Center } from '@mantine/core';
+import { Card, Group, Anchor, Text } from '@mantine/core';
 
 interface EventPriceOption {
   price?: number;
   color: string;
   source: string;
   url?: string | null | undefined;
-  loading?: boolean;
 }
 
-export default function EventPriceOption({ price, color, source, url, loading }: EventPriceOption) {
+export default function EventPriceOption({ price, color, source, url }: EventPriceOption) {
   return (
     <Card withBorder style={{ borderColor: color }} radius="md">
-      {loading ? 
-      <Center><Loader color={color} /></Center>
-      :
+      {
       <Text size="lg" fw={700} style={{ color }} ta="center">
         {price ? `$${price.toFixed(2)}` : 'N/A'}
       </Text>}

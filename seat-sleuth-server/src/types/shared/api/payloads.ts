@@ -31,8 +31,3 @@ export interface IsUserWatchingPayload {
 }
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;
-
-export type StubHubScrapePayload = {
-  name: string,
-  city: string
-}

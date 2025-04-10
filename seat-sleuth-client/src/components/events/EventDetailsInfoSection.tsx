@@ -1,6 +1,6 @@
 import { Flex, NativeSelect, Stack, Anchor, Divider, Text, Group, Grid } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { EventData, SpecificEventData, StubHubScrapeResponse } from '@shared/api/responses';
+import { EventData, SpecificEventData } from '@shared/api/responses';
 import { SetStateAction } from 'react';
 import EventPriceOption from './EventPriceOption';
 import { formatDateToMonthDayYearString } from '../../util/uiUtils';
@@ -11,8 +11,6 @@ interface EventDetailsInfoSectionProps {
   isError: boolean;
   selectedEventId: string;
   setSelectedEventId: React.Dispatch<SetStateAction<string>>;
-  stubHubEvent: StubHubScrapeResponse | null | undefined;
-  isStubHubLoading: boolean;
 }
 
 export default function EventDetailsInfoSection({
@@ -21,8 +19,6 @@ export default function EventDetailsInfoSection({
   isError,
   selectedEventId,
   setSelectedEventId,
-  stubHubEvent,
-  isStubHubLoading
 }: EventDetailsInfoSectionProps) {
   const isSmallScreen = useMediaQuery('(max-width: 1350px)');
   const eventFromIdProps: SpecificEventData =
@@ -108,7 +104,7 @@ export default function EventDetailsInfoSection({
 
           {/* TODO: StubHub Handle price integration props  */}
           <Grid.Col span={isSmallScreen ? 12 : 4}>
-            <EventPriceOption color="#BD3133" source={'StubHub'} price={stubHubEvent?.price} url={stubHubEvent?.url} loading={isStubHubLoading}/>
+            <EventPriceOption color="#BD3133" source={'StubHub'} />
           </Grid.Col>
         </Grid>
       </Flex>

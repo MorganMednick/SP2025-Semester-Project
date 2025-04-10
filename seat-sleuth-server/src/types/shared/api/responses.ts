@@ -64,8 +64,3 @@ export type TicketMasterQueryResponse = EventData[];
 export type GetWatchlistForUserResponse = EventData[];
 
 export type { EventMetaData, EventInstance, User };
-
-export type StubHubScrapeResponse = {
-  price: number,
-  url: string
-}

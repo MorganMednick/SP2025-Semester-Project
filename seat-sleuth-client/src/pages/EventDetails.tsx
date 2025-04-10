@@ -1,4 +1,4 @@
-import { ApiResponse, EventData, StubHubScrapeResponse, TicketMasterQueryResponse } from '@shared/api/responses';
+import { ApiResponse, EventData, TicketMasterQueryResponse } from '@shared/api/responses';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
@@ -7,7 +7,6 @@ import PageLayout from '../components/layout/PageLayout';
 import { sanitizeEventName, unsanitizeEventName } from '../util/sanitization';
 import EventDetailsImageSection from '../components/events/EventDetailsImageSection';
 import EventDetailsInfoSection from '../components/events/EventDetailsInfoSection';
-import { fetchStubHubPrice } from '../api/functions/stubHub';
 
 export default function EventDetails() {
   const { name, id } = useParams();
@@ -62,26 +61,6 @@ export default function EventDetails() {
     },
   );
 
-
-  const {
-    data: stubHubData, 
-    isLoading: stubHubLoading
-  } = useQuery<StubHubScrapeResponse | undefined, Error>(
-    ['scrapeStubHub', name, id],
-    async () => {
-      const res = await fetchStubHubPrice({name: sanitizedName, city: event?.instances[0].city!});
-      return res?.data ?? undefined;
-    },
-    {
-      enabled: ((event?.instanceCount?? 0) > 0) && !!event?.instances[0].city,
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 30,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
   return (
     <PageLayout>
       <EventDetailsImageSection selectedEventId={selectedEventId} event={event} />
@@ -91,8 +70,6 @@ export default function EventDetails() {
         event={event}
         isLoading={isLoading}
         isError={isError}
-        stubHubEvent={stubHubData}
-        isStubHubLoading={stubHubLoading}
       />
     </PageLayout>
   );

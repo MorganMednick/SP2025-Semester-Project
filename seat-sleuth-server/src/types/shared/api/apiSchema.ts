@@ -7,9 +7,8 @@ import {
   UserPayload,
   TicketMasterQueryParams,
   IsUserWatchingPayload,
-  StubHubScrapePayload,
 } from './payloads';
-import { AuthResponse, GetWatchlistForUserResponse, StubHubScrapeResponse, TicketMasterQueryResponse } from './responses';
+import { AuthResponse, GetWatchlistForUserResponse, TicketMasterQueryResponse } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -55,15 +54,6 @@ export const TM_API_SCHEMA = {
     method: 'POST',
     payload: {} as TicketMasterQueryParams,
     response: {} as TicketMasterQueryResponse,
-  },
-} as const;
-
-export const SH_API_SCHEMA = {
-  SCRAPE_STUBHUB: {
-    route: 'sh/scrape',
-    method: 'POST',
-    payload: {} as StubHubScrapePayload,
-    response: {} as StubHubScrapeResponse
   },
 } as const;
 
@@ -120,7 +110,6 @@ export const MERGED_API_SCHEMA = {
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
   ...WATCHLIST_API_SCHEMA,
-  ...SH_API_SCHEMA
 } as const;
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;
