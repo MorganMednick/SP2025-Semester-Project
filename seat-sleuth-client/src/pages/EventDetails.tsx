@@ -60,6 +60,7 @@ export default function EventDetails() {
       },
     },
   );
+
   return (
     <PageLayout>
       <EventDetailsImageSection selectedEventId={selectedEventId} event={event} />

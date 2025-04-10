@@ -1,16 +1,14 @@
 import { RUN_ENVIRONMENTS } from '../data/constants';
-
 export const {
-  DATABASE_URL,
-  CLIENT_URL,
-  NODE_ENV,
-  SESSION_SECRET,
-  TM_BASE_URL,
-  TM_API_KEY,
-  GMAIL_EMAIL,
-  GMAIL_PASSWORD,
-
-  WATCHLIST_EMAIL_CRON, // Not fatal. Defaults to 24 hours -Jayce
+  DATABASE_URL, // FATAL
+  CLIENT_URL, // FATAL
+  NODE_ENV, // FATAL
+  SESSION_SECRET, // FATAL
+  TM_BASE_URL, // FATAL
+  TM_API_KEY, // FATAL
+  GMAIL_EMAIL, // FATAL
+  GMAIL_PASSWORD, // FATAL
+  WATCHLIST_EMAIL_CRON, // NOT FATAL
 } = process.env;
 
 if (!DATABASE_URL) {
