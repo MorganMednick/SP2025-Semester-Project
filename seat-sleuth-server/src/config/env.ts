@@ -1,7 +1,17 @@
 import { RUN_ENVIRONMENTS } from '../data/constants';
 
-export const { DATABASE_URL, CLIENT_URL, NODE_ENV, SESSION_SECRET, TM_BASE_URL, TM_API_KEY } =
-  process.env;
+export const {
+  DATABASE_URL,
+  CLIENT_URL,
+  NODE_ENV,
+  SESSION_SECRET,
+  TM_BASE_URL,
+  TM_API_KEY,
+  GMAIL_EMAIL,
+  GMAIL_PASSWORD,
+
+  WATCHLIST_EMAIL_CRON, // Not fatal. Defaults to 24 hours -Jayce
+} = process.env;
 
 if (!DATABASE_URL) {
   throw new Error('\n\nDATABASE_URL is not defined in your environment variables.\n\n');
@@ -27,4 +37,12 @@ if (!TM_BASE_URL) {
 
 if (!TM_API_KEY) {
   throw new Error(`\n\nTM_API_KEY must be set in your .env to run this application. \n\n\n`);
+}
+
+if (!GMAIL_EMAIL) {
+  throw new Error(`\n\nGMAIL_EMAIL must be set in your .env to run this application. \n\n\n`);
+}
+
+if (!GMAIL_EMAIL) {
+  throw new Error(`\n\nGMAIL_PASSWORD must be set in your .env to run this application. \n\n\n`);
 }

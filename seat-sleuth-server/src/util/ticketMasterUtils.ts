@@ -1,13 +1,5 @@
-import {
-  RawTMEventData,
-  TicketMasterSearchParams,
-} from '../types/shared/api/external/ticketMaster';
-import { PriceOptionSource, PriceOption } from '@prisma/client';
-import {
-  EventData,
-  SpecificEventData,
-  TicketMasterQueryResponse,
-} from '../types/shared/api/responses';
+import { RawTMEventData, TicketMasterSearchParams } from '../types/shared/ticketMaster';
+import { EventData, PriceOption, SpecificEventData } from '../types/shared/responses';
 import { ticketMasterApiClient } from '../config/tmClient';
 import { logTicketMasterRequestInDatabase } from './dbUtils';
 import { StatusCodes } from 'http-status-codes';
@@ -15,7 +7,7 @@ import crypto from 'crypto';
 
 export const handleTicketMasterEventRequest = async (
   params: TicketMasterSearchParams,
-): Promise<TicketMasterQueryResponse> => {
+): Promise<EventData[]> => {
   const startOfReq = Date.now();
 
   // TODO: Revisit this - Likely a session cache tho
@@ -24,7 +16,6 @@ export const handleTicketMasterEventRequest = async (
 
   const rawEvents = await fetchEventsFromTicketMaster(params);
   const responseTimeMs = Date.now() - startOfReq;
-
   const finalResponse = mapRawEventsToQueryResponse(rawEvents);
 
   logTicketMasterRequestInDatabase(
@@ -49,7 +40,7 @@ async function fetchEventsFromTicketMaster(
   }
 }
 
-function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQueryResponse {
+function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): EventData[] {
   return Array.from(
     rawEvents
       .reduce<Map<string, EventData>>((eventMap, rawEvent) => {
@@ -65,7 +56,7 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
           eventMap.set(eventName, {
             eventName,
             genre: rawEvent.classifications?.[0]?.genre?.name || 'Unknown Genre',
-            coverImage: rawEvent.images?.[0]?.url || '',
+            coverImage: findLargestImage(rawEvent.images),
             instanceCount: 1,
             instances: [eventOption],
           });
@@ -77,9 +68,20 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): TicketMasterQ
   );
 }
 
+function findLargestImage(images?: { url: string; width: number }[]): string {
+  if (!images || images.length === 0) return '';
+  let maxWidthImage = images[0];
+  for (const image of images) {
+    if (image.width > maxWidthImage.width) {
+      maxWidthImage = image;
+    }
+  }
+
+  return maxWidthImage.url;
+}
+
 function mapRawEventToOption(rawEvent: RawTMEventData): SpecificEventData {
   const venue = rawEvent._embedded?.venues?.[0];
-
   return {
     eventName: rawEvent.name || 'Unknown Event',
     ticketMasterId: rawEvent.id,
@@ -109,7 +111,7 @@ function mapPriceRanges(
     eventInstanceId: eventId,
     priceMin: priceRange.min ?? 0,
     priceMax: priceRange.max ?? 0,
-    source: PriceOptionSource.Ticketmaster,
+    source: 'Ticketmaster',
   }));
 }
 

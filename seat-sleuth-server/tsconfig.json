@@ -11,5 +11,9 @@
   },
   "include": ["src/**/*", "src/types/express-session.d.ts"],
   "exclude": ["node_modules"],
-  "files": ["src/types/express-session.d.ts"]
+  "files": ["src/types/express-session.d.ts"],
+  "paths": {
+    "@server/types/*": ["./src/types/*"],
+    "@/*": ["./src/*"]
+  }
 }

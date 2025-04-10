@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState, ReactNode } from 'react';
 import { loginUser, checkLogin, registerUser, logoutUser } from '../api/functions/auth';
-import { AuthPayload } from '@shared/api/payloads';
+import { AuthPayload } from '@client/types/shared/payloads';
 import { AuthContext } from '../types/clitentAuth';
 import { showMantineNotification } from '../util/uiUtils';
-import { ApiResponse, AuthResponse } from '@shared/api/responses';
+import { ApiResponse, AuthResponse } from '@client/types/shared/responses';
 import { responseIsOk } from '../util/apiUtils';
 
 export function AuthProvider({ children }: { children: ReactNode }) {

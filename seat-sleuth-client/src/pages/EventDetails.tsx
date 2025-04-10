@@ -1,4 +1,4 @@
-import { ApiResponse, EventData, TicketMasterQueryResponse } from '@shared/api/responses';
+import { ApiResponse, EventData } from '@client/types/shared/responses';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { fetchTicketMasterEvents } from '../api/functions/ticketMaster';
@@ -33,7 +33,7 @@ export default function EventDetails() {
     ['eventWithOptions', name, id],
     async () => {
       if (id) {
-        const res: ApiResponse<TicketMasterQueryResponse> = await fetchTicketMasterEvents({
+        const res: ApiResponse<EventData[]> = await fetchTicketMasterEvents({
           id,
         });
         setSelectedEventId(id);
