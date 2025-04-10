@@ -1,3 +1,10 @@
+if (process.env.NODE_ENV !== 'production') {
+  console.warn(
+    'Requiring dotenv in non-production environment... Ensure this is a development environment!',
+  );
+  require('dotenv').config();
+}
+
 import { Server } from 'http';
 import app from './app';
 import { handleGracefulShutdown } from './middleware/gracefulShutdown';
