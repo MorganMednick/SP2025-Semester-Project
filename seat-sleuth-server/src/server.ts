@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
   console.warn(
     'Requiring dotenv in non-production environment... Ensure this is a development environment!',
   );
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('dotenv').config();
 }
 
