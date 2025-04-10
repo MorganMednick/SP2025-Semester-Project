@@ -1,13 +1,13 @@
 import { TextInput, Combobox, useCombobox } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import {  useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDebouncedValue } from "@mantine/hooks";
+import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from 'react-query';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
-import { TicketMasterQueryResponse } from '@shared/api/responses';
-import { TicketMasterSearchParams } from '@shared/api/external/ticketMaster';
+import { TicketMasterSearchParams } from '@client/types/shared/ticketMaster';
 import { useGeoPoint } from '../../hooks/hooks';
+import { EventData } from '@client/types/shared/responses';
 
 interface SearchProps {
   width?: number;
@@ -18,7 +18,7 @@ export default function SearchBar({ width, size }: SearchProps) {
   const icon = <IconSearch stroke={2} height={20} />;
   const navigate = useNavigate();
   const { geoPoint } = useGeoPoint();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebouncedValue(query, 400);
   const combobox = useCombobox();
 
@@ -30,13 +30,13 @@ export default function SearchBar({ width, size }: SearchProps) {
     [debouncedQuery, geoPoint],
   );
 
-  const isQueryEnabled = Boolean(searchParams.keyword && geoPoint); 
+  const isQueryEnabled = Boolean(searchParams.keyword && geoPoint);
 
-  const { data } = useQuery<TicketMasterQueryResponse, Error>(
+  const { data } = useQuery<EventData[], Error>(
     ['ticketMasterEvents', searchParams],
     async () => {
       const res = await fetchTicketMasterEvents(searchParams);
-      console.log(res?.data)
+      console.log(res?.data);
       return res?.data || [];
     },
     {
@@ -66,7 +66,7 @@ export default function SearchBar({ width, size }: SearchProps) {
           size={size}
           w={width}
           placeholder="Search for an event..."
-          onChange= {(event) => {
+          onChange={(event) => {
             setQuery((event.target as HTMLInputElement).value);
             combobox.openDropdown();
           }}
@@ -78,16 +78,16 @@ export default function SearchBar({ width, size }: SearchProps) {
             }
           }}
         />
-      </Combobox.Target> 
-      <Combobox.Dropdown hidden={(data?.length?? 0) <= 0}>
-          <Combobox.Options mah={300} style={{ overflowY: 'auto' }}>
+      </Combobox.Target>
+      <Combobox.Dropdown hidden={(data?.length ?? 0) <= 0}>
+        <Combobox.Options mah={300} style={{ overflowY: 'auto' }}>
           {data?.map((item) => (
-              <Combobox.Option value={item.eventName} key={item.eventName}>
-                {item.eventName}
-              </Combobox.Option>
-            ))}
-          </Combobox.Options>
+            <Combobox.Option value={item.eventName} key={item.eventName}>
+              {item.eventName}
+            </Combobox.Option>
+          ))}
+        </Combobox.Options>
       </Combobox.Dropdown>
-    </Combobox>    
+    </Combobox>
   );
 }

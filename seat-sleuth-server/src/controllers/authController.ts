@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { BCRYPT_SALT_ROUNDS } from '../data/constants';
 import { User } from '@prisma/client';
-import { AuthResponse } from '../types/shared/api/responses';
+import { AuthResponse } from '../types/shared/responses';
 import { destroySessionAndClearCookies } from '../util/sessionUtils';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {

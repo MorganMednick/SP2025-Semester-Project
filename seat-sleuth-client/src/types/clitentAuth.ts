@@ -1,4 +1,4 @@
-import { AuthPayload } from '@shared/api/payloads';
+import { AuthPayload } from '@client/types/shared/payloads';
 import { createContext } from 'react';
 
 export enum AuthState {

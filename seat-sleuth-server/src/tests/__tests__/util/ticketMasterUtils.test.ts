@@ -2,7 +2,6 @@ import { handleTicketMasterEventRequest } from '../../../util/ticketMasterUtils'
 import { ticketMasterApiClient } from '../../../config/tmClient';
 import { logTicketMasterRequestInDatabase } from '../../../util/dbUtils';
 import { StatusCodes } from 'http-status-codes';
-import { PriceOptionSource } from '@prisma/client';
 
 jest.mock('../../../config/tmClient', () => ({
   ticketMasterApiClient: {
@@ -66,7 +65,7 @@ describe('TicketMaster Utils', () => {
       expect.objectContaining({
         priceMin: 50,
         priceMax: 100,
-        source: PriceOptionSource.Ticketmaster,
+        source: 'Ticketmaster',
       }),
     );
 
@@ -118,7 +117,7 @@ describe('TicketMaster Utils', () => {
         expect.objectContaining({
           priceMin: 50,
           priceMax: 100,
-          source: PriceOptionSource.Ticketmaster,
+          source: 'Ticketmaster',
         }),
       ]),
     );
@@ -154,7 +153,7 @@ describe('TicketMaster Utils', () => {
       expect.objectContaining({
         priceMin: 50,
         priceMax: 100,
-        source: PriceOptionSource.Ticketmaster,
+        source: 'Ticketmaster',
       }),
     );
   });

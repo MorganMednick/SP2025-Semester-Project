@@ -1,6 +1,6 @@
-import { ApiResponse, User } from '@shared/api/responses';
+import { ApiResponse, User } from '@client/types/shared/responses';
 import { handleServerRequest } from '../apiClient';
-import { UpdatePasswordPayload, UserPayload } from '@shared/api/payloads';
+import { UserPayload, UpdatePasswordPayload } from '@client/types/shared/payloads';
 
 export const getUserInfo = async (): Promise<ApiResponse<User>> => {
   return await handleServerRequest('GET_USER_INFO');

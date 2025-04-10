@@ -1,7 +1,11 @@
-import { API_ENDPOINTS } from '@shared/api/api';
+import { API_ENDPOINTS } from '@client/types/shared/api';
+import {
+  EndpointPayload,
+  EndpointResponse,
+  ValidServerEndpoints,
+} from '@client/types/shared/apiSchema';
+import { ApiResponse, ApiErrorResponse } from '@client/types/shared/responses';
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { ApiErrorResponse, ApiResponse } from '@shared/api/responses';
-import { ValidServerEndpoints, EndpointPayload, EndpointResponse } from '@shared/api/apiSchema';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/',
@@ -26,7 +30,7 @@ export const handleServerRequest = async <E extends ValidServerEndpoints>(
     .request<ApiResponse<EndpointResponse<E>>>({
       method,
       url: route,
-      data: payload ?? undefined,
+      data: payload ?? {},
     })
     .then((res) => res?.data)
     .catch((err) => {

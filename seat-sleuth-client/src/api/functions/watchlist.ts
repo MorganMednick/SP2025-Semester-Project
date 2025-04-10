@@ -1,10 +1,10 @@
-import { ApiResponse, GetWatchlistForUserResponse } from '@shared/api/responses';
-import { handleServerRequest } from '../apiClient';
 import {
   AddToWatchListPayload,
-  IsUserWatchingPayload,
   RemoveFromWatchListPayload,
-} from '@shared/api/payloads';
+  IsUserWatchingPayload,
+} from '@client/types/shared/payloads';
+import { ApiResponse, EventData } from '@client/types/shared/responses';
+import { handleServerRequest } from '../apiClient';
 
 export const addToWatchList = async (
   addToWatchListPayload: AddToWatchListPayload,
@@ -18,7 +18,7 @@ export const removeFromWatchList = async (
   return await handleServerRequest('REMOVE_FROM_WATCHLIST', removeFromWatchListPayload);
 };
 
-export const fetchUserWatchList = async (): Promise<ApiResponse<GetWatchlistForUserResponse>> => {
+export const fetchUserWatchList = async (): Promise<ApiResponse<EventData[]>> => {
   return await handleServerRequest('GET_WATCHLIST');
 };
 
