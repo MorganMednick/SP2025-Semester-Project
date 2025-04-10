@@ -50,6 +50,6 @@ export const scrapeStubHub = async (eventName: string, targetLocation: string): 
     return null;
   } 
   catch (error) {
-    throw new Error('Failed to fetch events');
+    throw new Error(error);
   }
 };
