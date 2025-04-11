@@ -22,9 +22,9 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_PASSWORD
-              value: password
+              value: seat-sleuth-password-12345
             - name: POSTGRES_USER
-              value: postgres
+              value: seat-sleuth-user
           livenessProbe:
             tcpSocket:
               port: 5432
