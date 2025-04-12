@@ -45,6 +45,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://seat-sleuth-user:seat-sleuth-password-12345@database:5432/seat-sleuth
       - CLIENT_URL=http://localhost:8080
+      - NODE_ENV=production
     env_file:
       - ./seat-sleuth-server/.env
 
