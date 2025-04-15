@@ -38,14 +38,14 @@ const theme = createTheme({
     xxxx: '64px',
   },
   headings: {
+    fontFamily: "Bayon",
+    fontWeight: '400',
     sizes: {
       h1: {
-        fontWeight: '700',
         fontSize: '48px',
       },
       h2: {
         fontSize: '32px',
-        fontWeight: '700',
       },
       h3: {
         fontSize: '32px',
