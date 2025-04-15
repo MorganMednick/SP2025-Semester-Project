@@ -1,6 +1,6 @@
 import { useGeoPoint } from '../../hooks/hooks';
 import { fetchTicketMasterEvents } from '../../api/functions/ticketMaster';
-import { Text } from '@mantine/core';
+import { Title } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { EventData, EventMetaData } from '@client/types/shared/responses';
 import EventCardGrid from '../events/EventCardGrid';
@@ -50,9 +50,9 @@ export default function PopularNearYou() {
 
   return (
     <PageLayout>
-      <Text size="xl" mb="md" style={{ textAlign: 'center', fontWeight: 'bold' }}>
-        {isFetching ? <>Fetching Popular Events Near You</> : <>Popular near you:</>}
-      </Text>
+      <Title order={2}>
+        {isFetching ? <>Fetching Popular Events Near You</> : <>Popular near you</>}
+      </Title>
       <EventCardGrid
         error={error}
         isLoading={isFetching}

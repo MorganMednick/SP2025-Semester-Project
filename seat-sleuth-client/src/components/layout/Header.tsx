@@ -15,12 +15,12 @@ export default function Header() {
   let logoOrSearchBar;
   // TODO: Update this to be responsive to mobile. Maybe get rid of logo  or use the smaller one for mobile layout
   if (location.pathname === '/') {
-    logoOrSearchBar = <Image w={250} src={slothLogoWithText} />;
+    logoOrSearchBar = <Image ml={10} w={250} src={slothLogoWithText} alt="Seat Sleuth Logo" />;
   } else {
     logoOrSearchBar = (
-      <Group align="center" justify="space-between">
+      <Group ml={10} align="center" justify="space-between">
         <Link to={'/'}>
-          <Image w={70} src={slothLogo} visibleFrom="xs" />
+          <Image w={90} src={slothLogo} alt="Seat Sleuth Logo" visibleFrom="xs" />
         </Link>
         <Search width={300}/>
       </Group>
