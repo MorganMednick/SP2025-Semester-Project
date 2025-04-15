@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import prisma from '../config/db';
 import { EventInstance, PriceOption } from '@prisma/client';
-import { EventData, SpecificEventData } from '../types/shared/responses';
+import { SpecificEventData } from '../types/shared/responses';
 import { TicketMasterQueryParams, AddToWatchListPayload } from '../types/shared/payloads';
 
 export async function logTicketMasterRequestInDatabase(
@@ -115,7 +115,7 @@ export const upsertWatchlistDataForEvent = async (
   return false;
 };
 
-export const getUserWithWatchlist = async (userId: number): Promise<EventData[]> => {
+export const getUserWithWatchlist = async (userId: number): Promise<SpecificEventData[]> => {
   const userWithWatchlist = await prisma.user.findUnique({
     where: { id: userId },
     include: {
@@ -134,15 +134,11 @@ export const getUserWithWatchlist = async (userId: number): Promise<EventData[]>
       },
     },
   });
-
-  const eventMap: Map<string, EventData> = new Map<string, EventData>();
+  const specificEventDataList: SpecificEventData[] = [];
 
   userWithWatchlist?.watchlist.forEach(({ eventInstance }) => {
     if (!eventInstance) return;
 
-    const eventId = eventInstance.ticketMasterId;
-
-    // Map to SpecificEventData
     const mappedSpecificEvent: SpecificEventData = {
       ...eventInstance,
       watchers: eventInstance.watchers.map((watch) => ({
@@ -152,16 +148,8 @@ export const getUserWithWatchlist = async (userId: number): Promise<EventData[]>
       priceOptions: eventInstance.priceOptions as PriceOption[],
     };
 
-    if (eventMap.has(eventId)) {
-      const existingEvent = eventMap.get(eventId);
-      if (existingEvent) existingEvent.instances.push(mappedSpecificEvent);
-    } else {
-      eventMap.set(eventId, {
-        ...eventInstance.event,
-        instances: [mappedSpecificEvent], // Now using SpecificEventData
-      });
-    }
+    specificEventDataList.push(mappedSpecificEvent);
   });
 
-  return Array.from(eventMap.values()) || [];
+  return specificEventDataList;
 };

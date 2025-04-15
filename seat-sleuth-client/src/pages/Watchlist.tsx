@@ -1,10 +1,9 @@
 import { useQuery } from 'react-query';
 import PageLayout from '../components/layout/PageLayout';
 import { Text } from '@mantine/core';
-import { EventData, EventMetaData } from '@client/types/shared/responses';
+import { SpecificEventData } from '@client/types/shared/responses';
 import { fetchUserWatchList } from '../api/functions/watchlist';
-import EventCardGrid from '../components/events/EventCardGrid';
-import { stripInstancesFromEventData } from '../util/apiUtils';
+import WatchlistGrid from '@/components/events/WatchlistGrid';
 
 export default function Watchlist() {
   const {
@@ -12,16 +11,15 @@ export default function Watchlist() {
     isLoading,
     isError,
     error,
-  } = useQuery<EventMetaData[], Error>('eventWithOptions', async () => {
+  } = useQuery<SpecificEventData[], Error>('eventWithOptions', async () => {
     const res = await fetchUserWatchList();
-    const eventData: EventData[] = res?.data || [];
-    return stripInstancesFromEventData(eventData);
+    return res?.data || [];
   });
 
   return (
     <PageLayout>
       <Text>{isLoading ? 'Fetching User Watchlist...' : 'Your Watchlist'}</Text>
-      <EventCardGrid events={watchlistData} isError={isError} isLoading={isLoading} error={error} />
+      <WatchlistGrid events={watchlistData} isError={isError} isLoading={isLoading} error={error} />
     </PageLayout>
   );
 }
