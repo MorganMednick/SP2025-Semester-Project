@@ -51,7 +51,7 @@ export const scrapeVividSeats = async (
     await browser.close();
     return null;
   } catch (error) {
-    console.error('Error scraping StubHub: ', error);
+    console.error('Error scraping Vivid Seats: ', error);
     return error as Error;
   }
 };
