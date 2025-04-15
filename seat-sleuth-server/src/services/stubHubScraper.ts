@@ -32,11 +32,11 @@ export const scrapeStubHub = async (
 
     if (performerLinks.length > 0) {
       await page.goto(performerLinks[0], { waitUntil: 'networkidle2' });
-      const eventLinks = await page.$$eval('li.edUySU a', (elements) =>
+      const eventLinks = await page.$$eval('li.gEygrZ a', (elements) =>
         elements.map((el) => el.href).filter(Boolean),
       );
       for (const event of eventLinks) {
-        if (event.includes(targetLocation.toLowerCase())) {
+        if (event.includes(targetLocation.toLowerCase().replace(/\s+/g, '-'))) {
           await page.goto(event, { waitUntil: 'networkidle2' });
           const price = await page
             .$eval('.iwVOyT', (el) => el.textContent?.trim())
