@@ -7,7 +7,7 @@ import {
   TicketMasterQueryParams,
   IsUserWatchingPayload,
 } from './payloads';
-import { AuthResponse, EventData, User } from './responses';
+import { AuthResponse, EventData, SpecificEventData, User } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -82,8 +82,9 @@ export const WATCHLIST_API_SCHEMA = {
     route: '/watchlist',
     method: 'GET',
     payload: null,
-    response: {} as EventData[],
+    response: {} as SpecificEventData[],
   },
+  // EVENT DETAILS 
   ADD_TO_WATCHLIST: {
     route: '/watchlist',
     method: 'POST',

@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../util/responseUtils';
 import { AddToWatchListPayload, RemoveFromWatchListPayload } from '../types/shared/payloads';
-import { EventData } from '../types/shared/responses';
+import { SpecificEventData } from '../types/shared/responses';
 import { getUserWithWatchlist, upsertWatchlistDataForEvent } from '../util/dbUtils';
 
 export const getUserWatchList = async (req: Request, res: Response): Promise<void> => {
@@ -18,12 +18,13 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
     }
 
     // Fetch user watchlist with necessary relations
-    const userWithWatchlist: EventData[] = await getUserWithWatchlist(userId);
+    const userWithWatchlist: SpecificEventData[] = await getUserWithWatchlist(userId);
 
-    const userWatchlist: EventData[] = userWithWatchlist;
+    const userWatchlist: SpecificEventData[] = userWithWatchlist;
 
     console.info(`Fetched ${userWatchlist.length} watchlist for user`);
-
+    console.info(userWatchlist)
+    
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
       data: userWatchlist,
