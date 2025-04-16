@@ -38,7 +38,7 @@ export const configureServerSession = (app: Application): void => {
       saveUninitialized: false,
       cookie: {
         httpOnly: true,
-        secure: false, // TODO: Revisit this in production (If we ever deploy to public server)
+        secure: false,
         sameSite: 'strict',
         maxAge: 1000 * 60 * 60 * 24,
       },
