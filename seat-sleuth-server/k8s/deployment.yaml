@@ -56,9 +56,9 @@ metadata:
   name: seat-sleuth-secrets
 type: Opaque
 stringData:
-  GMAIL_PASSWORD: 
-  SESSION_SECRET: 
-  TM_API_KEY: 
+  GMAIL_PASSWORD: # Add Me
+  SESSION_SECRET: # Add Me
+  TM_API_KEY: # Add Me
 
 # App Deployment
 ---
