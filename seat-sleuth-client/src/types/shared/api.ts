@@ -1,8 +1,4 @@
-import {
-  MERGED_API_SCHEMA,
-  HttpMethodsAllowed,
-  ValidServerEndpoints,
-} from '@client/types/shared/apiSchema';
+import { MERGED_API_SCHEMA, HttpMethodsAllowed, ValidServerEndpoints } from './apiSchema';
 
 export const API_ENDPOINTS: Record<
   ValidServerEndpoints,

@@ -1,9 +1,11 @@
 import puppeteer from 'puppeteer';
+import { ScrapingPricePayload } from '../types/shared/payloads';
+import { ScrapingPriceResponse } from '../types/shared/responses';
 
-export const scrapeVividSeats = async (
-  eventName: string,
-  eventDate: string,
-): Promise<{ price: number; url: string } | null | Error> => {
+export const scrapeVividSeats = async ({
+  eventName,
+  eventDate,
+}: ScrapingPricePayload): Promise<ScrapingPriceResponse> => {
   const startUrl = 'https://www.vividseats.com/search?searchTerm=' + eventName.replace(/\s+/g, '+');
 
   const [year, month, day] = eventDate.split('-');
@@ -31,21 +33,19 @@ export const scrapeVividSeats = async (
     });
 
     const eventLinks = await page.$$eval('a.styles_linkContainer__4li3j', (elements) =>
-    elements.map((el) => el.href).filter(Boolean),
+      elements.map((el) => el.href).filter(Boolean),
     );
     for (const event of eventLinks) {
-       
-        if (event.includes(convertedDate)){
-            await page.goto(event, { waitUntil: 'networkidle2' });
-            const prices = await page
-            .$$eval('.MuiTypography-body-bold', elements =>
-            elements.map(el => el.textContent?.trim())
-            .filter(text => text?.startsWith('$')));
-            
-            await browser.close();
-            console.log('Found Vivid Seats event: ', event, " at price ", prices[0]);
-            return { price: Number(prices[0]?.replace("$", "")), url: event };
-        }
+      if (event.includes(convertedDate)) {
+        await page.goto(event, { waitUntil: 'networkidle2' });
+        const prices = await page.$$eval('.MuiTypography-body-bold', (elements) =>
+          elements.map((el) => el.textContent?.trim()).filter((text) => text?.startsWith('$')),
+        );
+
+        await browser.close();
+        console.log('Found Vivid Seats event: ', event, ' at price ', prices[0]);
+        return { price: Number(prices[0]?.replace('$', '')), url: event };
+      }
     }
     console.log('Vivid Seats location not found for this event ');
     await browser.close();

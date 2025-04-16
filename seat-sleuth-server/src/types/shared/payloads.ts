@@ -29,5 +29,9 @@ export interface RemoveFromWatchListPayload {
 export interface IsUserWatchingPayload {
   eventInstanceId: string;
 }
+export interface ScrapingPricePayload {
+  eventName: string;
+  eventDate: string;
+}
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;

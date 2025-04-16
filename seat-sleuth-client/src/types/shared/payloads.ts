@@ -1,4 +1,4 @@
-import { TicketMasterSearchParams } from '@client/types/shared/ticketMaster';
+import { TicketMasterSearchParams } from './ticketMaster';
 import { EventData } from './responses';
 
 export interface AuthPayload {
@@ -28,6 +28,11 @@ export interface RemoveFromWatchListPayload {
 
 export interface IsUserWatchingPayload {
   eventInstanceId: string;
+}
+
+export interface ScrapingPricePayload {
+  eventName: string;
+  eventDate: string;
 }
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;
