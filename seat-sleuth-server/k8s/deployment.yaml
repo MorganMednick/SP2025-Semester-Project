@@ -56,9 +56,9 @@ metadata:
   name: seat-sleuth-secrets
 type: Opaque
 stringData:
-  GMAIL_PASSWORD: ogsbzkzmafitcuun
-  SESSION_SECRET: f77ba46c300a345e8097bf4032286c043ec2ee505a0898b9c24a517f79ed4110
-  TM_API_KEY: cmtAt6aY2NgARV2FksRnE42AY2Hy3mmA
+  GMAIL_PASSWORD: 
+  SESSION_SECRET: 
+  TM_API_KEY: 
 
 # App Deployment
 ---
