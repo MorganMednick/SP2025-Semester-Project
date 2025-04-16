@@ -1,0 +1,151 @@
+# Database StatefulSet
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: seat-sleuth-db
+  labels:
+    app: seat-sleuth-db
+spec:
+  selector:
+    matchLabels:
+      app: seat-sleuth-db
+  serviceName: seat-sleuth-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: seat-sleuth-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: seat-sleuth-user
+            - name: POSTGRES_PASSWORD
+              value: seat-sleuth-password-12345
+            - name: POSTGRES_DB
+              value: seat-sleuth
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+# Database Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seat-sleuth-db
+spec:
+  selector:
+    app: seat-sleuth-db
+  ports:
+    - port: 5432
+
+# App Secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: seat-sleuth-secrets
+type: Opaque
+stringData:
+  GMAIL_PASSWORD: # TODO: ADD ME
+  SESSION_SECRET: # TODO: ADD ME
+  TM_API_KEY: # TODO: ADD ME
+
+# App Deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seat-sleuth
+  labels:
+    app: seat-sleuth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seat-sleuth
+  template:
+    metadata:
+      labels:
+        app: seat-sleuth
+    spec:
+      containers:
+        - name: seat-sleuth
+          image: seat-sleuth-server:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+          env:
+            - name: DATABASE_URL
+              value: postgresql://seat-sleuth-user:seat-sleuth-password-12345@seat-sleuth-db:5432/seat-sleuth
+            - name: NODE_ENV
+              value: production
+            - name: CLIENT_URL
+              value: http://localhost:8080
+            - name: TM_BASE_URL
+              value: 'https://app.ticketmaster.com/discovery/v2/'
+            - name: GMAIL_EMAIL
+              value: 'seatsleuthauth@gmail.com'
+            - name: WATCHLIST_EMAIL_CRON
+              value: '0 * * * *'
+            - name: GMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: seat-sleuth-secrets
+                  key: GMAIL_PASSWORD
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: seat-sleuth-secrets
+                  key: SESSION_SECRET
+            - name: TM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: seat-sleuth-secrets
+                  key: TM_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+# App Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seat-sleuth
+spec:
+  type: ClusterIP
+  selector:
+    app: seat-sleuth
+  ports:
+    - port: 4000
+      targetPort: 4000
+
+# Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seat-sleuth-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: seat-sleuth
+                port:
+                  number: 4000
