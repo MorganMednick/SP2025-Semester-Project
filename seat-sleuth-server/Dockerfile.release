@@ -11,6 +11,7 @@ RUN npx prisma generate
 
 RUN npm run build
 
+
 FROM node:18-alpine
 
 WORKDIR /app
@@ -28,5 +29,6 @@ COPY --from=builder /app/.env ./.env
 RUN npx prisma generate
 
 EXPOSE 4000
+
 
 CMD ["node", "dist/server.js"]

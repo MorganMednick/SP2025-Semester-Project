@@ -1,66 +1,27 @@
+# Database StatefulSet
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: seatsleuth
+  name: seat-sleuth-db
   labels:
-    app: seatsleuth
+    app: seat-sleuth-db
 spec:
   selector:
     matchLabels:
-      app: seatsleuth
+      app: seat-sleuth-db
+  serviceName: seat-sleuth-db
   replicas: 1
   template:
     metadata:
       labels:
-        app: seatsleuth
+        app: seat-sleuth-db
     spec:
       containers:
-        - image: docker.io/library/postgres:latest
-          name: seatsleuth
+        - name: postgres
+          image: postgres:15
           ports:
             - containerPort: 5432
-          env:
-            - name: POSTGRES_PASSWORD
-              value: seat-sleuth-password-12345
-            - name: POSTGRES_USER
-              value: seat-sleuth-user
-          livenessProbe:
-            tcpSocket:
-              port: 5432
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: seatsleuth-db
-spec:
-  selector:
-    app: seatsleuth-db
-  ports:
-    - port: 5432
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: seatsleuth-server
-  labels:
-    app: seatsleuth-server
-spec:
-  selector:
-    matchLabels:
-      app: seatsleuth-server
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: seatsleuth-server
-    spec:
-      containers:
-        - image: seatsleuth:v1
-          imagePullPolicy: Never
-          name: seatsleuth
-          ports:
-            - containerPort: 4000
           env:
             - name: POSTGRES_USER
               value: seat-sleuth-user
@@ -68,43 +29,115 @@ spec:
               value: seat-sleuth-password-12345
             - name: POSTGRES_DB
               value: seat-sleuth
-            - name: DATABASE_URL
-              value: postgresql://seat-sleuth-user:seat-sleuth-password-12345@seatsleuth-db:5432/seat-sleuth
-            - name: NODE_ENV
-              value: production
-            - name: CLIENT_URL
-              value: http://localhost:5173
-            - name: TM_BASE_URL #Look up Secrets in Kubernetes, we need a definition per secret env var. or just 1 as a store for secrets. create k8s secrets.yaml w/gitignore. deploy that, reference secrets in the cluster directly by name
-              value: 'https://app.ticketmaster.com/discovery/v2/'
-            - name: GMAIL_EMAIL
-              value: 'seatsleuthauth@gmail.com'
-            - name: GMAIL_PASSWORD
-              value: '' #TODO: Secret here
-            - name: SESSION_SECRET
-              value: '' #TODO: Secret here
-            - name: TM_API_KEY
-              value: '' #TODO: Secret here
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
 
-            # - name: APP_DATABASE__PORT #TODO: This was here originally, but I don't think it's needed
-            #   value: '5432'
+# Database Service
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: seatsleuth
+  name: seat-sleuth-db
 spec:
-  type: LoadBalancer
   selector:
-    app: seatsleuth
+    app: seat-sleuth-db
+  ports:
+    - port: 5432
+
+# App Secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: seat-sleuth-secrets
+type: Opaque
+stringData:
+  GMAIL_PASSWORD: # TODO: ADD ME
+  SESSION_SECRET: # TODO: ADD ME
+  TM_API_KEY: # TODO: ADD ME
+
+# App Deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seat-sleuth
+  labels:
+    app: seat-sleuth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seat-sleuth
+  template:
+    metadata:
+      labels:
+        app: seat-sleuth
+    spec:
+      containers:
+        - name: seat-sleuth
+          image: seat-sleuth-server:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+          env:
+            - name: DATABASE_URL
+              value: postgresql://seat-sleuth-user:seat-sleuth-password-12345@seat-sleuth-db:5432/seat-sleuth
+            - name: NODE_ENV
+              value: production
+            - name: CLIENT_URL
+              value: http://localhost:8080
+            - name: TM_BASE_URL
+              value: 'https://app.ticketmaster.com/discovery/v2/'
+            - name: GMAIL_EMAIL
+              value: 'seatsleuthauth@gmail.com'
+            - name: WATCHLIST_EMAIL_CRON
+              value: '0 * * * *'
+            - name: GMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: seat-sleuth-secrets
+                  key: GMAIL_PASSWORD
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: seat-sleuth-secrets
+                  key: SESSION_SECRET
+            - name: TM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: seat-sleuth-secrets
+                  key: TM_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+# App Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seat-sleuth
+spec:
+  type: ClusterIP
+  selector:
+    app: seat-sleuth
   ports:
     - port: 4000
+      targetPort: 4000
+
+# Ingress
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: seat-sleuth-ingress
-  # annotations:
-  # nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
     - http:
@@ -116,4 +149,3 @@ spec:
                 name: seat-sleuth
                 port:
                   number: 4000
-#Add a second ingress search for ngix ingress, regex replace we can do on it

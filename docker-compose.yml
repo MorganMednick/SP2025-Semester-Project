@@ -9,9 +9,6 @@ services:
       POSTGRES_USER: seat-sleuth-user
       POSTGRES_PASSWORD: seat-sleuth-password-12345
       POSTGRES_DB: seat-sleuth
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
     healthcheck:
@@ -47,7 +44,4 @@ services:
       - CLIENT_URL=http://localhost:8080
     env_file:
       - ./seat-sleuth-server/.env
-
-volumes:
-  postgres_data:
-    name: seat-sleuth-postgres-data
+    command: sh -c "npx prisma migrate reset --force && npx prisma generate && node dist/server.js"
