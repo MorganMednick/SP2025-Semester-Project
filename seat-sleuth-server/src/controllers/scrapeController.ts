@@ -6,9 +6,9 @@ import { scrapeVividSeats } from '../services/vividSeatsScraper';
 
 export const scrapeStubHubForPrice = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { eventName, targetLocation } = req.body;
+    const { eventName, eventDate } = req.body;
 
-    if (!eventName || !targetLocation) {
+    if (!eventName || !eventDate) {
       sendError(res, {
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'Event name and target location are required.',
@@ -16,7 +16,7 @@ export const scrapeStubHubForPrice = async (req: Request, res: Response): Promis
       return;
     }
 
-    const scrapingRes = await scrapeStubHub({ eventName, targetLocation });
+    const scrapingRes = await scrapeStubHub({ eventName, eventDate });
 
     if (scrapingRes instanceof Error) {
       sendError(res, {

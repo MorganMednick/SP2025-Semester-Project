@@ -6,8 +6,7 @@ import {
   UserPayload,
   TicketMasterQueryParams,
   IsUserWatchingPayload,
-  StubHubScrapingPayload,
-  VividSeatsScrapingPayload,
+  ScrapingPricePayload
 } from './payloads';
 import { AuthResponse, EventData, ScrapingPriceResponse, SpecificEventData, User } from './responses';
 
@@ -53,13 +52,13 @@ export const SCRAPING_API_SCHEMA = {
   SCRAPE_STUB_HUB: {
     route: '/scrape/sh',
     method: 'POST',
-    payload: {} as StubHubScrapingPayload,
+    payload: {} as ScrapingPricePayload,
     response: {} as ScrapingPriceResponse,
   },
   SCRAPE_VIVID_SEATS: {
     route: '/scrape/sh',
     method: 'POST',
-    payload: {} as VividSeatsScrapingPayload,
+    payload: {} as ScrapingPricePayload,
     response: {} as ScrapingPriceResponse,
   },
 } as const;

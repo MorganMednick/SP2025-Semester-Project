@@ -30,12 +30,7 @@ export interface IsUserWatchingPayload {
   eventInstanceId: string;
 }
 
-export interface StubHubScrapingPayload {
-  eventName: string;
-  targetLocation: string;
-}
-
-export interface VividSeatsScrapingPayload {
+export interface ScrapingPricePayload {
   eventName: string;
   eventDate: string;
 }

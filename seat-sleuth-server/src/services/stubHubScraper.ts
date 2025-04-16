@@ -1,12 +1,15 @@
 import puppeteer from 'puppeteer';
 import { ScrapingPriceResponse } from '../types/shared/responses';
-import { StubHubScrapingPayload } from '../types/shared/payloads';
+import { ScrapingPricePayload } from '../types/shared/payloads';
 
 export const scrapeStubHub = async ({
   eventName,
-  targetLocation,
-}: StubHubScrapingPayload): Promise<ScrapingPriceResponse> => {
+  eventDate,
+}: ScrapingPricePayload): Promise<ScrapingPriceResponse> => {
   const startUrl = 'https://www.stubhub.com/secure/Search?q=' + eventName.replace(/\s+/g, '+');
+
+  const [year, month, day] = eventDate.split('-');
+  const convertedDate = `${parseInt(month)}-${parseInt(day)}-${year}`;
 
   try {
     const browser = await puppeteer.launch({
@@ -38,7 +41,7 @@ export const scrapeStubHub = async ({
         elements.map((el) => el.href).filter(Boolean),
       );
       for (const event of eventLinks) {
-        if (event.includes(targetLocation.toLowerCase().replace(/\s+/g, '-'))) {
+        if (event.includes(convertedDate)) {
           await page.goto(event, { waitUntil: 'networkidle2' });
           const price = await page
             .$eval('.iwVOyT', (el) => el.textContent?.trim())

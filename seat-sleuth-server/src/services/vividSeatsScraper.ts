@@ -1,11 +1,11 @@
 import puppeteer from 'puppeteer';
-import { VividSeatsScrapingPayload } from '../types/shared/payloads';
+import { ScrapingPricePayload } from '../types/shared/payloads';
 import { ScrapingPriceResponse } from '../types/shared/responses';
 
 export const scrapeVividSeats = async ({
   eventName,
   eventDate,
-}: VividSeatsScrapingPayload): Promise<ScrapingPriceResponse> => {
+}: ScrapingPricePayload): Promise<ScrapingPriceResponse> => {
   const startUrl = 'https://www.vividseats.com/search?searchTerm=' + eventName.replace(/\s+/g, '+');
 
   const [year, month, day] = eventDate.split('-');
