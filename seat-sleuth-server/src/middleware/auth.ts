@@ -4,7 +4,7 @@ import session from 'express-session';
 import pgSession from 'connect-pg-simple';
 import { Pool } from 'pg';
 import cookieParser from 'cookie-parser';
-import { CLIENT_URL, NODE_ENV, SESSION_SECRET, DATABASE_URL } from '../config/env';
+import { CLIENT_URL, SESSION_SECRET, DATABASE_URL } from '../config/env';
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
@@ -38,7 +38,7 @@ export const configureServerSession = (app: Application): void => {
       saveUninitialized: false,
       cookie: {
         httpOnly: true,
-        secure: NODE_ENV === 'production',
+        secure: false,
         sameSite: 'strict',
         maxAge: 1000 * 60 * 60 * 24,
       },
