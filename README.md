@@ -64,6 +64,23 @@ SESSION_SECRET="<32 char secure string>"
 1. run `npm run dev`
 2. or run `docker-compose up --build`
 
+### API Endpoints
+
+| Index | Path                     | Methods                     | Middlewares                        |
+|-------|--------------------------|-----------------------------|-------------------------------------|
+| 0     | `/api/health`           | `GET`                       | `anonymous`                         |
+| 1     | `/api/auth/register`    | `POST`                      | `createUser`                        |
+| 2     | `/api/auth/login`       | `POST`, `GET`               | `loginUser`                         |
+| 3     | `/api/auth/logout`      | `POST`                      | `protectRoutes`, `logoutUser`      |
+| 4     | `/api/tm/events`        | `POST`                      | `fetchTicketMasterEvents`          |
+| 5     | `/api/scrape/vs`        | `POST`                      | `scrapeVividSeatsForPrice`         |
+| 6     | `/api/scrape/sh`        | `POST`                      | `scrapeStubHubForPrice`            |
+| 7     | `/api/user/info`        | `GET`, `PUT`                | `getUserInfo`                       |
+| 8     | `/api/user/password`    | `PUT`                       | `updatePassword`                   |
+| 9     | `/api/watchlist`        | `GET`, `POST`, `DELETE`     | `getUserWatchList`                 |
+| 10    | `/api/watchlist/check`  | `POST`                      | `isUserWatching`                   |
+
+
 ## Linting!
 
 Add the following to your settings.json:
