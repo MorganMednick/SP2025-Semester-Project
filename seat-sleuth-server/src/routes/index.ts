@@ -5,6 +5,7 @@ import authRoutes from './authRoutes';
 import ticketMasterRoutes from './ticketMasterRoutes';
 import userRoutes from './userRoutes';
 import watchlistRoutes from './watchlistRoutes';
+import scrapeRoutes from './scrapeRoutes';
 import { protectRoutes } from '../middleware/protectRoutes';
 
 const router = Router();
@@ -18,6 +19,8 @@ router.get('/health', (req, res) => {
 router.use('/auth', authRoutes);
 
 router.use('/tm', ticketMasterRoutes);
+
+router.use('/scrape', scrapeRoutes);
 
 router.use('/user', protectRoutes, userRoutes);
 

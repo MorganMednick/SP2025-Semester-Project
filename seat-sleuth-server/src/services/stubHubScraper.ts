@@ -1,9 +1,11 @@
 import puppeteer from 'puppeteer';
+import { ScrapingPriceResponse } from '../types/shared/responses';
+import { StubHubScrapingPayload } from '../types/shared/payloads';
 
-export const scrapeStubHub = async (
-  eventName: string,
-  targetLocation: string,
-): Promise<{ price: number; url: string } | null | Error> => {
+export const scrapeStubHub = async ({
+  eventName,
+  targetLocation,
+}: StubHubScrapingPayload): Promise<ScrapingPriceResponse> => {
   const startUrl = 'https://www.stubhub.com/secure/Search?q=' + eventName.replace(/\s+/g, '+');
 
   try {

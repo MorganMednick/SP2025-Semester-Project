@@ -6,8 +6,10 @@ import {
   UserPayload,
   TicketMasterQueryParams,
   IsUserWatchingPayload,
+  StubHubScrapingPayload,
+  VividSeatsScrapingPayload,
 } from './payloads';
-import { AuthResponse, EventData, SpecificEventData, User } from './responses';
+import { AuthResponse, EventData, ScrapingPriceResponse, SpecificEventData, User } from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -44,6 +46,21 @@ export const AUTH_API_SCHEMA = {
     method: 'POST',
     payload: {} as AuthPayload,
     response: null as AuthResponse,
+  },
+} as const;
+
+export const SCRAPING_API_SCHEMA = {
+  SCRAPE_STUB_HUB: {
+    route: '/scrape/sh',
+    method: 'POST',
+    payload: {} as StubHubScrapingPayload,
+    response: {} as ScrapingPriceResponse,
+  },
+  SCRAPE_VIVID_SEATS: {
+    route: '/scrape/sh',
+    method: 'POST',
+    payload: {} as VividSeatsScrapingPayload,
+    response: {} as ScrapingPriceResponse,
   },
 } as const;
 
@@ -110,6 +127,7 @@ export const MERGED_API_SCHEMA = {
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
   ...WATCHLIST_API_SCHEMA,
+  ...SCRAPING_API_SCHEMA
 } as const;
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;

@@ -30,4 +30,14 @@ export interface IsUserWatchingPayload {
   eventInstanceId: string;
 }
 
+export interface StubHubScrapingPayload {
+  eventName: string;
+  targetLocation: string;
+}
+
+export interface VividSeatsScrapingPayload {
+  eventName: string;
+  eventDate: string;
+}
+
 export type TicketMasterQueryParams = TicketMasterSearchParams;

@@ -1,4 +1,4 @@
-import { TicketMasterSearchParams } from '@client/types/shared/ticketMaster';
+import { TicketMasterSearchParams } from './ticketMaster';
 import { EventData } from './responses';
 
 export interface AuthPayload {
@@ -28,6 +28,16 @@ export interface RemoveFromWatchListPayload {
 
 export interface IsUserWatchingPayload {
   eventInstanceId: string;
+}
+
+export interface StubHubScrapingPayload {
+  eventName: string;
+  targetLocation: string;
+}
+
+export interface VividSeatsScrapingPayload {
+  eventName: string;
+  eventDate: string;
 }
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;
