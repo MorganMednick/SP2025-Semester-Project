@@ -125,6 +125,7 @@ export const getUserWithWatchlist = async (userId: number): Promise<SpecificEven
             include: {
               event: true,
               priceOptions: true,
+
               watchers: {
                 include: { user: true },
               },
@@ -146,6 +147,7 @@ export const getUserWithWatchlist = async (userId: number): Promise<SpecificEven
         user: watch.user,
       })),
       priceOptions: eventInstance.priceOptions as PriceOption[],
+      coverImage: eventInstance.event.coverImage,
     };
 
     specificEventDataList.push(mappedSpecificEvent);

@@ -14,8 +14,8 @@ export default function EventCard({ event }: { event: SpecificEventData }) {
       w={{ base: 375, sm: 700, lg: 1400 }}
       h={130}
     >
-      <Flex align="center" h="100%" justify="center" direction="row">
-        <Box w={200} maw={300}>
+      <Flex align="center" h="100%" justify="flex-start" direction="row">
+        <Box w={200} maw={300} mr={25}>
           <Image
             src={event?.coverImage || 'https://picsum.photos/400'}
             h={110}
@@ -27,9 +27,8 @@ export default function EventCard({ event }: { event: SpecificEventData }) {
           />
         </Box>
 
-        <Stack pl={100} justify="flex-start" align="flex-start" gap="xs">
+        <Stack pl={20} justify="flex-start" align="flex-start" gap="xs" pr={100}>
           <Text fw={700} size="xxl">
-            {' '}
             {event.eventName}{' '}
           </Text>
           <Text size="xl">
@@ -37,8 +36,8 @@ export default function EventCard({ event }: { event: SpecificEventData }) {
             {event.venueName} {'|'} {event.city}
           </Text>
         </Stack>
-        <Button w={200} h={80} bg="green.10" radius="md" ml={300}>
-          <Group gap={1} justify="flex-end">
+        <Button w={175} h={80} bg="green.10" radius="md" justify="flex-end" pl={0} ml="auto">
+          <Group gap={5} justify="flex-end">
             <Stack gap={0} align="center" justify="flex-start">
               <Text size="xxl" c="white" fw={700}>
                 $100

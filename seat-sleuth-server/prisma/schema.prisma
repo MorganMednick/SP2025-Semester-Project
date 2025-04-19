@@ -53,6 +53,7 @@ model EventInstance {
   city           String
   country        String
   url            String?
+  coverImage     String?
   currency       String?
   startTime      DateTime
   saleStart      DateTime?

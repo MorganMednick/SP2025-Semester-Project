@@ -51,6 +51,7 @@ export interface SpecificEventData {
   city: string;
   country: string;
   url: string | null;
+  coverImage: string | null;
   currency: string | null;
   startTime: Date;
   saleStart: Date | null;

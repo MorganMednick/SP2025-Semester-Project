@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Stack, Grid, Text, Box, Center, Transition } from '@mantine/core';
-import EventCardSkeleton from '../events/EventCardSkeleton';
+import WatchlistCardSkeleton from '../events/WatchlistCardSkeleton';
 import { useAppropriateGridColumnCount } from '../../hooks/hooks';
 import {  SpecificEventData } from '@client/types/shared/responses';
 import WatchlistEventCard from './WatchlistEventCard';
@@ -31,7 +31,7 @@ export default function WatchlistGrid({ events, isLoading, isError, error }: Wat
       <Grid gutter="xl" p="md">
         {Array.from({ length: 8 }, (_, index) => (
           <Grid.Col key={index} span={COL_SPAN}>
-            <EventCardSkeleton />
+            <WatchlistCardSkeleton />
           </Grid.Col>
         ))}
       </Grid>

@@ -94,6 +94,7 @@ function mapRawEventToOption(rawEvent: RawTMEventData): SpecificEventData {
     saleEnd: safeDate(rawEvent.sales?.public?.endDateTime),
     seatMapSrc: rawEvent.seatmap?.staticUrl || '',
     currency: rawEvent.priceRanges?.[0]?.currency || 'USD',
+    coverImage: findLargestImage(rawEvent.images),
     url: rawEvent.url || '',
     priceOptions: mapPriceRanges(rawEvent.id, rawEvent.priceRanges),
     watchers: [],
