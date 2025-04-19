@@ -72,3 +72,8 @@ export interface WatchedEventData {
     createdAt: Date;
   };
 }
+
+export interface ScrapingPriceResponse {
+  price: number;
+  url: string;
+}

@@ -72,3 +72,5 @@ export interface WatchedEventData {
     createdAt: Date;
   };
 }
+
+export type ScrapingPriceResponse = { price: number; url: string } | null | Error;

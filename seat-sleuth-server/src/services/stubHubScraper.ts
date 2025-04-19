@@ -1,10 +1,18 @@
 import puppeteer from 'puppeteer';
+import { ScrapingPriceResponse } from '../types/shared/responses';
+import { ScrapingPricePayload } from '../types/shared/payloads';
+import { formatDateToScrape, shortenEventName } from '../util/scrapeUtil';
 
-export const scrapeStubHub = async (
-  eventName: string,
-  targetLocation: string,
-): Promise<{ price: number; url: string } | null | Error> => {
-  const startUrl = 'https://www.stubhub.com/secure/Search?q=' + eventName.replace(/\s+/g, '+');
+export const scrapeStubHub = async ({
+  eventName,
+  eventDate,
+}: ScrapingPricePayload): Promise<ScrapingPriceResponse | null | Error> => {
+  
+  const convertedDate = formatDateToScrape(eventDate);
+  const shortenedName = shortenEventName(eventName);
+
+
+  const startUrl = 'https://www.stubhub.com/secure/Search?q=' + shortenedName.replace(/\s+/g, '+');
 
   try {
     const browser = await puppeteer.launch({
@@ -26,30 +34,22 @@ export const scrapeStubHub = async (
     await page.evaluate(() => {
       Object.defineProperty(navigator, 'webdriver', { get: () => false });
     });
-    const performerLinks = await page.$$eval('a.sc-2274f71f-2', (links) =>
-      links.map((link) => link.href),
+    
+    const eventLinks = await page.$$eval('a', (elements) =>
+      elements.map((el) => el.href).filter(Boolean),
     );
-
-    if (performerLinks.length > 0) {
-      await page.goto(performerLinks[0], { waitUntil: 'networkidle2' });
-      const eventLinks = await page.$$eval('li.gEygrZ a', (elements) =>
-        elements.map((el) => el.href).filter(Boolean),
-      );
-      for (const event of eventLinks) {
-        if (event.includes(targetLocation.toLowerCase().replace(/\s+/g, '-'))) {
-          await page.goto(event, { waitUntil: 'networkidle2' });
-          const price = await page
-            .$eval('.iwVOyT', (el) => el.textContent?.trim())
-            .catch(() => undefined);
-          await browser.close();
-          console.log('Found StubHub event: ', event);
-          return { price: Number(price?.replace('$', '')), url: event };
-        }
+    for (const event of eventLinks) {
+      if (event.includes(convertedDate)) {
+        await page.goto(event, { waitUntil: 'networkidle2' });
+        const price = await page
+          .$eval('.dNJQoP', (el) => el.textContent?.trim())
+          .catch(() => undefined);
+        await browser.close();
+        console.log('Found StubHub event: ', event);
+        return { price: Number(price?.replace('$', '')), url: event };
       }
-      console.log('StubHub location not found for this event ');
-    } else {
-      console.log('StubHub event not found ');
     }
+    console.log('StubHub location not found for this event ');
 
     await browser.close();
     return null;
