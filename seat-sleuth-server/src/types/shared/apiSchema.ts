@@ -62,7 +62,7 @@ export const SCRAPING_API_SCHEMA = {
     response: {} as ScrapingPriceResponse,
   },
   SCRAPE_VIVID_SEATS: {
-    route: '/scrape/sh',
+    route: '/scrape/vs',
     method: 'POST',
     payload: {} as ScrapingPricePayload,
     response: {} as ScrapingPriceResponse,
