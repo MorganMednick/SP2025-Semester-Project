@@ -32,7 +32,7 @@ export interface IsUserWatchingPayload {
 
 export interface ScrapingPricePayload {
   eventName: string;
-  eventDate: string;
+  eventDate: Date;
 }
 
 export type TicketMasterQueryParams = TicketMasterSearchParams;

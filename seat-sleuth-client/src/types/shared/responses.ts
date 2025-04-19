@@ -72,4 +72,4 @@ export interface WatchedEventData {
   };
 }
 
-export type ScrapingPriceResponse = { price: number; url: string } | null | Error;
+export type ScrapingPriceResponse = { price: number; url: string };
