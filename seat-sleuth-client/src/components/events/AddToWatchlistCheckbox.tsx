@@ -3,7 +3,7 @@ import { useAuthDisabled } from "@/hooks/hooks";
 import { responseIsOk } from "@/util/apiUtils";
 import { showMantineNotification } from "@/util/uiUtils";
 import { EventData } from "@client/types/shared/responses";
-import { Text, Checkbox } from "@mantine/core";
+import { Checkbox } from "@mantine/core";
 import { useState } from "react";
 import { useQuery } from "react-query";
 
