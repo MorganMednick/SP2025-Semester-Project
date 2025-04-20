@@ -20,6 +20,7 @@ const theme = createTheme({
       '#4c9763',
       '#418657',
       '#327448',
+      '#49905F',
     ],
   },
   fontFamily: "'Source Sans 3'",
@@ -38,7 +39,7 @@ const theme = createTheme({
     xxxx: '64px',
   },
   headings: {
-    fontFamily: "Bayon",
+    fontFamily: 'Bayon',
     fontWeight: '400',
     sizes: {
       h1: {

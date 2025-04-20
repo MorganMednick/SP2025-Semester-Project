@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Grid, Text, Center, Transition } from '@mantine/core';
-import EventCardSkeleton from '../events/EventCardSkeleton';
+import { Stack, Grid, Text, Box, Center, Transition } from '@mantine/core';
+import WatchlistCardSkeleton from '../events/WatchlistCardSkeleton';
 import { useAppropriateGridColumnCount } from '../../hooks/hooks';
 import {  SpecificEventData } from '@client/types/shared/responses';
 import WatchlistEventCard from './WatchlistEventCard';
@@ -31,7 +31,7 @@ export default function WatchlistGrid({ events, isLoading, isError, error }: Wat
       <Grid gutter="xl" p="md">
         {Array.from({ length: 8 }, (_, index) => (
           <Grid.Col key={index} span={COL_SPAN}>
-            <EventCardSkeleton />
+            <WatchlistCardSkeleton />
           </Grid.Col>
         ))}
       </Grid>
@@ -48,25 +48,25 @@ export default function WatchlistGrid({ events, isLoading, isError, error }: Wat
     );
   }
 
+
   return (
-    <Grid gutter="xl" py="md">
+    <Stack h={300} align="stretch" justify="flex-start" gap="md">
       {events && events.length > 0 ? (
         events.map((event, index) => (
-          <Grid.Col key={event.eventName} span={COL_SPAN}>
-            <Transition
-              mounted={mounted}
-              transition="slide-right" // Check this out if you wanna change transition effect: https://mantine.dev/core/transition/
-              duration={CARD_SLIDE_ANIMATION_DURATION}
-              enterDelay={index * CARD_SLIDE_ANIMATION_DELAY}
-              timingFunction="ease"
-            >
-              {(styles) => (
-                <div style={styles}>
-                  <WatchlistEventCard event={event} />
-                </div>
-              )}
-            </Transition>
-          </Grid.Col>
+          <Transition
+            key={event.eventName}
+            mounted={mounted}
+            transition="slide-right"
+            duration={CARD_SLIDE_ANIMATION_DURATION}
+            enterDelay={index * CARD_SLIDE_ANIMATION_DELAY}
+            timingFunction="ease"
+          >
+            {(styles) => (
+              <Box style={{ ...styles, marginLeft: '5%' }}>
+                <WatchlistEventCard event={event} />
+              </Box>
+            )}
+          </Transition>
         ))
       ) : (
         <Center py="xl">
@@ -75,6 +75,6 @@ export default function WatchlistGrid({ events, isLoading, isError, error }: Wat
           </Text>
         </Center>
       )}
-    </Grid>
+    </Stack>
   );
 }

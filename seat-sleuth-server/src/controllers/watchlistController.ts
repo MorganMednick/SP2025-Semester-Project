@@ -23,8 +23,8 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
     const userWatchlist: SpecificEventData[] = userWithWatchlist;
 
     console.info(`Fetched ${userWatchlist.length} watchlist for user`);
-    console.info(userWatchlist)
-    
+    console.info(userWatchlist);
+
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
       data: userWatchlist,
