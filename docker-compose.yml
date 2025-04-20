@@ -46,3 +46,4 @@ services:
     env_file:
       - ./seat-sleuth-server/.env
     command: sh -c "npx prisma migrate reset --force && npx prisma generate && node dist/server.js"
+    # Testing pr build
