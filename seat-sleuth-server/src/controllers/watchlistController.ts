@@ -17,17 +17,11 @@ export const getUserWatchList = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    // Fetch user watchlist with necessary relations
     const userWithWatchlist: SpecificEventData[] = await getUserWithWatchlist(userId);
-
-    const userWatchlist: SpecificEventData[] = userWithWatchlist;
-
-    console.info(`Fetched ${userWatchlist.length} watchlist for user`);
-    console.info(userWatchlist);
 
     sendSuccess(res, {
       statusCode: StatusCodes.OK,
-      data: userWatchlist,
+      data: userWithWatchlist,
       message: 'Watchlist successfully fetched',
     });
   } catch (error) {

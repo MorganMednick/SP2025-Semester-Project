@@ -37,9 +37,9 @@ export type EventMetaData = Omit<EventData, 'instances'>;
 export interface PriceOption {
   id: string;
   eventInstanceId: string;
-  priceMin: number;
-  priceMax: number;
+  price: number;
   source: string;
+  url: string | null;
 }
 
 export interface SpecificEventData {

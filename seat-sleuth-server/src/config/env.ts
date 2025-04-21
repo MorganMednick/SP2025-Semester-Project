@@ -9,6 +9,7 @@ export const {
   GMAIL_EMAIL, // FATAL
   GMAIL_PASSWORD, // FATAL
   WATCHLIST_EMAIL_CRON, // NOT FATAL
+  PRICE_UPDATE_CRON, // NOT FATAL
 } = process.env;
 
 if (!DATABASE_URL) {

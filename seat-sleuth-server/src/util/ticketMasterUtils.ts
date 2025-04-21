@@ -10,10 +10,6 @@ export const handleTicketMasterEventRequest = async (
 ): Promise<EventData[]> => {
   const startOfReq = Date.now();
 
-  // TODO: Revisit this - Likely a session cache tho
-  // const cachedEvents = await getCachedEvents(hashQueryParams(params));
-  // if (cachedEvents) return cachedEvents;
-
   const rawEvents = await fetchEventsFromTicketMaster(params);
   const responseTimeMs = Date.now() - startOfReq;
   const finalResponse = mapRawEventsToQueryResponse(rawEvents);
@@ -25,6 +21,7 @@ export const handleTicketMasterEventRequest = async (
     responseTimeMs,
     finalResponse.length,
   );
+
   return finalResponse;
 };
 
@@ -46,11 +43,12 @@ function mapRawEventsToQueryResponse(rawEvents: RawTMEventData[]): EventData[] {
       .reduce<Map<string, EventData>>((eventMap, rawEvent) => {
         const eventName = rawEvent.name || 'Unknown Event';
         const eventOption = mapRawEventToOption(rawEvent);
+
         if (eventMap.has(eventName)) {
-          const existingEventInstance = eventMap.get(eventName);
-          existingEventInstance?.instances.push(eventOption);
-          if (existingEventInstance?.instanceCount) {
-            existingEventInstance.instanceCount += 1;
+          const existing = eventMap.get(eventName);
+          existing?.instances.push(eventOption);
+          if (existing) {
+            existing.instanceCount += 1;
           }
         } else {
           eventMap.set(eventName, {
@@ -105,14 +103,14 @@ function mapPriceRanges(
   eventId: string,
   priceRanges?: { min?: number; max?: number; currency?: string }[],
 ): PriceOption[] {
-  if (!priceRanges) return [];
+  if (!priceRanges || priceRanges.length === 0) return [];
 
-  return priceRanges.map((priceRange) => ({
+  return priceRanges.map((range) => ({
     id: crypto.randomUUID(),
     eventInstanceId: eventId,
-    priceMin: priceRange.min ?? 0,
-    priceMax: priceRange.max ?? 0,
+    price: range.min ?? 0,
     source: 'Ticketmaster',
+    url: null,
   }));
 }
 

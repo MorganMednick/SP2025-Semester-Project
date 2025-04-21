@@ -37,9 +37,9 @@ export type EventMetaData = Omit<EventData, 'instances'>;
 export interface PriceOption {
   id: string;
   eventInstanceId: string;
-  priceMin: number;
-  priceMax: number;
+  price: number;
   source: string;
+  url: string | null;
 }
 
 export interface SpecificEventData {
@@ -51,7 +51,7 @@ export interface SpecificEventData {
   city: string;
   country: string;
   url: string | null;
-  coverImage: string | null; 
+  coverImage: string | null;
   currency: string | null;
   startTime: Date;
   saleStart: Date | null;
@@ -73,7 +73,4 @@ export interface WatchedEventData {
   };
 }
 
-export interface ScrapingPriceResponse {
-  price: number;
-  url: string;
-}
+export type ScrapingPriceResponse = { price: number; url: string } | null | Error;

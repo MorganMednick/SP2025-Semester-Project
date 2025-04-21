@@ -1,6 +1,6 @@
 import { Image, Box } from '@mantine/core';
 import { EventData } from '@client/types/shared/responses';
-import AddToWatchlistCheckbox from './AddToWatchlistCheckbox';
+import AddToWatchlistCheckbox from '../watchlist/AddToWatchlistCheckbox';
 
 interface EventDetailsImageSectionProps {
   event?: EventData | null;
@@ -9,9 +9,8 @@ interface EventDetailsImageSectionProps {
 
 export default function EventDetailsImageSection({
   event,
-  selectedEventId
+  selectedEventId,
 }: EventDetailsImageSectionProps) {
-
   return (
     <>
       {event && (
@@ -29,7 +28,7 @@ export default function EventDetailsImageSection({
         >
           <Image
             src={event?.coverImage}
-            h={"45vh"}
+            h={'45vh'}
             width="auto"
             alt={event.eventName}
             fit="cover"
@@ -38,7 +37,10 @@ export default function EventDetailsImageSection({
               objectPosition: 'center top',
             }}
           />
-          <AddToWatchlistCheckbox event={event} selectedEventId={selectedEventId}></AddToWatchlistCheckbox>
+          <AddToWatchlistCheckbox
+            event={event}
+            selectedEventId={selectedEventId}
+          ></AddToWatchlistCheckbox>
         </Box>
       )}
     </>

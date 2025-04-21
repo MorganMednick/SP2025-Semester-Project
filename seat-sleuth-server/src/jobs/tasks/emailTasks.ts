@@ -6,7 +6,9 @@ import { getHtmlBodyForWatchlistPriceUpdate } from '../emailTemplates/emailTempl
 export const sendwatchlistUpdateEmail = async () => {
   console.info(`[SCHEDULED EMAIL] Starting scheduled email for watchlist updates...`);
 
-  const users = await prisma.user.findMany({ include: { watchlist: true } });
+  const users = await prisma.user.findMany({
+    include: { watchlist: true },
+  });
 
   for (const user of users) {
     await handleUserWatchlist(user.email, user.watchlist);
@@ -16,7 +18,6 @@ export const sendwatchlistUpdateEmail = async () => {
 const handleUserWatchlist = async (email: string, watchlist: WatchedEvent[]) => {
   for (const watchRelation of watchlist) {
     const event = await getEventWithLowestPrice(watchRelation.eventInstanceId);
-    console.info(event);
     if (!event) continue;
 
     await sendWatchlistEmail(email, event);
@@ -28,12 +29,11 @@ const getEventWithLowestPrice = async (ticketMasterId: string) => {
     where: { ticketMasterId },
     include: { priceOptions: true },
   });
-  console.log(event);
 
   if (!event || event.priceOptions.length === 0) return null;
 
   const lowestPrice = event.priceOptions.reduce(
-    (min, opt) => (opt.priceMin < min ? opt.priceMin : min),
+    (min, opt) => (opt.price < min ? opt.price : min),
     Infinity,
   );
 
@@ -45,10 +45,11 @@ const sendWatchlistEmail = async (
   event: Awaited<ReturnType<typeof getEventWithLowestPrice>>,
 ) => {
   if (!event) return;
+
   const subject = `${event.eventName} Price Update`;
   const body = getHtmlBodyForWatchlistPriceUpdate(
     event.eventName,
-    event.lowestPrice.toString(),
+    event.lowestPrice.toFixed(2),
     event.startTime.toDateString(),
   );
 

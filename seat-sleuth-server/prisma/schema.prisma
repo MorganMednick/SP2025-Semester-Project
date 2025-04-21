@@ -34,10 +34,9 @@ model WatchedEvent {
 model PriceOption {
   id              String            @id @default(uuid()) // Let this randomly generate for primary key reference... DO NOT CHANGE ME - Jayce
   eventInstanceId String
-  priceMin        Float
-  priceMax        Float
+  price           Float
   source          String
-
+  url             String?
   specificEvent EventInstance @relation(fields: [eventInstanceId], references: [ticketMasterId], onDelete: Cascade)
 
   @@unique([eventInstanceId, source])

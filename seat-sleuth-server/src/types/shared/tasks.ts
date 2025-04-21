@@ -1,4 +1,4 @@
-export type TaskName = 'WATCHLIST_EMAIL';
+export type TaskName = 'WATCHLIST_EMAIL' | 'PRICE_UPDATE';
 export interface Task {
   start: () => void;
   stop: () => void;
