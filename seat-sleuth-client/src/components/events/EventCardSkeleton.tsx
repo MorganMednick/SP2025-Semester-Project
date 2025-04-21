@@ -7,5 +7,7 @@ export default function EventCardSkeleton() {
         <Skeleton h={160} w="100%" />
       </Card.Section>
     </Card>
+    
   );
+
 }

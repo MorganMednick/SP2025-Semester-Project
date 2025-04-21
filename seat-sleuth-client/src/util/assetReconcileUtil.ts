@@ -6,3 +6,4 @@ export { default as vividSeatsLogo } from '../assets/vivid_seats_logo.png';
 export { default as stubHubLogo } from '../assets/stub_hub_logo.png';
 export { default as ticketMasterLogo } from '../assets/ticket_master_logo.png';
 export { default as arrowImg } from '../assets/arrow.png';
+export { default as whiteArrow } from '../assets/white_arrow.png';
