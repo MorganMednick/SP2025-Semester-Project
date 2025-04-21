@@ -45,9 +45,11 @@ export default function EventPriceOption({
           eventName,
           eventDate,
         });
-        setSelectedPrice(res?.data?.price);
-        setSelectedUrl(res?.data?.url);
-        return res?.data ?? null;
+        if (!(res?.data instanceof Error) && res?.data?.price) {
+          setSelectedPrice(res?.data?.price);
+          setSelectedUrl(res?.data?.url);
+          return res?.data ?? null;
+        }
       }
       return null;
     },
@@ -70,9 +72,11 @@ export default function EventPriceOption({
           eventName,
           eventDate,
         });
-        setSelectedPrice(res?.data?.price);
-        setSelectedUrl(res?.data?.url);
-        return res?.data ?? null;
+        if (!(res?.data instanceof Error) && res?.data?.price) {
+          setSelectedPrice(res?.data?.price);
+          setSelectedUrl(res?.data?.url);
+          return res?.data ?? null;
+        }
       }
       return null;
     },

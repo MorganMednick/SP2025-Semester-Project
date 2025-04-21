@@ -76,7 +76,7 @@ export default function EventDetailsInfoSection({
         <Stack gap={15}>
             {/* TicketMaster */}
             <EventPriceOption
-              price={eventFromIdProps?.priceOptions?.[0]?.priceMin}
+              price={eventFromIdProps?.priceOptions?.[0]?.price}
               source={'TicketMaster'}
               url={eventFromIdProps?.url}
             />
