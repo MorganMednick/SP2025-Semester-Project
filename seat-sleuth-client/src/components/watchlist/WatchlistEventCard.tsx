@@ -1,7 +1,7 @@
 import { Box, Text, Card, Image, Flex, Group, Button, Stack } from '@mantine/core';
 import { SpecificEventData } from '@client/types/shared/responses';
 import { formatDateToMonthDayYearString } from '../../util/uiUtils';
-import { IconChevronCompactRight } from '@tabler/icons-react';
+import { whiteArrow } from '../../util/assetReconcileUtil';
 
 export default function EventCard({ event }: { event: SpecificEventData }) {
   const lowestPriceOption = event.priceOptions?.length
@@ -55,7 +55,7 @@ export default function EventCard({ event }: { event: SpecificEventData }) {
           }}
         >
           <Group gap={5} justify="flex-end">
-            <Stack gap={0} align="center" justify="flex-start">
+            <Stack gap={0} align="center" justify="flex-start" pr={10}>
               <Text size="xxl" c="white" fw={700}>
                 ${lowestPriceOption?.price?.toFixed(2) || '0.00'}
               </Text>
@@ -63,7 +63,7 @@ export default function EventCard({ event }: { event: SpecificEventData }) {
                 on {lowestPriceOption?.source}
               </Text>
             </Stack>
-            <IconChevronCompactRight size={50} color="white" />
+            <Image h="30px" pr="5px" src={whiteArrow} />
           </Group>
         </Button>
       </Flex>
