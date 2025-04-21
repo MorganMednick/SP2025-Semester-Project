@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Stack, Grid, Text, Box, Center, Transition } from '@mantine/core';
-import WatchlistCardSkeleton from '../events/WatchlistCardSkeleton';
+import WatchlistCardSkeleton from './WatchlistCardSkeleton';
 import { useAppropriateGridColumnCount } from '../../hooks/hooks';
-import {  SpecificEventData } from '@client/types/shared/responses';
+import { SpecificEventData } from '@client/types/shared/responses';
 import WatchlistEventCard from './WatchlistEventCard';
 
 interface WatchlistGridProps {
@@ -47,7 +47,6 @@ export default function WatchlistGrid({ events, isLoading, isError, error }: Wat
       </Center>
     );
   }
-
 
   return (
     <Stack h={300} align="stretch" justify="flex-start" gap="md">

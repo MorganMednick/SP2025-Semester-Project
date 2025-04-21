@@ -34,7 +34,7 @@ describe('sendwatchlistUpdateEmail', () => {
   const mockEvent = {
     eventName: 'Mock Concert',
     startTime: new Date('2025-04-01T18:00:00Z'),
-    priceOptions: [{ priceMin: 120 }, { priceMin: 100 }],
+    priceOptions: [{ price: 120 }, { price: 100 }],
   };
 
   beforeEach(() => {
@@ -55,7 +55,7 @@ describe('sendwatchlistUpdateEmail', () => {
 
     expect(getHtmlBodyForWatchlistPriceUpdate).toHaveBeenCalledWith(
       'Mock Concert',
-      '100',
+      '100.00',
       'Tue Apr 01 2025',
     );
 

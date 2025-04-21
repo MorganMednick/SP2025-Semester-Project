@@ -8,7 +8,13 @@ import {
   IsUserWatchingPayload,
   ScrapingPricePayload
 } from './payloads';
-import { AuthResponse, EventData, ScrapingPriceResponse, SpecificEventData, User } from './responses';
+import {
+  AuthResponse,
+  EventData,
+  ScrapingPriceResponse,
+  SpecificEventData,
+  User,
+} from './responses';
 
 export type HttpMethodsAllowed = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
@@ -100,7 +106,7 @@ export const WATCHLIST_API_SCHEMA = {
     payload: null,
     response: {} as SpecificEventData[],
   },
-  // EVENT DETAILS 
+  // EVENT DETAILS
   ADD_TO_WATCHLIST: {
     route: '/watchlist',
     method: 'POST',
@@ -126,7 +132,7 @@ export const MERGED_API_SCHEMA = {
   ...TM_API_SCHEMA,
   ...USER_API_SCHEMA,
   ...WATCHLIST_API_SCHEMA,
-  ...SCRAPING_API_SCHEMA
+  ...SCRAPING_API_SCHEMA,
 } as const;
 
 export type ValidServerEndpoints = keyof typeof MERGED_API_SCHEMA;

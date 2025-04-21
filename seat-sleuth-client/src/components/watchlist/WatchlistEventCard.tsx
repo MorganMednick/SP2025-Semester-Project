@@ -1,9 +1,13 @@
-import {Box, Text, Card, Image, Flex, Group, Button, Stack} from '@mantine/core';
+import { Box, Text, Card, Image, Flex, Group, Button, Stack } from '@mantine/core';
 import { SpecificEventData } from '@client/types/shared/responses';
 import { formatDateToMonthDayYearString } from '../../util/uiUtils';
 import { IconChevronCompactRight } from '@tabler/icons-react';
 
 export default function EventCard({ event }: { event: SpecificEventData }) {
+  const lowestPriceOption = event.priceOptions?.length
+    ? event.priceOptions.reduce((min, option) => (option.price < min.price ? option : min)) // WHIPPIN OUT THAT 131 Math.min() FUNCTION 😎
+    : null;
+
   return (
     <Card
       shadow="none"
@@ -36,14 +40,27 @@ export default function EventCard({ event }: { event: SpecificEventData }) {
             {event.venueName} {'|'} {event.city}
           </Text>
         </Stack>
-        <Button w={175} h={80} bg="green.10" radius="md" justify="flex-end" pl={0} ml="auto">
+        <Button
+          w={175}
+          h={80}
+          bg="green.10"
+          radius="md"
+          justify="flex-end"
+          pl={0}
+          ml="auto"
+          onClick={() => {
+            if (lowestPriceOption?.url) {
+              window.open(lowestPriceOption.url, '_blank', 'noopener,noreferrer');
+            }
+          }}
+        >
           <Group gap={5} justify="flex-end">
             <Stack gap={0} align="center" justify="flex-start">
               <Text size="xxl" c="white" fw={700}>
-                $100
+                ${lowestPriceOption?.price?.toFixed(2) || '0.00'}
               </Text>
               <Text size="xs" c="white">
-                on ...
+                on {lowestPriceOption?.source}
               </Text>
             </Stack>
             <IconChevronCompactRight size={50} color="white" />

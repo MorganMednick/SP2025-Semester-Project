@@ -1,12 +1,18 @@
 import { createTask, TaskDefinition } from './tasks/taskFactory';
 import { CronMap, Task, TaskName } from '../types/shared/tasks';
 import { sendwatchlistUpdateEmail } from './tasks/emailTasks';
-import { WATCHLIST_EMAIL_CRON } from '../config/env';
+import { PRICE_UPDATE_CRON, WATCHLIST_EMAIL_CRON } from '../config/env';
+import { updatePricesForPersistedEvents } from './tasks/priceUpdateTasks';
 const taskDefinitions: TaskDefinition[] = [
   {
     name: 'WATCHLIST_EMAIL',
     schedule: WATCHLIST_EMAIL_CRON || CronMap.EVERY_DAY_8AM, // Defaults to 8AM every day
     handler: sendwatchlistUpdateEmail,
+  },
+  {
+    name: 'PRICE_UPDATE',
+    schedule: PRICE_UPDATE_CRON || CronMap.EVERY_5_MINUTES, // Defaults to every 5 mins
+    handler: updatePricesForPersistedEvents,
   },
 ];
 

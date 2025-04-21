@@ -63,8 +63,7 @@ describe('TicketMaster Utils', () => {
     expect(result[0].eventName).toBe('Test Event');
     expect(result[0].instances[0].priceOptions[0]).toEqual(
       expect.objectContaining({
-        priceMin: 50,
-        priceMax: 100,
+        price: 50,
         source: 'Ticketmaster',
       }),
     );
@@ -115,8 +114,7 @@ describe('TicketMaster Utils', () => {
     expect(result[0].instances[0].priceOptions).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          priceMin: 50,
-          priceMax: 100,
+          price: 50,
           source: 'Ticketmaster',
         }),
       ]),
@@ -151,8 +149,7 @@ describe('TicketMaster Utils', () => {
 
     expect(result[0].instances[0].priceOptions[0]).toEqual(
       expect.objectContaining({
-        priceMin: 50,
-        priceMax: 100,
+        price: 50,
         source: 'Ticketmaster',
       }),
     );
